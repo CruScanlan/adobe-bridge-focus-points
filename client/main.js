@@ -58,12 +58,6 @@
 
     var currentPath = null;
 
-    function fileUrl(p) {
-        var u = p.replace(/\\/g, '/');
-        if (u.charAt(0) !== '/') u = '/' + u;
-        return 'file://' + encodeURI(u) + '?t=' + Date.now();
-    }
-
     function delegateFor(tags) {
         var make = (tags.Make || '').toUpperCase();
         return make.indexOf('FUJI') !== -1 ? fuji : null;
@@ -117,48 +111,46 @@
         var name = filePath.split(/[\\/]/).pop();
         setStatus('Reading ' + name + '…', '');
 
-        var tags;
-        try {
-            tags = exiftool.readTags(filePath);
-        } catch (err) {
-            setStatus('exiftool failed: ' + err.message, 'error');
-            return;
-        }
+        exiftool.readFocusData(filePath).then(function (data) {
+            // A newer selection superseded this one while exiftool was working.
+            if (currentPath !== filePath) return;
 
-        var delegate = delegateFor(tags);
-        if (!delegate) {
-            setStatus((tags.Make || 'This camera') + ' is not supported yet', 'warn');
-            els.preview.removeAttribute('src');
-            clearOverlay();
-            return;
-        }
-        if (delegate.makerNotesFound && !delegate.makerNotesFound(tags, filePath)) {
-            setStatus('No usable maker notes (DNG/converted?) — needs OOC RAF/JPEG', 'warn');
-        }
-
-        var previewPath;
-        try {
-            previewPath = exiftool.extractPreview(filePath);
-        } catch (err) {
-            setStatus('Could not extract preview: ' + err.message, 'error');
-            return;
-        }
-
-        els.preview.onload = function () {
-            els.placeholder.style.display = 'none';
-            var imgW = els.preview.naturalWidth, imgH = els.preview.naturalHeight;
-            var result = delegate.getAfPoints(tags, { width: imgW, height: imgH });
-            drawPoints(result, imgW, imgH);
-            if (!result || !result.points.length) {
-                setStatus(name + ' — no focus point recorded', 'warn');
-            } else {
-                var fp = result.focusPixel;
-                setStatus(name + ' — ' + (tags.Model || ''), 'ok');
-                els.coords.textContent = 'FocusPixel ' + Math.round(fp.x) + ',' + Math.round(fp.y);
+            var tags = data.tags || {};
+            var delegate = delegateFor(tags);
+            if (!delegate) {
+                setStatus((tags.Make || 'This camera') + ' is not supported yet', 'warn');
+                els.preview.removeAttribute('src');
+                clearOverlay();
+                return;
             }
-        };
-        els.preview.onerror = function () { setStatus('Failed to display preview', 'error'); };
-        els.preview.src = fileUrl(previewPath);
+            if (delegate.makerNotesFound && !delegate.makerNotesFound(tags, filePath)) {
+                setStatus('No usable maker notes (DNG/converted?) — needs OOC RAF/JPEG', 'warn');
+            }
+            if (!data.previewUrl) {
+                setStatus('No embedded preview to display', 'error');
+                return;
+            }
+
+            els.preview.onload = function () {
+                if (currentPath !== filePath) return; // superseded during decode
+                els.placeholder.style.display = 'none';
+                var imgW = els.preview.naturalWidth, imgH = els.preview.naturalHeight;
+                var result = delegate.getAfPoints(tags, { width: imgW, height: imgH });
+                drawPoints(result, imgW, imgH);
+                if (!result || !result.points.length) {
+                    setStatus(name + ' — no focus point recorded', 'warn');
+                } else {
+                    var fp = result.focusPixel;
+                    setStatus(name + ' — ' + (tags.Model || ''), 'ok');
+                    els.coords.textContent = 'FocusPixel ' + Math.round(fp.x) + ',' + Math.round(fp.y);
+                }
+            };
+            els.preview.onerror = function () { setStatus('Failed to display preview', 'error'); };
+            els.preview.src = data.previewUrl;
+        }, function (err) {
+            if (currentPath !== filePath) return;
+            setStatus('exiftool failed: ' + (err && err.message ? err.message : err), 'error');
+        });
     }
 
     window.addEventListener('resize', function () {
@@ -194,6 +186,11 @@
     } catch (e) { /* ignore */ }
 
     poll();                       // initial selection
-    setInterval(poll, 600);       // live updates
+    setInterval(poll, 250);       // live updates
     setStatus('Ready — select a photo in Bridge', 'ok');
+
+    // Shut the persistent exiftool process down when the panel goes away.
+    window.addEventListener('beforeunload', function () {
+        try { exiftool.stop(); } catch (e) { /* ignore */ }
+    });
 })();
