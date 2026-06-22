@@ -116,12 +116,13 @@ with `PlayerDebugMode=1`. It *lists* the extension in Window > Extensions but
 loading fails — an `Embedded` panel **hard-crashes Bridge** ("A nullptr was
 dereferenced"), and dialog types (`Modeless`/`ModalDialog`) show "Unable to
 load". The CEP log only says "Signature verification failed". The built-in
-`HelloBridge` sample works **because it is code-signed**.
+`HelloBridge` sample works **because it is code-signed**. Note: the symptoms
+differ by `UI Type` but the cause is the same (unsigned). Once signed, **all
+types work — including `Embedded`, which we ship** (it docks like the native
+Metadata panel). The earlier "Embedded crashes" was just the unsigned rejection.
 
-Two consequences baked into the project:
+Consequence baked into the project:
 
-- **We ship `Type=Modeless`**, not `Embedded` (Embedded crashes here). Modeless
-  is a floating, non-blocking window — fine for live browsing.
 - **Every install must be signed.** `tools/sign-install.sh` does it: stage the
   shippable dirs → `ZXPSignCmd -sign` with a self-signed cert
   (`tools/cert.p12`) → unzip the `.zxp` into
@@ -143,7 +144,8 @@ Working end-to-end in Bridge: select a Fuji RAF → preview + green AF box rende
 on the focus point, and the panel updates live as the selection changes.
 exiftool bundle verified (13.55); Fuji primary-point geometry ported & visually
 verified against all three fixtures (`fixtures/expected/*-afbox.jpg`); signed
-`Modeless` panel loads in Bridge 2026.
+`Embedded` panel docks in Bridge 2026 like a native panel. Faces / AI subject
+boxes confirmed working with live data.
 
 Not yet done / next steps:
 - Orientation + crop handling (current fixtures are all upright).

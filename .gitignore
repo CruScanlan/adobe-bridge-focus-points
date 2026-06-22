@@ -1,5 +1,6 @@
 memory/
 reference/
+fixtures/
 project.md
 
 # Dev signing artifacts (private key never committed; the .exe is re-downloadable)
