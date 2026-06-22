@@ -1,0 +1,10 @@
+memory/
+reference/
+project.md
+
+# Dev signing artifacts (private key never committed; the .exe is re-downloadable)
+tools/cert.p12
+tools/ZXPSignCmd.exe
+
+# Machine-specific config (tools/.env.example is the committed template)
+tools/.env

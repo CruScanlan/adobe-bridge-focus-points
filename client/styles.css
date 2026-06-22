@@ -1,0 +1,75 @@
+/* Panel styling. Dark to match Bridge's default UI. */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #2b2b2b;
+    color: #d6d6d6;
+    font: 12px/1.4 "Segoe UI", system-ui, sans-serif;
+    overflow: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1d1d1d;
+    overflow: hidden;
+}
+
+/* Image and overlay are stacked and sized identically so SVG image-space
+   coordinates line up with the rendered pixels. */
+#preview, #overlay {
+    position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+#overlay {
+    pointer-events: none;
+}
+
+#placeholder {
+    color: #777;
+    font-size: 13px;
+}
+
+#statusbar {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 10px;
+    background: #232323;
+    border-top: 1px solid #111;
+    font-size: 11px;
+    color: #9a9a9a;
+    white-space: nowrap;
+}
+
+#status.warn { color: #e0b341; }
+#status.error { color: #e0664b; }
+#status.ok { color: #6fbf73; }
+
+/* AF box overlay styling. Neon green to read against most images. */
+.af-box {
+    fill: none;
+    stroke: #39ff14;
+    stroke-width: 4px;
+    vector-effect: non-scaling-stroke;
+}
+.af-box.face { stroke: #ffd23f; }
+.af-box.crop { stroke: #4ab8ff; stroke-dasharray: 12 8; }
+.af-cross { stroke: #39ff14; stroke-width: 2px; vector-effect: non-scaling-stroke; }

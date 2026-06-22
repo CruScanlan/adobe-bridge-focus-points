@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Remote-debug ports for the panel. With PlayerDebugMode=1 set in the registry
+  (HKCU\Software\Adobe\CSXS.12, string value "1"), open the listed port in
+  Chrome/Edge at http://localhost:8088 to get DevTools for the panel.
+-->
+<ExtensionList>
+    <Extension Id="com.cru.bridgefocuspoints.panel">
+        <HostList>
+            <Host Name="KBRG" Port="8088"/>
+        </HostList>
+    </Extension>
+</ExtensionList>

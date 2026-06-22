@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self' 'unsafe-inline' file: data:; img-src 'self' file: data:;"/>
+    <title>Focus Points</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+    <div id="app">
+        <div id="stage">
+            <!-- Preview image; the SVG overlay sits on top, sharing a viewBox
+                 in image-pixel space so AF boxes map 1:1 regardless of zoom. -->
+            <img id="preview" alt=""/>
+            <svg id="overlay" preserveAspectRatio="xMidYMid meet"></svg>
+            <div id="placeholder">Select a photo in Bridge</div>
+        </div>
+        <div id="statusbar">
+            <span id="status">Loading…</span>
+            <span id="coords"></span>
+        </div>
+    </div>
+
+    <script src="lib/CSInterface.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
