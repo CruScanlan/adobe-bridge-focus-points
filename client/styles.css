@@ -27,14 +27,18 @@ html, body {
 }
 
 /* Image and overlay are stacked and sized identically so SVG image-space
-   coordinates line up with the rendered pixels. */
+   coordinates line up with the rendered pixels. JS sets explicit width/height
+   (computed to fit the stage, accounting for any EXIF rotation) and a matching
+   `transform` on both, so they rotate together as one unit about their shared
+   centre. `image-orientation: none` stops CEF auto-rotating the preview from
+   the extracted JPEG's own Orientation tag — we always decode native pixels and
+   apply the rotation ourselves, so RAF and JPEG behave identically. */
 #preview, #overlay {
     position: absolute;
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+    transform-origin: center center;
+}
+#preview {
+    image-orientation: none;
 }
 
 #overlay {
@@ -46,17 +50,69 @@ html, body {
     font-size: 13px;
 }
 
+/* Bottom bar, one row: layer toggles + filename on the left, shooting-info
+   readout on the right. */
 #statusbar {
     flex: 0 0 auto;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px;
     padding: 6px 10px;
     background: #232323;
     border-top: 1px solid #111;
     font-size: 11px;
+}
+
+#leftbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+#controls {
+    display: flex;
+    gap: 14px;
+    flex: 0 0 auto;
+}
+
+.tog {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #cfcfcf;
+    cursor: pointer;
+    user-select: none;
+}
+.tog input {
+    accent-color: #39ff14;
+    margin: 0;
+    cursor: pointer;
+}
+/* Layer with no data in the current image: greyed and non-interactive. */
+.tog.unavailable {
+    opacity: 0.35;
+    cursor: default;
+}
+.tog.unavailable input {
+    cursor: default;
+}
+
+#status {
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#shootinfo {
     color: #9a9a9a;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+    min-width: 0;
 }
 
 #status.warn { color: #e0b341; }

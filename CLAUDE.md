@@ -100,14 +100,37 @@ exiftool is invoked with `-json -s`, so tag keys are short PascalCase
 Delegates read tags by those names. `FocusPixel` comes back as the string
 `"2515 1164"`; dimensions come back numeric.
 
-## #1 correctness pitfall — orientation/crop
+## Orientation handling (done — and NOT in the delegate)
 
-AF coordinates are relative to the camera's native orientation. The current
-three fixtures are all `Horizontal (normal)`, so the v1 slice assumes an upright
-preview. **Rotated/cropped images are not handled yet** — that is the next
-correctness task. The Lr plugin does this in the delegates plus `Crop.lua` /
-`Straighten.lua` / its orientation logic; study those before adding it. Getting
-the box in the wrong place is almost always a transform bug, not a parse bug.
+AF coordinates are relative to the camera's native (unrotated) orientation.
+Rotated/portrait shots are handled, but **not** the way the Lr plugin does it.
+Because we draw a live SVG overlay (not Mogrify-baked pixels), we don't rotate
+each point — we rotate the *whole image+overlay container* and leave the points
+in native space. The delegate is orientation-agnostic and untouched. The logic
+lives entirely in `client/main.js` + `styles.css`:
+
+- `#preview` gets CSS `image-orientation: none` so CEF never auto-rotates from
+  the extracted preview's own Orientation tag. This is essential: a RAF's
+  embedded preview carries an Orientation tag (CEF would rotate it) while an OOC
+  JPEG's tiny preview does not (CEF would leave it sideways) — so without this we
+  get inconsistent behavior between the two. Forcing `none` makes the decoded
+  pixels always native, and `naturalWidth/Height` always the native frame.
+- `orientationOf(tags)` maps the exiftool `Orientation` string to `{rotate,
+  mirror}`; `layout()` fits the native preview into the stage (swapping bounds
+  for 90/270 so the *rotated* footprint fits) and applies the same CSS
+  `transform` to image and overlay so they rotate as one unit about a shared
+  centre. The SVG `viewBox` stays in native pixel space, so faces/crop boxes ride
+  along for free.
+- Mirrored EXIF variants (2/4/5/7) are implemented but not yet visually verified
+  (no mirrored fixture). The four rotations (incl. `Rotate 270 CW`, the
+  `DSCF2659` fixtures) are verified in Bridge.
+
+**Crop caveat (open):** an OOC JPEG's embedded `PreviewImage` can be a small
+letterboxed thumbnail (e.g. 640×480 4:3 for a 3:2 frame), so `FocusPixel`/dim
+scaling is slightly off on the *JPEG* path. The RAF preview is a clean full-frame
+3:2 and maps exactly — feed RAFs. Real in-camera crop (`CropSize`/`CropTopLeft`,
+digital tele-converter) is drawn but untested. Getting the box in the wrong place
+is almost always a transform bug, not a parse bug.
 
 ## ⚠️ Bridge 2026 requires a SIGNED extension (the big gotcha)
 
@@ -130,6 +153,11 @@ Consequence baked into the project:
   is enough because `PlayerDebugMode` is honored. **Editing any file invalidates
   the signature — re-run the script after every change.** (`tools/ZXPSignCmd.exe`
   is Adobe's official 4.1.103 build; dev-only, never shipped.)
+- **Claude runs the install, not Cru.** `bash tools/sign-install.sh` works in
+  Claude's environment, so whenever a change is ready to test in Bridge, Claude
+  runs the sign-install script itself and *then* asks Cru to test — never tell
+  Cru to run it. Cru's only manual steps are restarting Bridge and reporting what
+  the panel shows.
 
 ## Selection updates by polling, not events
 
@@ -145,11 +173,36 @@ on the focus point, and the panel updates live as the selection changes.
 exiftool bundle verified (13.55); Fuji primary-point geometry ported & visually
 verified against all three fixtures (`fixtures/expected/*-afbox.jpg`); signed
 `Embedded` panel docks in Bridge 2026 like a native panel. Faces / AI subject
-boxes confirmed working with live data.
+boxes confirmed working with live data. **Orientation** (incl. portrait
+`Rotate 270 CW`) verified on the `DSCF2659` fixtures.
+
+Bottom-bar UI: per-layer toggles (Focus / Faces / Crop, persisted via
+localStorage; a layer with no data in the current image is greyed/disabled) and
+a shooting-info readout (model · focal · aperture · shutter · ISO · focus-mode ·
+AF area+size · detected subject). Toggling re-renders the cached result; no
+re-run of exiftool.
+
+Crop: **aspect-ratio crop** (`RawImageAspectRatio`, e.g. 16:9 → centred dashed
+box, trim top/bottom) verified on `DSCF2561.RAF`. Digital tele-converter crop
+(`CropSize`/`CropTopLeft`) is drawn but still untested (no fixture). The two are
+mutually exclusive in the delegate (TC crop wins).
+
+AF-frame size: the green box is sized from the camera's real Single-Point
+`AFAreaPointSize` ordinal via the tunable `AF_POINT_SIZE_FRACTION` table in
+`fujifilm.js` (each step = +2% of the short side), falling back to the fixed
+`FOCUS_BOX_SIZE` when absent. **Relative** sizing verified across fixtures
+(SP 3 < 5 < 6); **absolute** scale is an unconfirmed approximation — needs
+in-camera ground-truth testing to calibrate the table. No prior art: neither the
+Lr nor digiKam ports use this ordinal at all.
 
 Not yet done / next steps:
-- Orientation + crop handling (current fixtures are all upright).
-- Faces / subject-detection display validated against real fixtures.
+- Calibrate `AF_POINT_SIZE_FRACTION` against real in-camera AF-frame testing
+  (absolute scale only; shape confirmed). Zone mode (`AFAreaZoneSize`) unmodelled.
+- Mirrored EXIF orientations (2/4/5/7) — coded, no fixture to verify.
+- JPEG-path letterbox crop (see orientation caveat) + digital-TC crop test.
+- Distinguish face-element types (Head/Body/Face/Eye via `FaceElementTypes`)
+  instead of drawing all as one yellow box; also `FacePositions` vs the
+  delegate's `FacesPositions` tag-name mismatch (latent dead branch).
 - Remaining manufacturers (Canon, Nikon, Sony, …), one at a time.
 - A proper `.zxp` for distribution (the dev self-sign is fine for personal use).
 

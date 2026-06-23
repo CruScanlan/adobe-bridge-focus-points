@@ -27,13 +27,36 @@ const POINTTYPE = {
 };
 
 // Box-size scaling factors, mirrors FocusPointPrefs.focusBoxSize { 0, .04, .1 }.
-// Default is medium, as in the Lr plugin (initfocusBoxSize = medium).
+// Default is medium, as in the Lr plugin (initfocusBoxSize = medium). Used as a
+// fallback when the camera's real AF-frame size is unavailable.
 const FOCUS_BOX_SIZE = { small: 0, medium: 0.04, large: 0.1 };
+
+// Real in-camera AF-frame size (approximation). Fuji records only an ordinal,
+// `AFAreaPointSize` 1..7 for Single Point — NOT a pixel size — and neither the
+// Lr nor digiKam ports use it at all. We map that ordinal to a fraction of the
+// frame's short side. These numbers are empirical and meant to be TUNED against
+// real shots: each step is +2% of the short side, spanning a small pinpoint to
+// a large single-point frame. The fixtures span sizes 3/5/6, so they give a
+// relative sanity check (size 3 must look clearly smaller than size 6).
+// AFAreaZoneSize (Zone mode) is a separate scale and not modelled yet.
+const AF_POINT_SIZE_FRACTION = {
+  1: 0.04, 2: 0.06, 3: 0.08, 4: 0.10, 5: 0.12, 6: 0.14, 7: 0.16,
+};
 
 /** Split a space-separated tag value into trimmed string parts. */
 function split(value) {
   if (value === undefined || value === null) return null;
   return String(value).trim().split(/\s+/);
+}
+
+/** Parse a "W:H" ratio (e.g. "16:9") into { w, h }, or null if not valid. */
+function split2(value) {
+  if (value === undefined || value === null) return null;
+  const m = String(value).match(/(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)/);
+  if (!m) return null;
+  const w = parseFloat(m[1]), h = parseFloat(m[2]);
+  if (!(w > 0) || !(h > 0)) return null;
+  return { w, h };
 }
 
 /**
@@ -79,12 +102,21 @@ function getAfPoints(tags, display, opts = {}) {
     points: [],
   };
 
-  // Primary point: a square box centred on the (scaled) focus pixel.
-  // Mirrors DefaultPointRenderer.createFocusFrame() with no explicit w/h:
-  //   w = min(cropW, cropH) * focusBoxSize ; h = w. (no crop here -> display dims)
-  const side = Math.min(display.width, display.height) * boxSize;
+  // Primary point: a square box centred on the (scaled) focus pixel. We size it
+  // from the camera's real Single-Point AF frame (AFAreaPointSize) when present,
+  // falling back to the fixed boxSize fraction otherwise. The box lives in the
+  // ExifImage* frame, so the side is a fraction of that frame's short side.
+  const areaMode = String(tags['AFAreaMode'] || tags['AFMode'] || '');
+  const ptSizeOrd = parseInt(tags['AFAreaPointSize'], 10);
+  let sideFraction = boxSize;
+  let cameraSized = false;
+  if (/single/i.test(areaMode) && AF_POINT_SIZE_FRACTION[ptSizeOrd] !== undefined) {
+    sideFraction = AF_POINT_SIZE_FRACTION[ptSizeOrd];
+    cameraSized = true;
+  }
+  const side = Math.min(display.width, display.height) * sideFraction;
   result.points.push({
-    pointType: boxSize === FOCUS_BOX_SIZE.small
+    pointType: sideFraction === FOCUS_BOX_SIZE.small
       ? POINTTYPE.AF_FOCUS_PIXEL
       : POINTTYPE.AF_FOCUS_PIXEL_BOX,
     x: x * xScale,
@@ -92,6 +124,8 @@ function getAfPoints(tags, display, opts = {}) {
     width: side,
     height: side,
     primary: true,
+    cameraSized: cameraSized,
+    afAreaPointSize: Number.isFinite(ptSizeOrd) ? ptSizeOrd : null,
   });
 
   // --- detected faces (FacesDetected / FacesPositions) -----------------------
@@ -124,6 +158,28 @@ function getAfPoints(tags, display, opts = {}) {
       width: Math.abs(x1 - x2),
       height: Math.abs(y1 - y2),
     });
+  } else {
+    // --- in-camera aspect-ratio crop (RawImageAspectRatio, e.g. "16:9", "1:1")
+    // A centred crop of the full (ExifImage*) frame: the preview is the whole
+    // sensor, so we draw the intended framing rather than physically cropping.
+    // Skipped when it matches the frame's own aspect (a normal 3:2 shot).
+    const ar = split2(tags['RawImageAspectRatio']);
+    if (ar) {
+      const targetR = ar.w / ar.h;
+      const frameR = exifW / exifH;
+      if (Math.abs(targetR - frameR) > 0.01) {
+        let cw, ch;
+        if (targetR > frameR) { cw = exifW; ch = exifW / targetR; } // trim top/bottom
+        else { ch = exifH; cw = exifH * targetR; }                  // trim sides
+        result.points.push({
+          pointType: POINTTYPE.CROP,
+          x: (exifW / 2) * xScale,
+          y: (exifH / 2) * yScale,
+          width: cw * xScale,
+          height: ch * yScale,
+        });
+      }
+    }
   }
 
   return result;

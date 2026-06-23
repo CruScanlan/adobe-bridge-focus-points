@@ -27,8 +27,11 @@ const TAGS = [
   'FocusPixel', 'ExifImageWidth', 'ExifImageHeight',
   'Make', 'Model', 'Orientation',
   'FacesDetected', 'FacesPositions', 'FaceElementPositions', 'FaceElementTypes',
-  'CropSize', 'CropTopLeft',
+  'CropSize', 'CropTopLeft', 'RawImageAspectRatio',
   'InternalSerialNumber', 'FocusMode', 'FocusMode2', 'AFMode',
+  'AFAreaMode', 'AFAreaPointSize', 'AFAreaZoneSize',
+  // Shooting-info readout (bottom bar).
+  'LensModel', 'FocalLength', 'FNumber', 'ExposureTime', 'ISO',
 ];
 
 let proc = null;          // the long-lived exiftool process
