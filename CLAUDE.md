@@ -62,6 +62,7 @@ client/
     exiftool.js            spawn wrapper: readTags() / extractPreview()
   delegates/
     fujifilm.js            ported Fuji geometry (getAfPoints)
+    dji.js                 DJI: preview + flight info, no AF data (none exists)
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
 tools/                     dev-only: ZXPSignCmd.exe + cert.p12 + sign-install.sh
 reference/                 read-only porting sources (Lr plugin, digiKam)
@@ -194,6 +195,29 @@ AF-frame size: the green box is sized from the camera's real Single-Point
 (SP 3 < 5 < 6); **absolute** scale is an unconfirmed approximation — needs
 in-camera ground-truth testing to calibrate the table. No prior art: neither the
 Lr nor digiKam ports use this ordinal at all.
+
+**DJI** (`client/delegates/dji.js`): no geometry exists to port — the Lr plugin
+and digiKam have zero DJI support, and exiftool decodes no DJI AF tags; the only
+focus-related output is `AFDebugInfo`, an undecoded 256-byte binary blob.
+Diffing the three Air 2S (FC3411) fixtures (`DJI_0426/0638/0685.DNG`): u32s at
+0x00/0x08 constant (18, 200), 0x10/0x14 always 0x7FFF ("invalid"), and only
+0x04 (68–77), 0x0C (76–78) and 0xD0 (2600/2700 — likely focus-motor position)
+vary, drifting like AF metrics rather than swinging like tap-to-focus
+coordinates. No field looks like a focus *position*; deciding for sure needs
+two shots with focus deliberately tapped at opposite corners. The delegate
+therefore draws nothing by design: it renders the DNG's embedded 960×630
+SubIFD1 preview, a drone-flavoured info bar (model-code map FC3411→Air 2S etc.,
+35mm-eq focal, AGL altitude, gimbal pitch from XMP-drone-dji), and an honest
+"DJI does not record AF-point coordinates" status. Delegates may now provide
+optional `matches(tags)` (dispatch; Mavic 2/3 report Make=Hasselblad),
+`formatShootingInfo(tags)` and `NO_AF_MESSAGE` hooks — main.js falls back to
+its generic versions when absent. Decoding `AFDebugInfo` would need several
+samples with known (tap-to-focus) positions to diff.
+
+**Unsupported cameras degrade gracefully**: no delegate is no longer fatal —
+the panel still renders the embedded preview (or, for JPEGs with no embedded
+PreviewImage, the file itself) plus the generic shooting-info line, with a
+"<Make> is not supported yet" status. Only the overlay needs a delegate.
 
 Not yet done / next steps:
 - Calibrate `AF_POINT_SIZE_FRACTION` against real in-camera AF-frame testing

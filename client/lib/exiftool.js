@@ -32,6 +32,8 @@ const TAGS = [
   'AFAreaMode', 'AFAreaPointSize', 'AFAreaZoneSize',
   // Shooting-info readout (bottom bar).
   'LensModel', 'FocalLength', 'FNumber', 'ExposureTime', 'ISO',
+  // DJI delegate (35mm-equivalent focal + XMP-drone-dji flight data).
+  'FocalLengthIn35mmFormat', 'RelativeAltitude', 'GimbalPitchDegree',
 ];
 
 let proc = null;          // the long-lived exiftool process
@@ -118,6 +120,10 @@ function readFocusData(file) {
         const b64 = pv.indexOf('base64:') === 0 ? pv.slice(7) : pv;
         fs.writeFileSync(PREVIEW_PATH, Buffer.from(b64, 'base64'));
         previewUrl = fileUrl(PREVIEW_PATH);
+      } else if (/\.jpe?g$/i.test(file)) {
+        // JPEGs without an embedded PreviewImage (most non-Fuji JPEGs) are
+        // themselves displayable — render the file directly.
+        previewUrl = fileUrl(file);
       }
       delete tags.PreviewImage;
       return { tags: tags, previewUrl: previewUrl };

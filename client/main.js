@@ -131,13 +131,14 @@
     }
 
     // --- real pipeline (Node available) ---------------------------------------
-    var path, exiftool, fuji, csInterface, EXT_ROOT;
+    var path, exiftool, fuji, dji, csInterface, EXT_ROOT;
     try {
         path = require('path');
         csInterface = new CSInterface();
         EXT_ROOT = csInterface.getSystemPath(SystemPath.EXTENSION);
         exiftool = require(path.join(EXT_ROOT, 'client', 'lib', 'exiftool.js'));
         fuji = require(path.join(EXT_ROOT, 'client', 'delegates', 'fujifilm.js'));
+        dji = require(path.join(EXT_ROOT, 'client', 'delegates', 'dji.js'));
     } catch (err) {
         setStatus('Init failed: ' + (err && err.message ? err.message : err), 'error');
         return;
@@ -147,7 +148,9 @@
 
     function delegateFor(tags) {
         var make = (tags.Make || '').toUpperCase();
-        return make.indexOf('FUJI') !== -1 ? fuji : null;
+        if (make.indexOf('FUJI') !== -1) return fuji;
+        if (dji.matches(tags)) return dji;
+        return null;
     }
 
     function clearOverlay() {
@@ -252,17 +255,14 @@
             if (currentPath !== filePath) return;
 
             var tags = data.tags || {};
+            // No delegate is not fatal: the preview + shooting info are
+            // manufacturer-agnostic, so unsupported cameras still render the
+            // image — they just can't draw focus data on it.
             var delegate = delegateFor(tags);
-            if (!delegate) {
-                setStatus((tags.Make || 'This camera') + ' is not supported yet', 'warn');
-                els.preview.removeAttribute('src');
-                clearOverlay();
-                updateToggleAvail(null);
-                setShootingInfo('');
-                return;
-            }
-            setShootingInfo(formatShootingInfo(tags));
-            if (delegate.makerNotesFound && !delegate.makerNotesFound(tags, filePath)) {
+            setShootingInfo(delegate && delegate.formatShootingInfo
+                ? delegate.formatShootingInfo(tags)
+                : formatShootingInfo(tags));
+            if (delegate && delegate.makerNotesFound && !delegate.makerNotesFound(tags, filePath)) {
                 setStatus('No usable maker notes (DNG/converted?) — needs OOC RAF/JPEG', 'warn');
             }
             if (!data.previewUrl) {
@@ -278,11 +278,16 @@
                 nativeW = els.preview.naturalWidth;
                 nativeH = els.preview.naturalHeight;
                 curOri = orientationOf(tags);
-                var result = delegate.getAfPoints(tags, { width: nativeW, height: nativeH });
+                var result = delegate
+                    ? delegate.getAfPoints(tags, { width: nativeW, height: nativeH })
+                    : null;
                 curResult = result;
                 layout();
-                if (!result || !result.points.length) {
-                    setStatus(name + ' — no focus point recorded', 'warn');
+                if (!delegate) {
+                    setStatus(name + ' — ' + (tags.Make || 'this camera') + ' is not supported yet', 'warn');
+                } else if (!result || !result.points.length) {
+                    var why = delegate.NO_AF_MESSAGE || 'no focus point recorded';
+                    setStatus(name + ' — ' + why, 'warn');
                 } else {
                     setStatus(name, 'ok');
                 }
