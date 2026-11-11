@@ -1,0 +1,44 @@
+{
+  "file": "ir/nikon-d850-liveview.NEF",
+  "source": "https://www.imaging-resource.com/PRODS/nikon-d850/FULLRES/D850FAR2ADL0.NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D850",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "50.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/400",
+    "ISO": 64,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Contrast-detect (normal area)",
+    "FocalLengthIn35mmFormat": "50 mm",
+    "AFAreaXPosition": 4128,
+    "AFAreaYPosition": 2688,
+    "AFAreaWidth": 435,
+    "AFAreaHeight": 360,
+    "AFImageWidth": 8256,
+    "AFImageHeight": 5504,
+    "CropHiSpeed": "FX Uncropped (8288x5520 cropped to 8288x5520 at pixel 0,0)",
+    "FocusDistance": "7.94 m",
+    "AFInfo2Version": "0101",
+    "PrimaryAFPoint": "(none)",
+    "AFPointsUsed": "(none)"
+  },
+  "expected": {
+    "frame": {
+      "width": 8256,
+      "height": 5504
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 4128,
+        "y": 2688,
+        "width": 435,
+        "height": 360,
+        "primary": true
+      }
+    ]
+  }
+}

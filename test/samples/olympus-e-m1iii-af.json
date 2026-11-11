@@ -1,0 +1,39 @@
+{
+  "file": "ir/olympus-e-m1iii-af.ORF",
+  "source": "https://www.imaging-resource.com/PRODS/olympus-e-m1-iii/FULLRES/Y-JG-E-M1-III-OM-20-F1-4-0138-BOKEH-F1-8.ORF",
+  "tags": {
+    "Make": "OLYMPUS CORPORATION",
+    "Model": "E-M1MarkIII",
+    "FileType": "ORF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "OM 20mm F1.4",
+    "FocalLength": "20.0 mm",
+    "FNumber": 1.8,
+    "ExposureTime": "1/200",
+    "ISO": 200,
+    "FocusMode": "Single AF; S-AF, Imager AF",
+    "FacesDetected": "0 0 0",
+    "InternalSerialNumber": "(redacted)",
+    "FocusDistance": "0.69 m",
+    "AFPointSelected": "0.2796875 0.5666666667 0.2796875 0.5666666667",
+    "AFAreas": "(62,136)-(80,153)",
+    "AISubjectTrackingMode": "Off",
+    "StackedImage": "No"
+  },
+  "expected": {
+    "frame": {
+      "width": 640,
+      "height": 480
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 179,
+        "y": 272,
+        "width": 19.2,
+        "height": 19.2,
+        "primary": true
+      }
+    ]
+  }
+}

@@ -28,3 +28,5 @@ Done on branch `wide-camera-support`.
 - One behaviour change: manual-focus Fuji files (`FocusMode2` = AF-M) used to draw a box at the parked focus frame; they now show "manual focus" and no box, as every other make does. Say if you would rather keep the box for MF.
 - Cru's own files are filed as X-H2: the samples were renamed `fuji-x-h2-dscf*.json` (and the DJI one `dji-air-2s-0685.json`); `add-sample.js` gained `--name` for this.
 - No downloaded sample has face data.
+
+**2026-11-11, later:** two real autofocus X-T3 files found on Imaging Resource (`fuji-x-t3-af`, `fuji-x-t3-af2` portrait), checked by eye. The X-T3 is no longer untested.

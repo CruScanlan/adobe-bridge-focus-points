@@ -1,0 +1,30 @@
+{
+  "file": "ir/sony-a7m2-af.ARW",
+  "source": "https://www.imaging-resource.com/PRODS/sony-a7-ii/FULLRES/A7M2FAR2I0050.ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7M2",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "FE 55mm F1.8 ZA",
+    "FocalLength": "55.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/250",
+    "ISO": 50,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Center",
+    "ExifImageWidth": 6000,
+    "ExifImageHeight": 4000,
+    "FacesDetected": 0,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "55 mm",
+    "FullImageSize": "6000x4000",
+    "FocalPlaneAFPointsUsed": "(none)",
+    "AFAreaModeSetting": "Center",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "Off",
+    "AFPointsUsed": "(none)",
+    "AFPointSelected": 0
+  },
+  "expected": null
+}

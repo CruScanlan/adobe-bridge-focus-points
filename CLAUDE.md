@@ -80,8 +80,10 @@ tools/                     dev-only: ZXPSignCmd.exe + cert.p12 + sign-install.sh
                            add-sample.js + fetch-samples.js (sample tests, below),
                            plus clipfix.cs (unshipped remedy, see blank-panel section)
 reference/                 read-only porting sources (Lr plugin, digiKam)
-fixtures/                  raw files, gitignored: Cru's own at the top level,
-                           downloaded ones in pixls/, check images in check/
+fixtures/                  raw files, gitignored: Cru's own at the top level and
+                           in cru-80d/, downloads in pixls/ (raw.pixls.us),
+                           ir/ (Imaging Resource), rawsamples/; check images
+                           in check/
 ```
 
 ## Delegate contract (adding a manufacturer)
@@ -128,7 +130,14 @@ never committed** — `fixtures/` is gitignored and each sample records its
 
 Adding a camera body:
 
-1. Put the raw in `fixtures/` (downloads go in `fixtures/pixls/`).
+1. Put the raw in `fixtures/` (downloads go in a subfolder per source).
+   Where to look: raw.pixls.us is CC0 but mostly manual-focus chart shots;
+   Imaging Resource (`imaging-resource.com/PRODS/<body>/<body>GALLERY.HTM`,
+   files under `.../FULLRES/`) has real field shots with autofocus for most
+   bodies. Its images are copyrighted, so they are test inputs only: commit
+   the tag snapshot, never the image. A file can be screened before
+   downloading by fetching its first 3 MB with an HTTP range request and
+   running exiftool on that; the maker notes are all in there.
 2. `node tools/add-sample.js fixtures/pixls/<name>.ARW --source <url>` writes
    `test/samples/<name>.json` and a check image `fixtures/check/<name>.jpg`
    (boxes drawn on the embedded preview; needs the dev-only ImageMagick).
@@ -175,14 +184,14 @@ Ported from `reference/focuspoints.lrplugin/FujifilmDelegates.lua`
 | X-H2 | `fuji-x-h2-dscf*` (Cru's own: portrait + faces, 16:9 crop, OOC JPEG) | yes, and in Bridge |
 | X-T5 | `fuji-x-t5`, `fuji-x-t5-mf` (manual focus) | yes |
 | X-T4 | `fuji-x-t4` | yes |
-| X-T3 | `fuji-x-t3` | manual focus only: both raw.pixls.us files are MF |
+| X-T3 | `fuji-x-t3` (MF), `fuji-x-t3-af`, `fuji-x-t3-af2` (portrait) | yes |
 | GFX 100S II | `fuji-gfx100s-ii` (off-centre) | yes |
 | GFX 100S | `fuji-gfx100s` | yes |
 | GFX 50S II | `fuji-gfx50s-ii` | yes |
 | GFX 50R | `fuji-gfx50r` (wide/tracking, off-centre) | yes |
 
-The X-T3 is **untested for autofocus**. None of the downloaded samples has
-face data; Fuji faces are covered by the X-H2 sample only.
+None of the downloaded samples has face data; Fuji faces are covered by the
+X-H2 sample only.
 
 **OOC caveat:** the `FocusPixel`/`ExifImageWidth` reference is lost or corrupted
 on RAF->DNG conversion. Feed straight-out-of-camera `.RAF` (or the OOC JPEG).
@@ -403,26 +412,28 @@ samples with known (tap-to-focus) positions to diff.
 sized from `FocusFrameSize` where the body records it (A7R V, A7 IV, a6700),
 the default box otherwise. All-zero `FocusLocation` falls back to the first
 focal-plane phase-detect point. `FocusMode` = Manual shows "manual focus" and
-no box. Faces (`FaceNPosition`) are ported but unverified: no sample has one.
-The Lr plugin's centring shift for non-native aspect ratios is left to the
-panel's centred frame fit, also unverified on a real 16:9 file. Inactive
-phase-detect points are not drawn.
+no focus box, but detected faces are still drawn. Faces (`FaceNPosition`) are
+verified on the A7R II and A7 II. The Lr plugin's centring shift for
+non-native aspect ratios is left to the panel's centred frame fit; the one
+real 16:9 file (A7R II) is a centre point, so off-centre is unverified.
+Inactive phase-detect points are not drawn.
 
 | Body | Sample | Checked by eye |
 |---|---|---|
 | A7R V | `sony-a7r5` (APS-C crop mode, camera-sized frame) | yes |
 | A7R IV | `sony-a7r4` | yes |
 | A7R III | `sony-a7r3` (flexible spot, off-centre) | yes |
-| A7R II | `sony-a7r2` | manual focus only: every raw.pixls.us file is MF |
+| A7R II | `sony-a7r2` (MF), `sony-a7r2-af` (flexible spot, 16:9), `sony-a7r2-face` (face, MF) | yes |
 | A7 IV | `sony-a7m4` (APS-C crop mode, tracking) | yes |
 | A7 III | `sony-a7m3` (centre point) | yes |
-| A7 II | `sony-a7m2` | manual focus only: every raw.pixls.us file is MF |
+| A7 II | `sony-a7m2` (MF), `sony-a7m2-af` (AF-S: no focus data), `sony-a7m2-face` (face) | faces yes; no focus point exists |
 | a6700 | `sony-a6700` (centre) | yes |
 | a6600 | `sony-a6600` | yes |
 | a6400 | `sony-a6400` | yes |
 
-So the A7R II and A7 II are **untested for autofocus**; whether they record
-`FocusLocation` in AF is unknown (the A7R II writes it even in MF).
+**The A7 II records no focus location at all**: its AF-S files have neither
+`FocusLocation` nor phase-detect points, so it shows "no Sony focus data
+recorded" (faces still draw). Nothing to fix; the data is not in the file.
 
 **Nikon Z** (`client/delegates/nikon.js`, the contrast-AF path of
 `NikonDelegates.lua`): `AFAreaXPosition/YPosition/Width/Height` are the focus
@@ -486,7 +497,7 @@ subject's box (see the R7 and R10 samples).
 | 5D Mark IV | `canon-5d4` (single point) | yes |
 | 5D Mark III | `canon-5d3` (single point) | yes |
 | R6 Mark II | `canon-r6ii` (whole area, 7 areas) | yes |
-| R6 | `canon-r6` | manual focus only: every raw.pixls.us file tried is MF |
+| R6 | `canon-r6` (MF), `canon-r6-af` (spot AF), `canon-r6-tracking` (face + tracking, on the eye) | yes |
 | R7 | `canon-r7` (subject box) | yes |
 | R10 | `canon-r10` (portrait, subject box) | yes |
 | 90D | `canon-90d` (single point) | yes |
@@ -495,8 +506,6 @@ subject's box (see the R7 and R10 samples).
 | 77D | `canon-77d` (auto-area, 5 areas) | yes |
 | 7D Mark II | `canon-7d2` (single point) | yes |
 | 6D Mark II | `canon-6d2` (live view) | yes |
-
-The R6 is **untested for autofocus**.
 
 **Nikon DSLR** (viewfinder AF, the phase-detect path of `NikonDelegates.lua`,
 in the same `nikon.js`): these bodies record point *names* (`C6`, `E9`), not
@@ -519,16 +528,16 @@ and add a sample.
 
 | Body | Sample | Checked by eye |
 |---|---|---|
-| D850 | `nikon-d850` (manual focus), `nikon-d850-af-edited` | AF path on hand-edited tags only: every raw.pixls.us file is MF |
+| D850 | `nikon-d850` (MF), `nikon-d850-af` (point A4, on the bird's eye), `-dynamic` (C11), `-liveview` (AF-area path) | yes |
 | D810 | `nikon-d810` (point A5), `nikon-d810-dx-edited` (crop offset, hand-edited) | yes (the real one) |
 | D800 | `nikon-d800` (centre; from rawsamples.ch) | yes |
 | D800E | `nikon-d800e` (centre) | yes |
-| D500 | `nikon-d500` (manual focus), `nikon-d500-af-edited` | AF path on hand-edited tags only: every raw.pixls.us file is MF |
+| D500 | `nikon-d500` (MF), `nikon-d500-af` (E9), `-offcentre` (C12), `-group` (group area, 4 points), `-liveview` | yes |
 | D7500 | `nikon-d7500` (dynamic area, centre) | yes |
 
-So the **D850 and D500 are untested on a real autofocus file**, and the DSLR
-crop offset is covered only by a hand-edited sample. `nikon-d750-nomap-edited`
-covers the no-map status.
+The AF-info 0101 tag choice is verified on real D850 and D500 files (single,
+dynamic and group area). The DSLR crop offset is still covered only by a
+hand-edited sample. `nikon-d750-nomap-edited` covers the no-map status.
 
 **OM System / Olympus** (`client/delegates/olympus.js`, the primary-focus path
 of `OlympusDelegates.lua`; matches Make "OLYMPUS…" and "OM Digital
@@ -541,21 +550,20 @@ adds `FocusDistance` and `StackedImage` when the camera focus-stacked.
 Not ported: the selected-but-not-in-focus target area, and face frames
 (`FaceDetectArea` needs Lr's long per-model decoding).
 
-**This make is the least verified.** Nearly every OM/Olympus file on
-raw.pixls.us is a manual-focus chart shot (20 files tried across the six
-bodies):
+All three paths are verified on real files (the raw.pixls.us ones are nearly
+all manual-focus chart shots; the autofocus ones come from Imaging Resource):
 
 | Body | Sample | Checked by eye |
 |---|---|---|
-| OM-1 Mark II | `om-1ii` | manual focus only (5 files tried) |
-| OM-1 | `om-1` (AF, but focus not confirmed: no area), `om-1-af-edited` | `AFFocusArea` path on hand-edited tags only |
-| E-M1 Mark III | `olympus-e-m1iii` | manual focus only (3 files tried) |
-| E-M1 Mark II | `olympus-e-m1ii` | manual focus only (4 files tried) |
-| OM-5 | `om-5` | manual focus only (3 files tried) |
+| OM-1 Mark II | `om-1ii` | manual focus only: no autofocus file found anywhere |
+| OM-1 | `om-1` (focus not confirmed), `om-1-af` (`AFFocusArea`), `om-1-subject` (dog: body + eye frames), `om-1-subject2` (tiger) | yes |
+| E-M1 Mark III | `olympus-e-m1iii` (MF), `olympus-e-m1iii-af` (off-centre) | yes |
+| E-M1 Mark II | `olympus-e-m1ii` (MF), `olympus-e-m1ii-af` (centre) | yes |
+| OM-5 | `om-5` (MF), `om-5-af` (`AFFocusArea`, off-centre) | yes |
 | E-M5 Mark III | `olympus-e-m5iii` (`AFPointSelected`, off-centre) | yes |
 
-So only the `AFPointSelected` path is confirmed on a real file. The OM System
-`AFFocusArea` path and the subject-detect frames need a real autofocus ORF.
+The **OM-1 Mark II is the one target body with no autofocus sample**. It
+writes the same tags as the OM-1, so it should behave the same.
 
 **Unsupported cameras degrade gracefully**: no delegate is no longer fatal —
 the panel still renders the embedded preview (or, for JPEGs with no embedded
@@ -563,13 +571,9 @@ PreviewImage, the file itself) plus the generic shooting-info line, with a
 "<Make> is not supported yet" status. Only the overlay needs a delegate.
 
 Not yet done / next steps:
-- Real autofocus files for the bodies listed above as manual-focus-only or
-  hand-edited: Sony A7R II / A7 II, Canon R6, Fuji X-T3, Nikon D850 / D500, and
-  every OM System / Olympus body except the E-M5 III. Add each with
-  `tools/add-sample.js` and look at its check image.
-- Unverified geometry: Sony faces and non-3:2 aspect, Nikon off-centre points
-  in 16:9 / 1:1 crop, Nikon DSLR crop offset, OM System `AFFocusArea` and
-  subject-detect frames.
+- A real autofocus file for the OM-1 Mark II (the only target body without).
+- Unverified geometry: Sony off-centre points in a non-3:2 aspect, Nikon
+  off-centre points in 16:9 / 1:1 crop, Nikon DSLR crop offset.
 - Calibrate `AF_POINT_SIZE_FRACTION` against real in-camera AF-frame testing
   (absolute scale only; shape confirmed). Zone mode (`AFAreaZoneSize`) unmodelled.
 - Mirrored EXIF orientations (2/4/5/7) — coded, no fixture to verify.

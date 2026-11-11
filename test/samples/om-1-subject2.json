@@ -1,0 +1,58 @@
+{
+  "file": "ir/om-1-subject2.ORF",
+  "source": "https://www.imaging-resource.com/PRODS/om-system-om-1/FULLRES/Y-JG-OM-1-OM-40-150-121387.ORF",
+  "tags": {
+    "Make": "OM Digital Solutions",
+    "Model": "OM-1",
+    "FileType": "ORF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "OM 40-150mm F4.0",
+    "FocalLength": "122.0 mm",
+    "FNumber": 4,
+    "ExposureTime": "1/800",
+    "ISO": 400,
+    "FocusMode": "Continuous AF; C-AF, Imager AF",
+    "FacesDetected": "0 0 0",
+    "InternalSerialNumber": "(redacted)",
+    "FocusDistance": "13.87 m",
+    "AFFrameSize": "640 480",
+    "AFFocusArea": "0 0 0 0",
+    "AFPointSelected": "0.3125 0.3770833333 0.3125 0.3770833333",
+    "AFAreas": "(121,118)-(127,127)",
+    "SubjectDetectFrameSize": "640 480",
+    "SubjectDetectArea": "230 78 342 330",
+    "SubjectDetectDetail": "186 121 110 120",
+    "AISubjectTrackingMode": "Dogs & Cats; Object Found",
+    "StackedImage": "No"
+  },
+  "expected": {
+    "frame": {
+      "width": 640,
+      "height": 480
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 200,
+        "y": 181,
+        "width": 19.2,
+        "height": 19.2,
+        "primary": true
+      },
+      {
+        "pointType": "face",
+        "x": 401,
+        "y": 243,
+        "width": 342,
+        "height": 330
+      },
+      {
+        "pointType": "face",
+        "x": 241,
+        "y": 181,
+        "width": 110,
+        "height": 120
+      }
+    ]
+  }
+}

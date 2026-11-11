@@ -1,0 +1,38 @@
+{
+  "file": "ir/olympus-e-m1ii-af.ORF",
+  "source": "https://www.imaging-resource.com/PRODS/olympus-e-m1-ii/FULLRES/EM1IIFAR2GRAD_AUTO.ORF",
+  "tags": {
+    "Make": "OLYMPUS CORPORATION",
+    "Model": "E-M1MarkII",
+    "FileType": "ORF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "LEICA DG SUMMILUX 25/F1.4 ",
+    "FocalLength": "25.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/640",
+    "ISO": 200,
+    "FocusMode": "Single AF; S-AF, Imager AF",
+    "FacesDetected": "0 0 0",
+    "InternalSerialNumber": "(redacted)",
+    "FocusDistance": "19.025 m",
+    "AFPointSelected": "0.5 0.5 0.5 0.5",
+    "AFAreas": "(118,119)-(137,136)",
+    "StackedImage": "No"
+  },
+  "expected": {
+    "frame": {
+      "width": 640,
+      "height": 480
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 320,
+        "y": 240,
+        "width": 19.2,
+        "height": 19.2,
+        "primary": true
+      }
+    ]
+  }
+}

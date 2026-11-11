@@ -1,0 +1,39 @@
+{
+  "file": "ir/nikon-d500-offcentre.NEF",
+  "source": "https://www.imaging-resource.com/PRODS/nikon-d500/FULLRES/Y-D500-500PF-3152.NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D500",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "500.0 mm",
+    "FNumber": 5.6,
+    "ExposureTime": "1/500",
+    "ISO": 800,
+    "FocusMode": "AF-C",
+    "AFAreaMode": "Single Area",
+    "FocalLengthIn35mmFormat": "750 mm",
+    "CropHiSpeed": "DX Uncropped (5600x3728 cropped to 5600x3728 at pixel 0,0)",
+    "FocusDistance": "3.76 m",
+    "AFInfo2Version": "0101",
+    "PrimaryAFPoint": "C12",
+    "AFPointsUsed": "C12",
+    "AFPointsInFocus": "C12"
+  },
+  "expected": {
+    "frame": {
+      "width": 5568,
+      "height": 3712
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3749,
+        "y": 1431,
+        "width": 170,
+        "height": 170,
+        "primary": true
+      }
+    ]
+  }
+}

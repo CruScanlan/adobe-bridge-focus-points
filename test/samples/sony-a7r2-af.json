@@ -1,0 +1,46 @@
+{
+  "file": "ir/sony-a7r2-af.ARW",
+  "source": "https://www.imaging-resource.com/PRODS/sony-a7r-ii/FULLRES/A7R2FAR2I0050.ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7RM2",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "FE 55mm F1.8 ZA",
+    "FocalLength": "55.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/250",
+    "ISO": 50,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Flexible Spot",
+    "ExifImageWidth": 7952,
+    "ExifImageHeight": 5304,
+    "FacesDetected": 0,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "55 mm",
+    "FocusLocation": "7952 5304 3976 2652",
+    "FullImageSize": "7952x5304",
+    "FocalPlaneAFPointsUsed": "(none)",
+    "AFAreaModeSetting": "Flexible Spot",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "Off",
+    "AFPointsUsed": "(none)",
+    "AFPointSelected": 0
+  },
+  "expected": {
+    "frame": {
+      "width": 7952,
+      "height": 5304
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 3976,
+        "y": 2652,
+        "width": 212.16,
+        "height": 212.16,
+        "primary": true
+      }
+    ]
+  }
+}

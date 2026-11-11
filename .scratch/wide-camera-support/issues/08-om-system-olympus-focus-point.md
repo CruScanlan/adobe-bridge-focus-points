@@ -15,7 +15,7 @@ Target bodies, newest first: OM-1 Mark II, OM-1, E-M1 Mark III, E-M1 Mark II; OM
 **Status:** ready-for-human
 
 - [x] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
-- [ ] Each sample's box position was checked by eye against the image before its expected output was committed
+- [x] Each sample's box position was checked by eye against the image before its expected output was committed
 - [x] A manual-focus or no-AF-data file shows a status message, not an error
 - [ ] Cru confirms one ORF renders correctly in Bridge after sign-install
 - [x] CLAUDE.md status section lists OM System / Olympus and the bodies sampled
@@ -28,3 +28,5 @@ Code done on branch `wide-camera-support`, but this is the least verified make. 
 - The OM System `AFFocusArea` path and the subject-detect frames are exercised by a hand-edited sample (`om-1-af-edited`) only.
 - Face frames (`FaceDetectArea`) are not ported; subject-detect frames are.
 - Focus distance was cheap, so it is in the info line, plus the `StackedImage` note when the camera stacked in-body.
+
+**2026-11-11, later:** real autofocus files found on Imaging Resource for the E-M1 II, E-M1 III, OM-1 and OM-5, all checked by eye. The OM-1 files cover the `AFFocusArea` path and the subject-detect frames (a dog with body and eye frames, a tiger), so the hand-edited sample is deleted and the eye-check box is ticked. Only the OM-1 Mark II still has no autofocus sample: Imaging Resource has no raws for it and Photography Blog refuses automated requests.

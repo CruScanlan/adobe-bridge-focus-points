@@ -1,0 +1,44 @@
+{
+  "file": "ir/om-5-af.ORF",
+  "source": "https://www.imaging-resource.com/PRODS/om-system-om-5/FULLRES/Y-JG-OM-5-PB300051.ORF",
+  "tags": {
+    "Make": "OM Digital Solutions",
+    "Model": "OM-5",
+    "FileType": "ORF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "OM 12-40mm F2.8 II",
+    "FocalLength": "18.0 mm",
+    "FNumber": 6.3,
+    "ExposureTime": "1/8",
+    "ISO": 200,
+    "FocusMode": "Single AF; S-AF, Imager AF",
+    "FacesDetected": "0 0 0",
+    "InternalSerialNumber": "(redacted)",
+    "FocusDistance": "inf",
+    "AFFrameSize": "640 480",
+    "AFFocusArea": "67 137 91 69",
+    "AFPointSelected": "0.16875 0.3541666667 0.16875 0.3541666667",
+    "AFAreas": "(118,119)-(137,136)",
+    "SubjectDetectFrameSize": "640 480",
+    "SubjectDetectArea": "0 0 0 0",
+    "SubjectDetectDetail": "0 0 0 0",
+    "AISubjectTrackingMode": "Off",
+    "StackedImage": "No"
+  },
+  "expected": {
+    "frame": {
+      "width": 640,
+      "height": 480
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 112.5,
+        "y": 171.5,
+        "width": 91,
+        "height": 69,
+        "primary": true
+      }
+    ]
+  }
+}
