@@ -1,0 +1,44 @@
+{
+  "file": "ir/fuji-x-t3-af.RAF",
+  "source": "https://www.imaging-resource.com/PRODS/fuji-x-t3/FULLRES/Y-JG-XF8-16-6627.RAF",
+  "tags": {
+    "Make": "FUJIFILM",
+    "Model": "X-T3",
+    "FileType": "RAF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "XF8-16mmF2.8 R LM WR",
+    "FocalLength": "11.0 mm",
+    "FNumber": 8,
+    "ExposureTime": 7,
+    "ISO": 160,
+    "FocusMode": "Auto",
+    "AFAreaMode": "Single Point",
+    "FocusPixel": "1899 1781",
+    "ExifImageWidth": 4416,
+    "ExifImageHeight": 2944,
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "3:2",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode2": "AF-S",
+    "AFMode": "Single Point",
+    "AFAreaPointSize": 1,
+    "AFAreaZoneSize": "n/a",
+    "FocalLengthIn35mmFormat": "17 mm"
+  },
+  "expected": {
+    "frame": {
+      "width": 4416,
+      "height": 2944
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 1899,
+        "y": 1781,
+        "width": 117.76,
+        "height": 117.76,
+        "primary": true
+      }
+    ]
+  }
+}

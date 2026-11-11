@@ -35,14 +35,18 @@ function matches(tags) {
 const NO_AF_MESSAGE = 'no Sony focus data recorded';
 
 function getAfPoints(tags) {
-  if (tags.FocusMode === 'Manual') return { points: [], message: 'manual focus' };
+  // Manual focus: no focus box (FocusLocation is then just the frame centre),
+  // but detected faces are still drawn.
+  const manual = tags.FocusMode === 'Manual';
 
   const loc = nums(tags.FocusLocation);           // W H X Y
   const full = nums(tags.FullImageSize);          // W H
   let frame = null;
   const points = [];
 
-  if (loc.length === 4 && loc[0] > 0 && loc[1] > 0) {
+  if (manual) {
+    // no focus point
+  } else if (loc.length === 4 && loc[0] > 0 && loc[1] > 0) {
     frame = { width: loc[0], height: loc[1] };
     const size = nums(tags.FocusFrameSize);
     if (size.length === 2 && size[0] > 0 && size[1] > 0) {
@@ -83,6 +87,7 @@ function getAfPoints(tags) {
     }
   }
 
+  if (manual) return { frame: frame || undefined, points: points, message: 'manual focus' };
   if (!points.length) return null;
   return { frame: frame, points: points };
 }

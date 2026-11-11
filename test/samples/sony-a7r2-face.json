@@ -1,0 +1,47 @@
+{
+  "file": "ir/sony-a7r2-face.ARW",
+  "source": "https://www.imaging-resource.com/PRODS/sony-a7r-ii/FULLRES/A7R2OUTBAP0.ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7RM2",
+    "FileType": "ARW",
+    "Orientation": "Rotate 270 CW",
+    "LensModel": "FE 55mm F1.8 ZA",
+    "FocalLength": "55.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/40",
+    "ISO": 100,
+    "FocusMode": "Manual",
+    "AFAreaMode": "Manual",
+    "ExifImageWidth": 7952,
+    "ExifImageHeight": 5304,
+    "FacesDetected": 1,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "55 mm",
+    "FocusLocation": "7952 5304 3976 2652",
+    "FullImageSize": "7952x5304",
+    "FocalPlaneAFPointsUsed": "(none)",
+    "Face1Position": "1569 4995 2087 2087",
+    "AFAreaModeSetting": "Flexible Spot",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "Off",
+    "AFPointsUsed": "(none)",
+    "AFPointSelected": 0
+  },
+  "expected": {
+    "frame": {
+      "width": 7952,
+      "height": 5304
+    },
+    "message": "manual focus",
+    "points": [
+      {
+        "pointType": "face",
+        "x": 6038.5,
+        "y": 2612.5,
+        "width": 2087,
+        "height": 2087
+      }
+    ]
+  }
+}

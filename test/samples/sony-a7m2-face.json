@@ -1,0 +1,46 @@
+{
+  "file": "ir/sony-a7m2-face.ARW",
+  "source": "https://www.imaging-resource.com/PRODS/sony-a7-ii/FULLRES/A7M2OUTBAP0.ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7M2",
+    "FileType": "ARW",
+    "Orientation": "Rotate 270 CW",
+    "LensModel": "FE 55mm F1.8 ZA",
+    "FocalLength": "55.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/40",
+    "ISO": 100,
+    "FocusMode": "Manual",
+    "AFAreaMode": "Manual",
+    "ExifImageWidth": 6000,
+    "ExifImageHeight": 4000,
+    "FacesDetected": 1,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "55 mm",
+    "FullImageSize": "6000x4000",
+    "FocalPlaneAFPointsUsed": "(none)",
+    "Face1Position": "1427 3806 1575 1575",
+    "AFAreaModeSetting": "Center",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "Off",
+    "AFPointsUsed": "(none)",
+    "AFPointSelected": 0
+  },
+  "expected": {
+    "frame": {
+      "width": 6000,
+      "height": 4000
+    },
+    "message": "manual focus",
+    "points": [
+      {
+        "pointType": "face",
+        "x": 4593.5,
+        "y": 2214.5,
+        "width": 1575,
+        "height": 1575
+      }
+    ]
+  }
+}

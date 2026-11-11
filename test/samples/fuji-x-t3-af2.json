@@ -1,0 +1,44 @@
+{
+  "file": "ir/fuji-x-t3-af2.RAF",
+  "source": "https://www.imaging-resource.com/PRODS/fuji-x-t3/FULLRES/Y-200mm-5991.RAF",
+  "tags": {
+    "Make": "FUJIFILM",
+    "Model": "X-T3",
+    "FileType": "RAF",
+    "Orientation": "Rotate 270 CW",
+    "LensModel": "XF200mmF2 R LM OIS WR + 1.4x F2",
+    "FocalLength": "280.0 mm",
+    "FNumber": 2.8,
+    "ExposureTime": "1/1000",
+    "ISO": 160,
+    "FocusMode": "Auto",
+    "AFAreaMode": "Single Point",
+    "FocusPixel": "2517 1935",
+    "ExifImageWidth": 4416,
+    "ExifImageHeight": 2944,
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "3:2",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode2": "AF-S",
+    "AFMode": "Single Point",
+    "AFAreaPointSize": 4,
+    "AFAreaZoneSize": "n/a",
+    "FocalLengthIn35mmFormat": "420 mm"
+  },
+  "expected": {
+    "frame": {
+      "width": 4416,
+      "height": 2944
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 2517,
+        "y": 1935,
+        "width": 294.4,
+        "height": 294.4,
+        "primary": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "file": "ir/nikon-d500-af.NEF",
+  "source": "https://www.imaging-resource.com/PRODS/nikon-d500/FULLRES/D500hVFAI0000050.NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D500",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "60.0 mm",
+    "FNumber": 5.6,
+    "ExposureTime": "1/15",
+    "ISO": 50,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Single Area",
+    "FocalLengthIn35mmFormat": "90 mm",
+    "CropHiSpeed": "DX Uncropped (5600x3728 cropped to 5600x3728 at pixel 0,0)",
+    "FocusDistance": "2.66 m",
+    "AFInfo2Version": "0101",
+    "PrimaryAFPoint": "E9 (Center)",
+    "AFPointsUsed": "E9",
+    "AFPointsInFocus": "E9"
+  },
+  "expected": {
+    "frame": {
+      "width": 5568,
+      "height": 3712
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2784,
+        "y": 1856,
+        "width": 170,
+        "height": 170,
+        "primary": true
+      }
+    ]
+  }
+}
