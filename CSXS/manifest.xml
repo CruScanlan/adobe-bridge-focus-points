@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ExtensionBundleId="com.cru.bridgefocuspoints" ExtensionBundleVersion="1.0" Version="7.0">
+<ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ExtensionBundleId="com.cru.bridgefocuspoints" ExtensionBundleVersion="0.0.0" Version="7.0">
     <ExtensionList>
-        <Extension Id="com.cru.bridgefocuspoints.panel" Version="1.0"/>
+        <Extension Id="com.cru.bridgefocuspoints.panel" Version="0.0.0"/>
     </ExtensionList>
     <ExecutionEnvironment>
         <HostList>
