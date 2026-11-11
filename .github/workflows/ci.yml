@@ -1,0 +1,59 @@
+name: CI
+
+# Also called by release.yml: a release is only published if this passes.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_call:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Every committed sample through its delegate. No exiftool involved.
+      - name: Sample tests
+        run: node --test
+
+      # The real exiftool on a few real raws: the .exe on Windows, the bundled
+      # ExifTool on the system Perl on macOS (what the panel does there).
+      - name: Fetch a few sample raws
+        shell: bash
+        run: |
+          for s in canon-r6. sony-a6400. nikon-z50. nikon-d810. fuji-x-t4. olympus-e-m5iii.; do
+            node tools/fetch-samples.js "$s"
+          done
+      - name: exiftool against the samples
+        run: node tools/check-exiftool.js
+
+      - name: Mac install script
+        if: runner.os == 'macOS'
+        run: |
+          # A .zxp is a zip; an unsigned one is enough to test the script.
+          zip -qr "$RUNNER_TEMP/test.zxp" CSXS client host vendor
+          export HOME="$RUNNER_TEMP/home"; mkdir -p "$HOME"
+          dest="$HOME/Library/Application Support/Adobe/CEP/extensions/com.cru.bridgefocuspoints"
+          FOCUSPOINTS_ZXP="$RUNNER_TEMP/test.zxp" sh tools/install-mac.sh
+          for d in CSXS client host vendor; do diff -r "$d" "$dest/$d"; done
+          # Installing over an existing copy leaves no stray files.
+          touch "$dest/stray"
+          FOCUSPOINTS_ZXP="$RUNNER_TEMP/test.zxp" sh tools/install-mac.sh
+          test ! -e "$dest/stray"
+          /usr/bin/perl "$dest/client/lib/exiftool-unix.pl" -ver
+          sh tools/install-mac.sh --uninstall
+          test ! -e "$dest"
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck tools/install-mac.sh tools/diagnose-mac.sh tools/build-release.sh tools/sign-install.sh

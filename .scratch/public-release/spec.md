@@ -45,3 +45,5 @@ Considered and rejected for now: ZXP-installer-only distribution (users need a s
 01 and 02 are resolved (2026-11-11): a self-signed extension loads without `PlayerDebugMode`, and the build ships no GPU flags and no `clipfix`. See each ticket's Answer.
 
 Mac tickets slot in alongside: 08 can start any time; 05 attaches the Mac script once 09 exists.
+
+2026-11-11, later: 03, 04, 05, 06, 08, 09, 11 are written (see each ticket's Comments for what was and was not verified). Two deviations from the approach above: the package carries **one** ExifTool (the Windows bundle's pure-Perl part runs on macOS's Perl, ticket 08), and releases are **not timestamped** (ZXPSignCmd crashes on it; a 25-year cert instead, ticket 03). What only Cru can do is listed in `docs/releasing.md`.

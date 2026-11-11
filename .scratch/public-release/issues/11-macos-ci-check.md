@@ -16,14 +16,16 @@ macOS runner minutes are free on public repos; on a private repo they count at 1
 
 **Blocked by:** 08, 09, and `.scratch/wide-camera-support` ticket 01
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
 - [ ] macOS CI job runs the sample tests through Perl exiftool and passes
 - [ ] Windows and macOS exiftool JSON for the samples match
 - [ ] Install-script smoke test runs in CI
 - [ ] Release workflow refuses to publish when either platform fails
-- [ ] README's bug-report section tells Mac users to attach `diagnose-mac.sh` output
+- [x] README's bug-report section tells Mac users to attach `diagnose-mac.sh` output
 
 ## Comments
 
 2026-11-11: the sample tests this ticket depends on now exist. `node --test` from the repo root runs `test/samples.test.js` over `test/samples/*.json`; it needs only Node (no exiftool, no raw files), so the same command works on the macOS runner as is. Note that this alone does not exercise the Perl exiftool: the samples hold tags already extracted on Windows. The exiftool-parity half of this ticket needs raw files on the runner; `node tools/fetch-samples.js <name-filter>` downloads the ones with a URL source (pick a few small ones, e.g. `canon-r6` at 5 MB), and `tools/add-sample.js` goes through `client/lib/exiftool.js`, so it will use whatever platform pick ticket 08 adds. The check-image step needs ImageMagick and is skipped when it is missing.
+
+2026-11-11: `.github/workflows/ci.yml` written, **never run** (nothing has been pushed). Windows + macOS: `node --test`, then six small raws fetched from raw.pixls.us and `tools/check-exiftool.js` (real exiftool, tags and boxes compared with the committed samples; Perl route on macOS). Both platforms compare against the same snapshots, which is the parity check. macOS also runs the install-script smoke test; an ubuntu job runs shellcheck. `release.yml` calls this workflow and needs it to pass. Expect the first macOS run to need a fix or two (the Perl route was only verified with Git Bash's Perl 5.42, not Apple's 5.30/5.34). The other checkboxes stay open until a run is green.

@@ -62,6 +62,8 @@ client/
   lib/
     CSInterface.js         Adobe CEP 12 library (vendored)
     exiftool.js            spawn wrapper: readFocusData(file, tags) -> tags + preview
+    exiftool-unix.pl       macOS: runs the bundled ExifTool on the system Perl
+  update.js                update-available banner (GitHub releases, once a day)
   delegates/
     index.js               registry: delegate list, tag union, delegateFor(tags)
     common.js              shared helpers: point types, default box, info line
@@ -78,7 +80,10 @@ test/
   samples/*.json           one per camera file: exiftool tags + expected boxes
 tools/                     dev-only: ZXPSignCmd.exe + cert.p12 + sign-install.sh,
                            add-sample.js + fetch-samples.js (sample tests, below),
-                           plus clipfix.cs (unshipped remedy, see blank-panel section)
+                           plus clipfix.cs (unshipped remedy, see blank-panel section);
+                           release: build-release.sh, installer.iss,
+                           install-mac.sh, diagnose-mac.sh, check-exiftool.js
+.github/workflows/         ci.yml (Windows + macOS), release.yml (on a v* tag)
 reference/                 read-only porting sources (Lr plugin, digiKam)
 fixtures/                  raw files, gitignored: Cru's own at the top level and
                            in cru-80d/, downloads in pixls/ (raw.pixls.us),
@@ -582,7 +587,36 @@ Not yet done / next steps:
   instead of drawing all as one yellow box; also `FacePositions` vs the
   delegate's `FacesPositions` tag-name mismatch (latent dead branch).
 - Other makes (Panasonic, Pentax, …) only on request; each is one delegate file.
-- A proper `.zxp` for distribution (the dev self-sign is fine for personal use).
+- Distribution: everything is written (see "Release" below) but the workflows
+  have never run. Open: release cert + GitHub secrets (Cru), first CI run,
+  first compile of the installer, a real Mac.
+
+## Release
+
+How to cut one, and the one-time certificate setup: [docs/releasing.md](docs/releasing.md).
+Tickets and what was verified: `.scratch/public-release/`. The points that
+matter when changing code:
+
+- **The version lives in the packaged manifest only.** The repo's
+  `CSXS/manifest.xml` stays `0.0.0`; `tools/build-release.sh` stamps the git
+  tag's version into the staged copy, and `client/update.js` reads
+  `ExtensionBundleVersion` at runtime. A `0.0.0` build never checks for
+  updates.
+- **Release builds drop `.debug`** (no port 8088) and add `LICENSE` and
+  `THIRD_PARTY_NOTICES.md`. A new ported file or bundled component needs a
+  line in the notices.
+- **One ExifTool for both platforms.** macOS runs
+  `vendor/exiftool/exiftool_files/exiftool.pl` on `/usr/bin/perl` through
+  `client/lib/exiftool-unix.pl`, which appends the bundle's `lib` to the end
+  of `@INC` so the Windows Perl runtime in there never shadows the system
+  one. `BFP_PERL=<perl> node tools/check-exiftool.js` runs that route on
+  Windows against every sample raw on disk.
+- **The panel's only network access** is `api.github.com` (CSP `connect-src`
+  in `index.html`).
+- **No timestamp on the signature**: ZXPSignCmd 4.1.103 crashes on it. The
+  release cert has a 25-year validity instead.
+- Shell and Perl scripts are forced to LF by `.gitattributes`; a CRLF
+  `install-mac.sh` would break `curl | sh`.
 
 ## Install / debug (Windows VM)
 
