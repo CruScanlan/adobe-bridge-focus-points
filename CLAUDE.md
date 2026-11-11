@@ -343,3 +343,17 @@ Not yet done / next steps:
 - ImageMagick (`reference/focuspoints.lrplugin/bin/ImageMagick/magick.exe`) is
   used **only** for dev-time fixture verification (drawing oracle boxes), never
   shipped or required at runtime.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as local markdown files under `.scratch/<feature>/` in this repo (no GitHub Issues). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default triage roles, label string = role name (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`), recorded as each issue file's `Status:` line. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` + `docs/adr/` at the repo root (created lazily). See `docs/agents/domain.md`.

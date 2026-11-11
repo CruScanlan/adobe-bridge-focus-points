@@ -1,0 +1,3 @@
+# Every install is code-signed, even in development
+
+Bridge 2026 (CEP 12) will not load an unsigned extension even with `PlayerDebugMode=1`: dialog panels show "Unable to load" and an `Embedded` panel hard-crashes Bridge, with only "Signature verification failed" in the CEP log. So every install, including every dev iteration, goes through `tools/sign-install.sh`, which self-signs with `tools/cert.p12` (sufficient because debug mode is honoured). Editing any installed file invalidates the signature, so re-run the script after every change. A "crashing panel" after an edit is a missing re-sign before it is anything else.
