@@ -24,7 +24,8 @@ const FIXTURES_DIR = path.join(ROOT, 'fixtures');
 
 function download(url, dest, redirects) {
   return new Promise(function (resolve, reject) {
-    https.get(url, function (res) {
+    // Some hosts refuse requests that carry no User-Agent.
+    https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0 (sample fetch)' } }, function (res) {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location && (redirects || 0) < 5) {
         res.resume();
         return resolve(download(new URL(res.headers.location, url).href, dest, (redirects || 0) + 1));
