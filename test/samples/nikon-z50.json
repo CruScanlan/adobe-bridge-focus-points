@@ -1,0 +1,42 @@
+{
+  "file": "pixls/nikon-z50.NEF",
+  "source": "https://raw.pixls.us/getfile.php/3648/nice/Nikon - Z 50 - 12bit 12bit compressed (3:2).NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON Z 50",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "NIKKOR Z DX 16-50mm f/3.5-6.3 VR",
+    "FocalLength": "20.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/200",
+    "ISO": 250,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Single",
+    "FocalLengthIn35mmFormat": "30 mm",
+    "AFAreaXPosition": 2784,
+    "AFAreaYPosition": 1856,
+    "AFAreaWidth": 272,
+    "AFAreaHeight": 319,
+    "AFImageWidth": 5568,
+    "AFImageHeight": 3712,
+    "CropHiSpeed": "DX Uncropped (5600x3728 cropped to 5600x3728 at pixel 0,0)",
+    "FocusDistance": "6.34 m"
+  },
+  "expected": {
+    "frame": {
+      "width": 5568,
+      "height": 3712
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2784,
+        "y": 1856,
+        "width": 272,
+        "height": 319,
+        "primary": true
+      }
+    ]
+  }
+}

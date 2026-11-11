@@ -1,0 +1,42 @@
+{
+  "file": "pixls/nikon-zfc.NEF",
+  "source": "https://raw.pixls.us/getfile.php/4813/nice/Nikon - Z fc - 12bit 12bit compressed (Lossless) (3:2).nef",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON Z fc",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "NIKKOR Z DX 16-50mm f/3.5-6.3 VR",
+    "FocalLength": "25.0 mm",
+    "FNumber": 9,
+    "ExposureTime": "1/125",
+    "ISO": 400,
+    "FocusMode": "AF-A",
+    "AFAreaMode": "Auto",
+    "FocalLengthIn35mmFormat": "37 mm",
+    "AFAreaXPosition": 1296,
+    "AFAreaYPosition": 1856,
+    "AFAreaWidth": 556,
+    "AFAreaHeight": 556,
+    "AFImageWidth": 5568,
+    "AFImageHeight": 3712,
+    "CropHiSpeed": "DX Uncropped (5600x3728 cropped to 5600x3728 at pixel 0,0)",
+    "FocusDistance": "0.2871 m"
+  },
+  "expected": {
+    "frame": {
+      "width": 5568,
+      "height": 3712
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 1296,
+        "y": 1856,
+        "width": 556,
+        "height": 556,
+        "primary": true
+      }
+    ]
+  }
+}

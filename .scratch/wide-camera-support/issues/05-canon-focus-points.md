@@ -15,6 +15,7 @@ Out of scope until someone asks: selected-but-not-in-focus points.
 
 - Full frame: R5 Mark II, R5, EOS R, 5D Mark IV, 5D Mark III; R6 Mark II, R6.
 - Crop sensor (same geometry, samples only): R7, R10, 90D.
+- Added by Cru (2026-11-11): the EOS 80D and bodies like it: 80D, 70D, 77D, 7D Mark II, 6D Mark II.
 
 Fetch one sample per body from raw.pixls.us (CC0) and add it with the ticket 01 tool.
 

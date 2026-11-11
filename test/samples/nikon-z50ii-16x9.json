@@ -1,0 +1,42 @@
+{
+  "file": "pixls/nikon-z50ii-16x9.NEF",
+  "source": "https://raw.pixls.us/getfile.php/7770/nice/Nikon - Z50_2 - 8bit compressed (16:9).NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON Z50_2",
+    "FileType": "NRW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "NIKKOR Z DX 16-50mm f/3.5-6.3 VR",
+    "FocalLength": "24.0 mm",
+    "FNumber": 4.2,
+    "ExposureTime": "1/50",
+    "ISO": 100,
+    "FocusMode": "AF-A",
+    "AFAreaMode": "3D-tracking",
+    "FocalLengthIn35mmFormat": "36 mm",
+    "AFAreaXPosition": 2789,
+    "AFAreaYPosition": 1865,
+    "AFAreaWidth": 280,
+    "AFAreaHeight": 280,
+    "AFImageWidth": 5568,
+    "AFImageHeight": 3712,
+    "CropHiSpeed": "DX Movie 16:9 Crop (5600x3728 cropped to 5600x3144 at pixel 0,292)",
+    "FocusDistance": "9.98 m"
+  },
+  "expected": {
+    "frame": {
+      "width": 5600,
+      "height": 3144
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2805.03,
+        "y": 1581.05,
+        "width": 281.61,
+        "height": 281.61,
+        "primary": true
+      }
+    ]
+  }
+}

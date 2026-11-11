@@ -1,0 +1,42 @@
+{
+  "file": "pixls/nikon-z6iii-dx.NEF",
+  "source": "https://raw.pixls.us/getfile.php/7810/nice/Nikon - Z6_3 - 8bit compressed (3:2).NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON Z6_3",
+    "FileType": "NRW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "NIKKOR Z 24-200mm f/4-6.3 VR",
+    "FocalLength": "86.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/60",
+    "ISO": 200,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Pinpoint",
+    "FocalLengthIn35mmFormat": "129 mm",
+    "AFAreaXPosition": 3023,
+    "AFAreaYPosition": 2016,
+    "AFAreaWidth": 222,
+    "AFAreaHeight": 245,
+    "AFImageWidth": 6048,
+    "AFImageHeight": 4032,
+    "CropHiSpeed": "DX Crop (6064x4040 cropped to 4000x2672 at pixel 1032,684)",
+    "FocusDistance": "11.0 m"
+  },
+  "expected": {
+    "frame": {
+      "width": 4000,
+      "height": 2672
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 1999.34,
+        "y": 1336,
+        "width": 147.12,
+        "height": 162.36,
+        "primary": true
+      }
+    ]
+  }
+}

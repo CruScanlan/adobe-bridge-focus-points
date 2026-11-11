@@ -68,6 +68,7 @@ client/
     fujifilm.js            ported Fuji geometry (getAfPoints)
     dji.js                 DJI: preview + flight info, no AF data (none exists)
     sony.js                ported Sony geometry (FocusLocation)
+    nikon.js               ported Nikon geometry (AF area + CropHiSpeed)
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
 test/
   samples.test.js          `node --test`: every sample through its delegate
@@ -386,6 +387,38 @@ phase-detect points are not drawn.
 
 So the A7R II and A7 II are **untested for autofocus**; whether they record
 `FocusLocation` in AF is unknown (the A7R II writes it even in MF).
+
+**Nikon Z** (`client/delegates/nikon.js`, the contrast-AF path of
+`NikonDelegates.lua`): `AFAreaXPosition/YPosition/Width/Height` are the focus
+area in the pixels of `AFImageWidth x AFImageHeight`, which is the frame. The
+same path covers DSLRs shot in live view. `FocusMode` = Manual shows "manual
+focus". The info line includes `FocusDistance` (useful for telling the frames
+of a focus stack apart; whether to show it for every make is still the open
+question in the spec).
+
+In-camera crop (`CropHiSpeed`): the area is moved into the cropped image by
+scaling about the centre by the *larger* of the two crop ratios. This
+**deviates from the Lr plugin** for 16:9 and 1:1, where Lr scales each axis
+separately. Reason: real Z6 III files keep the area size (163x174) in 16:9 and
+1:1 and enlarge it only in DX, so those modes crop without magnifying. For DX
+the two formulas are identical. Every crop sample is a centre point, where
+both agree, so **off-centre points in 16:9/1:1 are unverified**.
+
+**Faces are unavailable for Nikon**: exiftool exposes no face positions for
+these bodies (only `SubjectDetection`), and the Lr plugin has none either.
+With subject detection on, the AF area is normally the subject's box anyway.
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| Z8 | `nikon-z8` | no AF area: all raw.pixls.us Z8 files are auto-area, which records point names instead |
+| Z7 II | `nikon-z7ii` (off-centre) | yes |
+| Z7 | `nikon-z7` (off-centre) | yes |
+| Z6 III | `nikon-z6iii`, `-dx`, `-16x9`, `-1x1` (pinpoint, centre) | yes |
+| Z6 II | `nikon-z6ii` (centre) | yes |
+| Z6 | `nikon-z6` (off-centre) | yes |
+| Z50 II | `nikon-z50ii`, `-16x9` (3D-tracking) | yes |
+| Z50 | `nikon-z50` (centre) | yes |
+| Zfc | `nikon-zfc` (auto-area, off-centre) | yes |
 
 **Unsupported cameras degrade gracefully**: no delegate is no longer fatal —
 the panel still renders the embedded preview (or, for JPEGs with no embedded

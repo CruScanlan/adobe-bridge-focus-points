@@ -1,0 +1,42 @@
+{
+  "file": "pixls/nikon-z6ii.NEF",
+  "source": "https://raw.pixls.us/getfile.php/4164/nice/Nikon - Z 6_2 - 12bit 12bit compressed (Lossy (type 2)) (3:2).NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON Z 6_2",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "NIKKOR Z 24-200mm f/4-6.3 VR",
+    "FocalLength": "70.0 mm",
+    "FNumber": 6,
+    "ExposureTime": "1/40",
+    "ISO": 100,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Single",
+    "FocalLengthIn35mmFormat": "70 mm",
+    "AFAreaXPosition": 3024,
+    "AFAreaYPosition": 2012,
+    "AFAreaWidth": 285,
+    "AFAreaHeight": 308,
+    "AFImageWidth": 6048,
+    "AFImageHeight": 4024,
+    "CropHiSpeed": "FX Uncropped (6064x4040 cropped to 6064x4040 at pixel 0,0)",
+    "FocusDistance": "11.0 m"
+  },
+  "expected": {
+    "frame": {
+      "width": 6048,
+      "height": 4024
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3024,
+        "y": 2012,
+        "width": 285,
+        "height": 308,
+        "primary": true
+      }
+    ]
+  }
+}
