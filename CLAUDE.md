@@ -129,6 +129,8 @@ Adding a camera body:
 2. `node tools/add-sample.js fixtures/pixls/<name>.ARW --source <url>` writes
    `test/samples/<name>.json` and a check image `fixtures/check/<name>.jpg`
    (boxes drawn on the embedded preview; needs the dev-only ImageMagick).
+   Samples are named `<make>-<body>[-<what>]`; for a file with a camera name
+   such as `DSCF2714.RAF`, pass `--name fuji-x-h2-dscf2714`.
 3. **Look at the check image.** Nothing else confirms the box is in the right
    place; the expected output is only a regression baseline.
 4. `node --test`, then commit the `.json`.
@@ -156,6 +158,28 @@ Ported from `reference/focuspoints.lrplugin/FujifilmDelegates.lua`
   (`FaceElementPositions`, exiftool >= 12.44) and tele-converter crop
   (`CropSize`/`CropTopLeft`, >= 12.82) use the same scale and are already ported.
   None of the current fixtures exercise them.
+
+**Manual focus:** with `FocusMode2` = AF-M the camera still writes
+`FocusPixel` (where the focus frame was parked), but the delegate shows
+"manual focus" and no box, like every other make.
+
+**Bodies sampled** (the delegate needed no per-body changes: every body uses
+`FocusPixel` in the `ExifImage*` frame, which is 4416x2944 on the X bodies and
+4000x3000, 4:3, on the GFX):
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| X-H2 | `fuji-x-h2-dscf*` (Cru's own: portrait + faces, 16:9 crop, OOC JPEG) | yes, and in Bridge |
+| X-T5 | `fuji-x-t5`, `fuji-x-t5-mf` (manual focus) | yes |
+| X-T4 | `fuji-x-t4` | yes |
+| X-T3 | `fuji-x-t3` | manual focus only: both raw.pixls.us files are MF |
+| GFX 100S II | `fuji-gfx100s-ii` (off-centre) | yes |
+| GFX 100S | `fuji-gfx100s` | yes |
+| GFX 50S II | `fuji-gfx50s-ii` | yes |
+| GFX 50R | `fuji-gfx50r` (wide/tracking, off-centre) | yes |
+
+The X-T3 is **untested for autofocus**. None of the downloaded samples has
+face data; Fuji faces are covered by the X-H2 sample only.
 
 **OOC caveat:** the `FocusPixel`/`ExifImageWidth` reference is lost or corrupted
 on RAF->DNG conversion. Feed straight-out-of-camera `.RAF` (or the OOC JPEG).
@@ -324,7 +348,7 @@ bonus path — polling is what actually drives live updates.
 Working end-to-end in Bridge: select a Fuji RAF → preview + green AF box render
 on the focus point, and the panel updates live as the selection changes.
 exiftool bundle verified (13.55); Fuji primary-point geometry ported & visually
-verified against all three fixtures (`fixtures/expected/*-afbox.jpg`); signed
+verified against Cru's X-H2 fixtures (`fixtures/expected/*-afbox.jpg`); signed
 `Embedded` panel docks in Bridge 2026 like a native panel. Faces / AI subject
 boxes confirmed working with live data. **Orientation** (incl. portrait
 `Rotate 270 CW`) verified on the `DSCF2659` fixtures.

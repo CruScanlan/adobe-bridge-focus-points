@@ -1,0 +1,44 @@
+{
+  "file": "pixls/fuji-x-t4.RAF",
+  "source": "https://raw.pixls.us/getfile.php/3918/nice/Fujifilm - X-T4 - 14bit 14bit compressed (3:2).RAF",
+  "tags": {
+    "Make": "FUJIFILM",
+    "Model": "X-T4",
+    "FileType": "RAF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "XF16-55mmF2.8 R LM WR",
+    "FocalLength": "16.0 mm",
+    "FNumber": 3.6,
+    "ExposureTime": "1/125",
+    "ISO": 160,
+    "FocusMode": "Auto",
+    "AFAreaMode": "Single Point",
+    "FocusPixel": "2517 1472",
+    "ExifImageWidth": 4416,
+    "ExifImageHeight": 2944,
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "3:2",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode2": "AF-S",
+    "AFMode": "Single Point",
+    "AFAreaPointSize": 4,
+    "AFAreaZoneSize": "n/a",
+    "FocalLengthIn35mmFormat": "24 mm"
+  },
+  "expected": {
+    "frame": {
+      "width": 4416,
+      "height": 2944
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 2517,
+        "y": 1472,
+        "width": 294.4,
+        "height": 294.4,
+        "primary": true
+      }
+    ]
+  }
+}

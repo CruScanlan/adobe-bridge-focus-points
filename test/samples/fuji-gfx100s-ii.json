@@ -1,0 +1,44 @@
+{
+  "file": "pixls/fuji-gfx100s-ii.RAF",
+  "source": "https://raw.pixls.us/getfile.php/7777/nice/Fujifilm - GFX100S II - 14bit compressed (4:3).RAF",
+  "tags": {
+    "Make": "FUJIFILM",
+    "Model": "GFX100S II",
+    "FileType": "RAF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "GF55mmF1.7 R WR",
+    "FocalLength": "55.0 mm",
+    "FNumber": 1.7,
+    "ExposureTime": "1/80",
+    "ISO": 80,
+    "FocusMode": "Auto",
+    "AFAreaMode": "Single Point",
+    "FocusPixel": "1999 2336",
+    "ExifImageWidth": 4000,
+    "ExifImageHeight": 3000,
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "4:3",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode2": "AF-S",
+    "AFMode": "Single Point",
+    "AFAreaPointSize": 4,
+    "AFAreaZoneSize": "n/a",
+    "FocalLengthIn35mmFormat": "44 mm"
+  },
+  "expected": {
+    "frame": {
+      "width": 4000,
+      "height": 3000
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 1999,
+        "y": 2336,
+        "width": 300,
+        "height": 300,
+        "primary": true
+      }
+    ]
+  }
+}

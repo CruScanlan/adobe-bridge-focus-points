@@ -69,6 +69,8 @@ function split2(value) {
  */
 function getAfPoints(tags) {
   if (!makerNotesFound(tags)) return { points: [], message: NOT_OOC_MESSAGE };
+  // In manual focus FocusPixel is only where the focus frame was parked.
+  if (tags.FocusMode2 === 'AF-M' || tags.FocusMode === 'Manual') return { points: [], message: 'manual focus' };
 
   // --- primary focus point ---------------------------------------------------
   const focusPixel = tags['FocusPixel'];

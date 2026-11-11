@@ -13,8 +13,18 @@ Faces are already ported for Fuji; if any sample contains face data, check the b
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
-- [ ] Each sample's box position was checked by eye against the image before its expected output was committed
-- [ ] Any body-specific difference found (frame size, missing tags, medium-format aspect) is handled in the delegate and noted in CLAUDE.md
+- [x] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
+- [x] Each sample's box position was checked by eye against the image before its expected output was committed
+- [x] Any body-specific difference found (frame size, missing tags, medium-format aspect) is handled in the delegate and noted in CLAUDE.md
+
+## Comments
+
+Done on branch `wide-camera-support`.
+
+- Samples for X-T5, X-T4, X-T3, GFX 100S II, GFX 100S, GFX 50S II and GFX 50R; both the 50S II and the 50R had files, so both are in. All checked by eye except the X-T3, whose two raw.pixls.us files are both manual focus.
+- No geometry fix was needed. GFX files report a 4000x3000 `ExifImage` frame and a matching 4:3 preview, which the frame handling from ticket 02 covers.
+- One behaviour change: manual-focus Fuji files (`FocusMode2` = AF-M) used to draw a box at the parked focus frame; they now show "manual focus" and no box, as every other make does. Say if you would rather keep the box for MF.
+- Cru's own files are filed as X-H2: the samples were renamed `fuji-x-h2-dscf*.json` (and the DJI one `dji-air-2s-0685.json`); `add-sample.js` gained `--name` for this.
+- No downloaded sample has face data.

@@ -3,6 +3,7 @@
  * add-sample.js — snapshot a camera file into a committed test sample.
  *
  *   node tools/add-sample.js fixtures/DSCF2714.RAF [--source <url|text>] [--note <text>]
+ *                            [--name fuji-x-h2-dscf2714]   (default: the file's name)
  *   node tools/add-sample.js test/samples/DSCF2714.json     (refresh expected only)
  *
  * Given a raw/JPEG it writes test/samples/<name>.json holding the exiftool
@@ -104,7 +105,8 @@ function writeSample(samplePath, sample) {
 async function snapshot(file, opts) {
   const exiftool = require('../client/lib/exiftool.js');
   const abs = path.resolve(file);
-  const name = path.basename(abs, path.extname(abs)) +
+  // Default name: the file's own. --name files it under make and body instead.
+  const name = opts.name || path.basename(abs, path.extname(abs)) +
     (/\.jpe?g$/i.test(abs) ? '-jpg' : ''); // an OOC JPEG sits beside its raw
   const samplePath = path.join(SAMPLES_DIR, name + '.json');
   const old = fs.existsSync(samplePath) ? JSON.parse(fs.readFileSync(samplePath, 'utf8')) : {};
@@ -140,10 +142,11 @@ async function main(argv) {
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--source') opts.source = argv[++i];
     else if (argv[i] === '--note') opts.note = argv[++i];
+    else if (argv[i] === '--name') opts.name = argv[++i];
     else files.push(argv[i]);
   }
   if (!files.length) {
-    console.error('usage: node tools/add-sample.js <raw-or-sample.json>... [--source <url|text>] [--note <text>]');
+    console.error('usage: node tools/add-sample.js <raw-or-sample.json>... [--source <url|text>] [--note <text>] [--name <sample-name>]');
     process.exit(2);
   }
   try {

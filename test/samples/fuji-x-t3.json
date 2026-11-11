@@ -1,0 +1,32 @@
+{
+  "file": "pixls/fuji-x-t3.RAF",
+  "source": "https://raw.pixls.us/getfile.php/2783/nice/Fujifilm - X-T3 - 14bit 14bit compressed (3:2).RAF",
+  "tags": {
+    "Make": "FUJIFILM",
+    "Model": "X-T3",
+    "FileType": "RAF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "XF35mmF2 R WR",
+    "FocalLength": "35.0 mm",
+    "FNumber": 3.6,
+    "ExposureTime": "1/4",
+    "ISO": 160,
+    "FocusMode": "Manual",
+    "AFAreaMode": "Single Point",
+    "FocusPixel": "2517 1472",
+    "ExifImageWidth": 4416,
+    "ExifImageHeight": 2944,
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "3:2",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode2": "AF-M",
+    "AFMode": "No",
+    "AFAreaPointSize": "n/a",
+    "AFAreaZoneSize": "n/a",
+    "FocalLengthIn35mmFormat": "53 mm"
+  },
+  "expected": {
+    "message": "manual focus",
+    "points": []
+  }
+}
