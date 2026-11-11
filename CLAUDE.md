@@ -35,10 +35,12 @@ delegate to both:
 ```
 Bridge selection
   -> host/index.jsx (ExtendScript)  : reports selected file path; pings panel on change
-  -> client/main.js (Node/JS)       : spawns exiftool, picks delegate, renders
-  -> vendor/exiftool                : returns maker-note / AF tags as JSON
-  -> client/delegates/<mfr>.js      : computes AF box(es) in image-pixel coords
-  -> SVG overlay                    : draws the box(es) on the preview
+  -> client/main.js (Node/JS)       : asks exiftool, asks the registry, renders
+  -> vendor/exiftool                : returns maker-note / AF tags as JSON, and
+                                      the largest embedded image as the preview
+  -> client/delegates/index.js      : registry: picks the delegate for the tags
+  -> client/delegates/<mfr>.js      : computes AF box(es) in its own pixel frame
+  -> SVG overlay                    : viewBox = that frame, stretched on the preview
 ```
 
 ExtendScript (ES3) is the *only* thing that can talk to Bridge but is feeble, so
@@ -59,8 +61,10 @@ client/
   styles.css
   lib/
     CSInterface.js         Adobe CEP 12 library (vendored)
-    exiftool.js            spawn wrapper: readTags() / extractPreview()
+    exiftool.js            spawn wrapper: readFocusData(file, tags) -> tags + preview
   delegates/
+    index.js               registry: delegate list, tag union, delegateFor(tags)
+    common.js              shared helpers: point types, default box, info line
     fujifilm.js            ported Fuji geometry (getAfPoints)
     dji.js                 DJI: preview + flight info, no AF data (none exists)
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
@@ -74,6 +78,35 @@ reference/                 read-only porting sources (Lr plugin, digiKam)
 fixtures/                  raw files, gitignored: Cru's own at the top level,
                            downloaded ones in pixls/, check images in check/
 ```
+
+## Delegate contract (adding a manufacturer)
+
+Adding a make is **one file in `client/delegates/` plus one line in the
+`DELEGATES` list of `client/delegates/index.js`**. Neither `main.js` nor
+`exiftool.js` names any manufacturer. A delegate is a pure module (no I/O, no
+DOM, so the sample tests run it on plain Node) exporting:
+
+- `matches(tags)` — true if it handles this file. First match in the list wins.
+- `TAGS` — the exiftool tag names it reads. The registry asks exiftool for the
+  union of every delegate's list plus a few common ones; wildcards work for
+  numbered tags (`Face*Position`).
+- `getAfPoints(tags)` — returns `{ frame: {width, height}, points, message? }`,
+  or `null` for nothing to draw. Each point is a centre/size box
+  `{pointType, x, y, width, height, primary?}` in the pixel space of `frame`,
+  in the camera's native (unrotated) orientation. `frame` is whatever space the
+  camera reports coordinates in (Fuji: `ExifImageWidth x ExifImageHeight`;
+  most others: full-sensor pixels) and must cover the same area as the
+  displayed preview: the panel sets the SVG `viewBox` to it and stretches it
+  over the preview, so the preview's own pixel size never matters. `message`
+  optionally explains an empty `points` (manual focus, no AF data).
+- optional `formatShootingInfo(tags)` and `NO_AF_MESSAGE`.
+
+`pointType` picks the layer and colour: contains `face` → Faces, `crop` →
+Crop, anything else → Focus (see `common.js`).
+
+**Preview:** `exiftool.js` displays the largest embedded image a file has
+(`JpgFromRaw`, `PreviewImage`, `OtherImage`, `ThumbnailImage`, by byte size),
+so NEF/ARW/CR3 get their full-size JPEG. A JPEG file is displayed as itself.
 
 ## Sample tests (run outside Bridge)
 
@@ -107,15 +140,13 @@ Ported from `reference/focuspoints.lrplugin/FujifilmDelegates.lua`
 
 - `FocusPixel` is a single `(x, y)` in the coordinate system of the **embedded
   JPEG**, whose dimensions are reported by `ExifImageWidth`/`ExifImageHeight`.
-- The transform is a pure scale to the displayed image:
-  `xScale = displayW / ExifImageWidth`, same for y. The box is a square of side
-  `min(displayW, displayH) * 0.04` (the Lr "medium" default) centred on the
-  scaled point.
+- The delegate returns that as its `frame` and leaves the point unscaled. The
+  default box is a square of side `min(frameW, frameH) * 0.04` (the Lr "medium"
+  default) centred on the point.
 - **We render the embedded preview**, extracted with exiftool. On the X-H2 that
   preview is exactly `ExifImageWidth x ExifImageHeight` (4416x2944 on the test
-  bodies), so `xScale = yScale = 1.0` and `FocusPixel` maps directly. The SVG
-  overlay uses `viewBox="0 0 imgW imgH"` so coordinates are in image-pixel space
-  regardless of on-screen zoom.
+  bodies). The SVG overlay's `viewBox` is the frame, so coordinates stay in
+  frame space regardless of preview size or on-screen zoom.
 - Faces (`FacesDetected`/`FacesPositions`), subject detection
   (`FaceElementPositions`, exiftool >= 12.44) and tele-converter crop
   (`CropSize`/`CropTopLeft`, >= 12.82) use the same scale and are already ported.
@@ -123,7 +154,8 @@ Ported from `reference/focuspoints.lrplugin/FujifilmDelegates.lua`
 
 **OOC caveat:** the `FocusPixel`/`ExifImageWidth` reference is lost or corrupted
 on RAF->DNG conversion. Feed straight-out-of-camera `.RAF` (or the OOC JPEG).
-`fujifilm.makerNotesFound()` rejects DNGs and files missing `InternalSerialNumber`.
+`fujifilm.js` rejects DNGs (`FileType`) and files missing `InternalSerialNumber`,
+with a status message instead of a box.
 
 ### Tag access convention
 
@@ -157,10 +189,9 @@ lives entirely in `client/main.js` + `styles.css`:
   (no mirrored fixture). The four rotations (incl. `Rotate 270 CW`, the
   `DSCF2659` fixtures) are verified in Bridge.
 
-**Crop caveat (open):** an OOC JPEG's embedded `PreviewImage` can be a small
-letterboxed thumbnail (e.g. 640×480 4:3 for a 3:2 frame), so `FocusPixel`/dim
-scaling is slightly off on the *JPEG* path. The RAF preview is a clean full-frame
-3:2 and maps exactly — feed RAFs. Real in-camera crop (`CropSize`/`CropTopLeft`,
+**JPEGs are displayed as themselves**, not via their embedded `PreviewImage`
+(a small letterboxed thumbnail, e.g. 640×480 4:3 for a 3:2 frame, which used to
+put the box slightly off). Real in-camera crop (`CropSize`/`CropTopLeft`,
 digital tele-converter) is drawn but untested. Getting the box in the wrong place
 is almost always a transform bug, not a parse bug.
 
@@ -324,10 +355,8 @@ two shots with focus deliberately tapped at opposite corners. The delegate
 therefore draws nothing by design: it renders the DNG's embedded 960×630
 SubIFD1 preview, a drone-flavoured info bar (model-code map FC3411→Air 2S etc.,
 35mm-eq focal, AGL altitude, gimbal pitch from XMP-drone-dji), and an honest
-"DJI does not record AF-point coordinates" status. Delegates may now provide
-optional `matches(tags)` (dispatch; Mavic 2/3 report Make=Hasselblad),
-`formatShootingInfo(tags)` and `NO_AF_MESSAGE` hooks — main.js falls back to
-its generic versions when absent. Decoding `AFDebugInfo` would need several
+"DJI does not record AF-point coordinates" status. Its `matches(tags)` also
+claims Mavic 2/3 files, which report Make=Hasselblad. Decoding `AFDebugInfo` would need several
 samples with known (tap-to-focus) positions to diff.
 
 **Unsupported cameras degrade gracefully**: no delegate is no longer fatal —
@@ -339,7 +368,7 @@ Not yet done / next steps:
 - Calibrate `AF_POINT_SIZE_FRACTION` against real in-camera AF-frame testing
   (absolute scale only; shape confirmed). Zone mode (`AFAreaZoneSize`) unmodelled.
 - Mirrored EXIF orientations (2/4/5/7) — coded, no fixture to verify.
-- JPEG-path letterbox crop (see orientation caveat) + digital-TC crop test.
+- Digital-TC crop test.
 - Distinguish face-element types (Head/Body/Face/Eye via `FaceElementTypes`)
   instead of drawing all as one yellow box; also `FacePositions` vs the
   delegate's `FacesPositions` tag-name mismatch (latent dead branch).

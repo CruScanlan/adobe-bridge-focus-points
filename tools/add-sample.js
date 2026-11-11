@@ -33,18 +33,11 @@ const CHECK_DIR = path.join(FIXTURES_DIR, 'check');
 const MAGICK = process.env.MAGICK ||
   path.join(ROOT, 'reference', 'focuspoints.lrplugin', 'bin', 'ImageMagick', 'magick.exe');
 
-const fuji = require('../client/delegates/fujifilm.js');
-const dji = require('../client/delegates/dji.js');
+const registry = require('../client/delegates/index.js');
 
 // Tags that identify one particular camera. Samples are public; keep the key
 // (delegates test for its presence) but never the value.
 const REDACT = ['InternalSerialNumber', 'SerialNumber'];
-
-function delegateFor(tags) {
-  if (String(tags.Make || '').toUpperCase().indexOf('FUJI') !== -1) return fuji;
-  if (dji.matches(tags)) return dji;
-  return null;
-}
 
 const round = function (n) { return Math.round(n * 100) / 100; };
 
@@ -53,13 +46,14 @@ const round = function (n) { return Math.round(n * 100) / 100; };
  * null when no delegate handles the file or it finds no focus data at all.
  */
 function computeExpected(tags) {
-  const delegate = delegateFor(tags);
+  const delegate = registry.delegateFor(tags);
   if (!delegate) return null;
-  const display = { width: Number(tags.ExifImageWidth), height: Number(tags.ExifImageHeight) };
-  const result = delegate.getAfPoints(tags, display);
+  const result = delegate.getAfPoints(tags);
   if (!result) return null;
-  return {
-    points: result.points.map(function (pt) {
+  const expected = {};
+  if (result.frame) expected.frame = result.frame;
+  if (result.message) expected.message = result.message;
+  expected.points = result.points.map(function (pt) {
       const out = {
         pointType: pt.pointType,
         x: round(pt.x), y: round(pt.y),
@@ -67,8 +61,8 @@ function computeExpected(tags) {
       };
       if (pt.primary) out.primary = true;
       return out;
-    }),
-  };
+  });
+  return expected;
 }
 
 function rotationOf(tags) {
@@ -82,7 +76,7 @@ function writeCheckImage(name, tags, expected, previewPath) {
   if (!previewPath) return 'no embedded preview, check image skipped';
   const dims = execFileSync(MAGICK, ['identify', '-format', '%w %h', previewPath + '[0]'])
     .toString().trim().split(' ').map(Number);
-  const frame = { width: Number(tags.ExifImageWidth) || dims[0], height: Number(tags.ExifImageHeight) || dims[1] };
+  const frame = (expected && expected.frame) || { width: dims[0], height: dims[1] };
   const sx = dims[0] / frame.width, sy = dims[1] / frame.height;
   const colour = function (pt) {
     return pt.pointType.indexOf('face') !== -1 ? 'yellow'
@@ -115,9 +109,8 @@ async function snapshot(file, opts) {
   const samplePath = path.join(SAMPLES_DIR, name + '.json');
   const old = fs.existsSync(samplePath) ? JSON.parse(fs.readFileSync(samplePath, 'utf8')) : {};
 
-  const data = await exiftool.readFocusData(abs);
+  const data = await exiftool.readFocusData(abs, registry.allTags());
   const tags = data.tags;
-  delete tags.SourceFile;
   REDACT.forEach(function (key) { if (tags[key] !== undefined) tags[key] = '(redacted)'; });
 
   const sample = {
@@ -132,8 +125,7 @@ async function snapshot(file, opts) {
 
   const n = sample.expected ? sample.expected.points.length : 0;
   console.log(path.relative(ROOT, samplePath) + ': ' + n + ' box(es)');
-  const preview = data.previewUrl ? exiftool.PREVIEW_PATH : null;
-  console.log('  ' + writeCheckImage(name, tags, sample.expected, preview));
+  console.log('  ' + writeCheckImage(name, tags, sample.expected, data.previewPath));
 }
 
 function refresh(samplePath) {

@@ -2,12 +2,20 @@
   "file": "DSCF2659.RAF",
   "source": "Cru's own",
   "tags": {
+    "Make": "FUJIFILM",
+    "Model": "X-H2",
+    "FileType": "RAF",
+    "Orientation": "Rotate 270 CW",
+    "LensModel": "XF16-80mmF4 R OIS WR",
+    "FocalLength": "54.5 mm",
+    "FNumber": 4,
+    "ExposureTime": "1/500",
+    "ISO": 500,
+    "FocusMode": "Auto",
+    "AFAreaMode": "Single Point",
     "FocusPixel": "2427 1554",
     "ExifImageWidth": 4416,
     "ExifImageHeight": 2944,
-    "Make": "FUJIFILM",
-    "Model": "X-H2",
-    "Orientation": "Rotate 270 CW",
     "FacesDetected": 1,
     "FaceElementPositions": "2304 1444 2544 1643 828 939 2655 2112 2290 1444 2475 1615 2386 1430 2467 1511 2386 1513 2467 1594",
     "FaceElementTypes": [
@@ -19,20 +27,17 @@
     ],
     "RawImageAspectRatio": "3:2",
     "InternalSerialNumber": "(redacted)",
-    "FocusMode": "Auto",
     "FocusMode2": "AF-C",
     "AFMode": "Single Point",
-    "AFAreaMode": "Single Point",
     "AFAreaPointSize": 5,
     "AFAreaZoneSize": "n/a",
-    "LensModel": "XF16-80mmF4 R OIS WR",
-    "FocalLength": "54.5 mm",
-    "FNumber": 4,
-    "ExposureTime": "1/500",
-    "ISO": 500,
     "FocalLengthIn35mmFormat": "82 mm"
   },
   "expected": {
+    "frame": {
+      "width": 4416,
+      "height": 2944
+    },
     "points": [
       {
         "pointType": "af_focus_pixel_box",

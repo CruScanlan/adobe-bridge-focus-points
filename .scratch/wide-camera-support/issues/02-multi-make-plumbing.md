@@ -10,10 +10,20 @@ Orientation handling stays where it is (rotating the container), per ADR 0004.
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
-- [ ] Fuji sample tests from ticket 01 still pass unchanged in expected output (frame added, same geometry)
+- [x] Fuji sample tests from ticket 01 still pass unchanged in expected output (frame added, same geometry)
 - [ ] Fuji and DJI fixtures look identical in Bridge before and after (Cru confirms after sign-install)
-- [ ] An unsupported NEF or ARW shows a sharp full-frame preview with the "not supported yet" status
-- [ ] No manufacturer name appears in the panel's dispatch or tag-request code
-- [ ] CLAUDE.md describes the delegate contract (matches, tags, frame + points)
+- [x] An unsupported NEF or ARW shows a sharp full-frame preview with the "not supported yet" status
+- [x] No manufacturer name appears in the panel's dispatch or tag-request code
+- [x] CLAUDE.md describes the delegate contract (matches, tags, frame + points)
+
+## Comments
+
+Code done on branch `wide-camera-support`; only Cru's look in Bridge is left (second checkbox).
+
+- Registry is `client/delegates/index.js`; shared helpers in `client/delegates/common.js`. The Fuji shooting-info line moved out of `main.js` into the Fuji delegate.
+- The Fuji samples' points are byte-for-byte unchanged; each gained `"frame": {4416, 2944}` (the OOC JPEG: `7728 x 5152`).
+- Best preview: largest of `JpgFromRaw` / `PreviewImage` / `OtherImage` / `ThumbnailImage` by byte size, which costs a second exiftool round-trip per image. Checked outside Bridge on a Z8 NEF (5.9 MB full-size JPEG) and an A7R V ARW (4.9 MB).
+- One deliberate visible change: a JPEG file is now displayed as itself instead of via its 640×480 embedded thumbnail, which removes the old letterbox offset on the JPEG path. So DSCF2659.JPG will look sharper than before and its box moves slightly, onto the right place.
+- The "unsupported NEF or ARW" check was done with the snapshot tool's check image, not in Bridge.

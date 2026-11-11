@@ -4,9 +4,12 @@
  * ExifTool is a packaged Perl app; cold-starting it costs ~0.5-2s. We launch
  * ONE long-lived process for the panel's lifetime (`-stay_open True -@ -`) and
  * feed each request through its stdin, so only the very first selection pays
- * the startup cost. Each request fetches the AF tags AND the embedded preview
- * in a single `-execute` (via `-json -b`, which returns the preview as a
- * base64 string), so there is one round-trip per image.
+ * the startup cost. An image costs two cheap round-trips: one for the tags
+ * (which also reports the size of every embedded image), one to pull out the
+ * largest embedded image as the preview (`-json -b`, base64).
+ *
+ * This module knows nothing about manufacturers: the caller passes the tag
+ * list (the delegate registry's union).
  *
  * Runs in the CEP panel's Node context (Node enabled in manifest.xml).
  */
@@ -21,20 +24,10 @@ const fs = require('fs');
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const EXIFTOOL_EXE = path.join(REPO_ROOT, 'vendor', 'exiftool', 'exiftool.exe');
 
-// Only the tags the Fuji delegate + panel actually use. Keeping this tight
-// means ExifTool parses/serialises less per call.
-const TAGS = [
-  'FocusPixel', 'ExifImageWidth', 'ExifImageHeight',
-  'Make', 'Model', 'Orientation',
-  'FacesDetected', 'FacesPositions', 'FaceElementPositions', 'FaceElementTypes',
-  'CropSize', 'CropTopLeft', 'RawImageAspectRatio',
-  'InternalSerialNumber', 'FocusMode', 'FocusMode2', 'AFMode',
-  'AFAreaMode', 'AFAreaPointSize', 'AFAreaZoneSize',
-  // Shooting-info readout (bottom bar).
-  'LensModel', 'FocalLength', 'FNumber', 'ExposureTime', 'ISO',
-  // DJI delegate (35mm-equivalent focal + XMP-drone-dji flight data).
-  'FocalLengthIn35mmFormat', 'RelativeAltitude', 'GimbalPitchDegree',
-];
+// Embedded images a file may carry. Which exist and how big they are varies by
+// format (NEF/ARW/CR3 hold a full-size JpgFromRaw, RAF/CR2/ORF a big
+// PreviewImage), so we ask for all of them and display the largest.
+const PREVIEW_TAGS = ['JpgFromRaw', 'PreviewImage', 'OtherImage', 'ThumbnailImage'];
 
 let proc = null;          // the long-lived exiftool process
 let stdoutBuf = '';       // accumulates stdout until the {ready<n>} marker
@@ -93,64 +86,76 @@ function fileUrl(p) {
   return 'file://' + encodeURI(u) + '?t=' + Date.now();
 }
 
-/**
- * Read AF tags + embedded preview for a file in a single exiftool round-trip.
- * The preview is written to a temp JPEG and returned as a file:// URL (large
- * data: URIs can destabilise CEP's CEF renderer, so we avoid them).
- * @param {string} file absolute path
- * @returns {Promise<{tags: object, previewUrl: string|null}>}
- */
-function readFocusData(file) {
-  // Serialise: only one command may be in flight on the shared process.
-  const run = function () {
-    const args = ['-json', '-s', '-b'];
-    for (let i = 0; i < TAGS.length; i++) args.push('-' + TAGS[i]);
-    args.push('-PreviewImage', file);
-    return execute(args).then(function (payload) {
-      let tags = {};
-      try {
-        const parsed = JSON.parse(payload);
-        if (Array.isArray(parsed) && parsed[0]) tags = parsed[0];
-      } catch (e) {
-        throw new Error('exiftool returned unparseable output: ' + e.message);
-      }
-      let previewUrl = null;
-      const pv = tags.PreviewImage;
-      if (typeof pv === 'string' && pv.length) {
-        const b64 = pv.indexOf('base64:') === 0 ? pv.slice(7) : pv;
-        fs.writeFileSync(PREVIEW_PATH, Buffer.from(b64, 'base64'));
-        previewUrl = fileUrl(PREVIEW_PATH);
-      } else if (/\.jpe?g$/i.test(file)) {
-        // JPEGs without an embedded PreviewImage (most non-Fuji JPEGs) are
-        // themselves displayable — render the file directly.
-        previewUrl = fileUrl(file);
-      }
-      delete tags.PreviewImage;
-      return { tags: tags, previewUrl: previewUrl };
-    });
-  };
-  chain = chain.then(run, run); // keep the chain alive across failures
+/** Run fn once every earlier request has finished (one command at a time). */
+function queue(fn) {
+  chain = chain.then(fn, fn); // keep the chain alive across failures
   return chain;
 }
 
-/**
- * Read just the tags (no preview). Used by the sample tools; the same tag
- * list and exiftool as the panel, so a snapshot holds what the panel sees.
- * @param {string} file absolute path
- * @returns {Promise<object>}
- */
-function readTags(file) {
-  const run = function () {
-    const args = ['-json', '-s'];
-    for (let i = 0; i < TAGS.length; i++) args.push('-' + TAGS[i]);
-    args.push(file);
-    return execute(args).then(function (payload) {
-      const parsed = JSON.parse(payload);
-      return (Array.isArray(parsed) && parsed[0]) || {};
+function parseOne(payload) {
+  try {
+    const parsed = JSON.parse(payload);
+    return (Array.isArray(parsed) && parsed[0]) || {};
+  } catch (e) {
+    throw new Error('exiftool returned unparseable output: ' + e.message);
+  }
+}
+
+/** One round-trip: the requested tags, plus which embedded image is largest. */
+function inspect(file, tagList) {
+  const args = ['-json', '-s'];
+  tagList.concat(PREVIEW_TAGS).forEach(function (tag) { args.push('-' + tag); });
+  args.push(file);
+  return execute(args).then(function (payload) {
+    const tags = parseOne(payload);
+    let previewTag = null, best = 0;
+    PREVIEW_TAGS.forEach(function (tag) {
+      // Without -b a binary tag reads "(Binary data 123456 bytes, use -b ...)".
+      const m = /(\d+) bytes/.exec(String(tags[tag] || ''));
+      if (m && Number(m[1]) > best) { best = Number(m[1]); previewTag = tag; }
+      delete tags[tag];
     });
-  };
-  chain = chain.then(run, run);
-  return chain;
+    delete tags.SourceFile;
+    return { tags: tags, previewTag: previewTag };
+  });
+}
+
+/** Second round-trip: write the chosen embedded image to the temp file. */
+function extractPreview(file, previewTag) {
+  return execute(['-json', '-b', '-' + previewTag, file]).then(function (payload) {
+    const value = parseOne(payload)[previewTag];
+    if (typeof value !== 'string' || !value.length) return null;
+    const b64 = value.indexOf('base64:') === 0 ? value.slice(7) : value;
+    fs.writeFileSync(PREVIEW_PATH, Buffer.from(b64, 'base64'));
+    return PREVIEW_PATH;
+  });
+}
+
+/**
+ * Read the tags and the best displayable image for a file.
+ * A JPEG is displayed as itself (its embedded preview is only a thumbnail);
+ * anything else shows its largest embedded image, written to a temp JPEG and
+ * returned as a file:// URL (large data: URIs can destabilise CEP's CEF
+ * renderer, so we avoid them).
+ * @param {string} file absolute path
+ * @param {string[]} tagList exiftool tag names to read
+ * @returns {Promise<{tags: object, previewUrl: string|null, previewPath: string|null}>}
+ */
+function readFocusData(file, tagList) {
+  return queue(function () {
+    return inspect(file, tagList).then(function (info) {
+      const done = function (previewPath) {
+        return {
+          tags: info.tags,
+          previewPath: previewPath,
+          previewUrl: previewPath ? fileUrl(previewPath) : null,
+        };
+      };
+      if (/\.jpe?g$/i.test(file)) return done(file);
+      if (!info.previewTag) return done(null);
+      return extractPreview(file, info.previewTag).then(done);
+    });
+  });
 }
 
 /** Shut the persistent process down (call on panel unload). */
@@ -163,4 +168,4 @@ function stop() {
   stdoutBuf = '';
 }
 
-module.exports = { readFocusData, readTags, stop, EXIFTOOL_EXE, REPO_ROOT, PREVIEW_PATH };
+module.exports = { readFocusData, stop, EXIFTOOL_EXE, REPO_ROOT };
