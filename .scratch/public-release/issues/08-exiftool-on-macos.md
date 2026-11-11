@@ -11,8 +11,14 @@ Windows behaviour must not change. Nothing else in the panel is platform-specifi
 
 **Blocked by:** —
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
-- [ ] Running the Perl exiftool with system Node + Perl against the fixtures gives the same JSON tags as the `.exe` (can be checked on Windows with any Perl, e.g. Git Bash's)
+- [x] Running the Perl exiftool with system Node + Perl against the fixtures gives the same JSON tags as the `.exe` (can be checked on Windows with any Perl, e.g. Git Bash's)
 - [ ] Windows fixtures look identical in Bridge before and after (Cru confirms after sign-install)
-- [ ] Missing-Perl case shows a readable status
+- [x] Missing-Perl case shows a readable status
+
+## Comments
+
+2026-11-11: done, with one deviation. **No second exiftool copy is bundled.** The Windows bundle already contains the complete pure-Perl ExifTool (`vendor/exiftool/exiftool_files/exiftool.pl` + `lib/Image/ExifTool`, 13.55) next to its Windows-only Perl runtime. `client/lib/exiftool-unix.pl` appends that `lib` to the end of `@INC` (so the system Perl keeps its own core modules) and runs the script. `exiftool.js` spawns `/usr/bin/perl exiftool-unix.pl` on anything that is not Windows; `BFP_PERL=<perl>` forces that route on Windows. Saves 20 MB and keeps both platforms on the same ExifTool by construction.
+
+Checked with `tools/check-exiftool.js` (new: real exiftool over every sample raw on disk, tags + boxes + preview compared with the snapshot): 89/89 through the `.exe`, 89/89 through Git Bash's Perl 5.42. A missing Perl shows "Perl was not found at … install Perl and restart Bridge" as the panel status. Not checked: macOS's own Perl (5.30/5.34) — that is the CI job in ticket 11 — and the Windows panel in Bridge after this change (the Windows spawn line is unchanged).
