@@ -64,7 +64,8 @@ client/
     fujifilm.js            ported Fuji geometry (getAfPoints)
     dji.js                 DJI: preview + flight info, no AF data (none exists)
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
-tools/                     dev-only: ZXPSignCmd.exe + cert.p12 + sign-install.sh
+tools/                     dev-only: ZXPSignCmd.exe + cert.p12 + sign-install.sh,
+                           plus clipfix.cs (unshipped remedy, see blank-panel section)
 reference/                 read-only porting sources (Lr plugin, digiKam)
 fixtures/                  test RAFs; expected/ holds rendered AF-box oracles
 ```
@@ -135,8 +136,10 @@ is almost always a transform bug, not a parse bug.
 
 ## ⚠️ Bridge 2026 requires a SIGNED extension (the big gotcha)
 
-Bridge 2026 (16.0.3, CEP 12) **will not render an unsigned CEP extension**, even
-with `PlayerDebugMode=1`. It *lists* the extension in Window > Extensions but
+Bridge 2026 (16.0.3, CEP 12) **will not render an unsigned CEP extension**. (This
+was originally recorded as "even with `PlayerDebugMode=1`", but that value never
+reached Bridge — see the sandbox note below — so real debug mode is untested.)
+It *lists* the extension in Window > Extensions but
 loading fails — an `Embedded` panel **hard-crashes Bridge** ("A nullptr was
 dereferenced"), and dialog types (`Modeless`/`ModalDialog`) show "Unable to
 load". The CEP log only says "Signature verification failed". The built-in
@@ -151,7 +154,7 @@ Consequence baked into the project:
   shippable dirs → `ZXPSignCmd -sign` with a self-signed cert
   (`tools/cert.p12`) → unzip the `.zxp` into
   `%APPDATA%\Adobe\CEP\extensions\com.cru.bridgefocuspoints`. A self-signed cert
-  is enough because `PlayerDebugMode` is honored. **Editing any file invalidates
+  is enough on its own — Bridge loads it with no `PlayerDebugMode` set. **Editing any file invalidates
   the signature — re-run the script after every change.** (`tools/ZXPSignCmd.exe`
   is Adobe's official 4.1.103 build; dev-only, never shipped.)
 - **Claude runs the install, not Cru.** `bash tools/sign-install.sh` works in
@@ -159,6 +162,89 @@ Consequence baked into the project:
   runs the sign-install script itself and *then* asks Cru to test — never tell
   Cru to run it. Cru's only manual steps are restarting Bridge and reporting what
   the panel shows.
+
+## ⚠️ Blank panel: never force CEF into software rendering
+
+**The manifest passes no GPU flags, and must stay that way.** `CEFCommandLine`
+holds `--enable-nodejs` only, so the panel is GPU-composited like Adobe's own.
+Verified 2026-11-11 on Bridge 16.0.8: six normal launches in a row GPU-rendered
+and drawn, and the panel stayed drawn through a tab switch and a
+minimise/restore.
+
+**Why software rendering goes blank (confirmed by switching it off and on
+against a live Bridge).** Bridge docks a CEP panel inside a
+`DroverLord - TabPanel Window` created **without `WS_CLIPCHILDREN`**. Whenever
+Bridge repaints that window it paints over the panel's area. A GPU-composited
+panel is unaffected — its frames are a separate DirectComposition surface above
+the window. A software-composited one keeps its pixels in the same surface, so
+they are wiped: the page is fully alive (a CDP `Page.captureScreenshot` is
+perfect) and the screen shows a flat RGB(50,50,50), PlugPlug's panel
+background. It may draw for an instant after a selection change, then vanish.
+
+**History, so it is not repeated.** `--disable-gpu-compositing` (Jul 2026),
+then `--disable-gpu` and `--disable-direct-composition` (Sep 2026), were each
+added as a "fix" for a blank panel and each declared working after one good
+restart. They were the cause of the recurring blank panel, not the cure: on
+2026-11-11 the same three flags gave blank and drawn launches minutes apart.
+The ANGLE/Vulkan `GL is disabled` errors they produce are just CEF's software
+fallback failing to start, and appear whether or not the panel is visible.
+Removing all three is what fixed it. A single "it works now" after a restart is
+not evidence here — switch the suspected cause off and on again.
+
+**If a machine can only do software rendering** (CEF falls back by itself when
+it has no usable GPU), the overpaint above should apply and the panel would be
+blank there. That is untested — it has only been seen with the flags. The known
+remedy is `tools/clipfix.cs`: a small helper that sets `WS_CLIPCHILDREN` on the
+tab panel and keeps it set (measured with the panel in software mode: drawn
+0/12 without it, 12/12 with it; of the three ancestor windows lacking the
+style, only the tab panel matters). It is deliberately **not shipped** — it is
+an extra executable that modifies Bridge's windows, which is the wrong default
+for a distributable extension. Its header says how to wire it back in.
+
+**Two things still unexplained:**
+
+- Default GPU compositing was reported blank on this VM in July 2026 (Bridge
+  16.0.6); that is what started the flags. The cause was never established and
+  it has not recurred on 16.0.8.
+- A second blank mode: PlugPlug's content window (the GUID-class child of
+  `WC_PLUGPLUG_HTMLEXTENSION_CLASS_NAME`) is left hidden at the manifest's
+  default 800×600, so the page reports 534×400 at 150 % and never resizes. Seen
+  2026-09-20 and on the first two launches of 2026-11-11 (both with the flags,
+  both straight after a VM boot/crash); not reproduced since. In a good launch
+  PlugPlug logs `InitContent begin/end` for the extension about a second after
+  the engine's `ClientInitialized` RPC — that step shows and sizes the window,
+  so that is the line to look for (needs `LogLevel` 6, see the sandbox note).
+
+**Diagnose before changing plugin code:**
+
+1. `curl http://localhost:8088/json` → the page's `webSocketDebuggerUrl`, then
+   drive CDP from Node (global `WebSocket`, no deps): `Runtime.evaluate` for the
+   DOM and `innerWidth`, `Page.captureScreenshot` for pixels. A correct
+   screenshot with a blank pane means the problem is outside the page.
+2. `Get-CimInstance Win32_Process` on `CEPHtmlEngine.exe`: the `gpu-process`
+   command line containing `--use-gl=disabled` means CEF is in software mode.
+3. `PrintWindow(hwnd, hdc, PW_RENDERFULLCONTENT)` on Bridge's top-level window
+   is a truthful capture of what is on screen even when Bridge is covered
+   (checked against a real `BitBlt` of the desktop). It returns nothing useful
+   while Bridge is minimised — check `IsIconic` first.
+4. If the content window is hidden / 800×600, it is the second mode above.
+
+### Sandbox note: a Claude session does not see Bridge's registry
+
+The Claude desktop app is an MSIX package, so registry writes made from a
+session land in the package's private hive. Bridge, launched normally, never
+sees them — and a Bridge *started from a session* does, so it behaves
+differently from the one Cru runs.
+
+- `PlayerDebugMode=1` and `LogLevel=6` under `HKCU\Software\Adobe\CSXS.12`
+  exist only in that private hive (written 2026-06-22). The real key holds just
+  `LogLevel=1`, unchanged since Bridge was installed. So debug mode has never
+  been on for Cru's Bridge; the self-signed extension loads and `.debug` opens
+  port 8088 regardless.
+- To run something as the real user from a session, hand it to Explorer:
+  `explorer.exe "C:\path\to\thing.cmd"`. Always start Bridge that way when
+  testing; a directly spawned Bridge reads the private hive (verbose logging,
+  different timing) and is not a valid test.
 
 ## Selection updates by polling, not events
 
@@ -232,10 +318,10 @@ Not yet done / next steps:
 
 ## Install / debug (Windows VM)
 
-1. Enable debug mode: `regedit` ->
-   `HKEY_CURRENT_USER\Software\Adobe\CSXS.12`, add string `PlayerDebugMode` = `1`.
-   (Required, but NOT sufficient on its own — the extension must also be signed,
-   see above.)
+1. No registry change is needed: the signed extension loads without
+   `PlayerDebugMode` (it has never been set in Cru's real registry — see the
+   sandbox note above). Only set it, by hand in `regedit`, if you want to test
+   real CEP debug mode.
 2. Build + sign + install: run `bash tools/sign-install.sh` from the repo. It
    installs only the shippable dirs (`CSXS/`, `client/`, `host/`, `vendor/`,
    `.debug`) — never `reference/` or `fixtures/`. `client/lib/exiftool.js` finds
@@ -248,13 +334,12 @@ Not yet done / next steps:
 
 ## Tooling notes
 
-- **No system Node** on the dev machine — the panel uses CEP's bundled Node, so
-  that is fine at runtime. It means the delegate JS cannot be unit-tested via a
-  plain `node` invocation here without installing Node first.
+- **System Node is installed** now (v26.3.1, `C:\Program Files\nodejs`), so
+  delegate JS can be exercised outside Bridge, and it is what drives the CDP
+  debugging described above. At runtime the panel still uses CEP's bundled Node.
 - exiftool: `vendor/exiftool/exiftool.exe` (complete standalone, 13.55). The
   copy originally dropped in was missing its Perl runtime; it was replaced with
   the complete bundle from the Lr plugin's `bin/`.
 - ImageMagick (`reference/focuspoints.lrplugin/bin/ImageMagick/magick.exe`) is
   used **only** for dev-time fixture verification (drawing oracle boxes), never
   shipped or required at runtime.
-```
