@@ -1,0 +1,29 @@
+{
+  "file": "pixls/om-1.ORI",
+  "source": "https://raw.pixls.us/getfile.php/5287/nice/OM System - OM-1 - 16bit (4:3).ORI",
+  "tags": {
+    "Make": "OM Digital Solutions",
+    "Model": "OM-1",
+    "FileType": "ORF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "OLYMPUS M.7-14mm F2.8",
+    "FocalLength": "14.0 mm",
+    "FNumber": 2.8,
+    "ExposureTime": "1/320",
+    "ISO": 200,
+    "FocusMode": "Single AF; S-AF",
+    "FacesDetected": "0 0 0",
+    "InternalSerialNumber": "(redacted)",
+    "FocusDistance": "inf",
+    "AFFrameSize": "640 480",
+    "AFFocusArea": "0 0 0 0",
+    "AFPointSelected": "undef undef undef undef",
+    "AFAreas": "none",
+    "SubjectDetectFrameSize": "640 480",
+    "SubjectDetectArea": "0 0 0 0",
+    "SubjectDetectDetail": "0 0 0 0",
+    "AISubjectTrackingMode": "Off",
+    "StackedImage": "No"
+  },
+  "expected": null
+}

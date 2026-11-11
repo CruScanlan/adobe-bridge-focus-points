@@ -32,6 +32,7 @@ const DELEGATES = [
   require('./sony.js'),
   require('./nikon.js'),
   require('./canon.js'),
+  require('./olympus.js'),
 ];
 
 // Tags the panel needs whatever the camera (dispatch, orientation, info bar).

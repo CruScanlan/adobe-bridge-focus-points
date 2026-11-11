@@ -12,10 +12,19 @@ Target bodies, newest first: OM-1 Mark II, OM-1, E-M1 Mark III, E-M1 Mark II; OM
 
 **Blocked by:** 01, 02
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
-- [ ] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
+- [x] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
 - [ ] Each sample's box position was checked by eye against the image before its expected output was committed
-- [ ] A manual-focus or no-AF-data file shows a status message, not an error
+- [x] A manual-focus or no-AF-data file shows a status message, not an error
 - [ ] Cru confirms one ORF renders correctly in Bridge after sign-install
-- [ ] CLAUDE.md status section lists OM System / Olympus and the bodies sampled
+- [x] CLAUDE.md status section lists OM System / Olympus and the bodies sampled
+
+## Comments
+
+Code done on branch `wide-camera-support`, but this is the least verified make. Left for Cru: look at one ORF in Bridge, ideally a real autofocus one from an OM-1.
+
+- Samples are committed for all six bodies, but 20 raw.pixls.us files were tried and only one has usable AF data: the E-M5 Mark III (`AFPointSelected`), checked by eye. The rest are manual-focus chart shots, committed as "manual focus" samples. The OM-1 file is Single AF with no confirmed focus area. So the second checkbox is only partly met and stays open.
+- The OM System `AFFocusArea` path and the subject-detect frames are exercised by a hand-edited sample (`om-1-af-edited`) only.
+- Face frames (`FaceDetectArea`) are not ported; subject-detect frames are.
+- Focus distance was cheap, so it is in the info line, plus the `StackedImage` note when the camera stacked in-body.

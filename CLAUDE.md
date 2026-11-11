@@ -71,6 +71,7 @@ client/
     nikon.js               ported Nikon geometry (AF area, point names, CropHiSpeed)
     nikon-points.js        Nikon AF point maps (name -> x, y, w, h), generated data
     canon.js               ported Canon geometry (AF area lists, in-focus only)
+    olympus.js             OM System / Olympus: primary focus area or point
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
 test/
   samples.test.js          `node --test`: every sample through its delegate
@@ -347,6 +348,10 @@ bonus path — polling is what actually drives live updates.
 
 Working end-to-end in Bridge: select a Fuji RAF → preview + green AF box render
 on the focus point, and the panel updates live as the selection changes.
+Sony, Nikon (Z and DSLR), Canon and OM System / Olympus delegates were added
+on 2026-11-11 and pass their sample tests (`node --test`), but **have not yet
+been looked at in Bridge**; the per-make notes below say what each sample
+covers.
 exiftool bundle verified (13.55); Fuji primary-point geometry ported & visually
 verified against Cru's X-H2 fixtures (`fixtures/expected/*-afbox.jpg`); signed
 `Embedded` panel docks in Bridge 2026 like a native panel. Faces / AI subject
@@ -516,12 +521,46 @@ So the **D850 and D500 are untested on a real autofocus file**, and the DSLR
 crop offset is covered only by a hand-edited sample. `nikon-d750-nomap-edited`
 covers the no-map status.
 
+**OM System / Olympus** (`client/delegates/olympus.js`, the primary-focus path
+of `OlympusDelegates.lua`; matches Make "OLYMPUS…" and "OM Digital
+Solutions"). First hit wins: `AFFocusArea` in `AFFrameSize` units (OM System
+bodies, the area actually in focus); else `AFPointSelected` read numerically
+(`AFPointSelected#`, fractions of the image, default box); else `AFAreas`
+(1/256ths). Subject-detect frames (`SubjectDetectArea`/`Detail`) go on the
+Faces layer. `FocusMode` starting "MF" shows "manual focus". The info line
+adds `FocusDistance` and `StackedImage` when the camera focus-stacked.
+Not ported: the selected-but-not-in-focus target area, and face frames
+(`FaceDetectArea` needs Lr's long per-model decoding).
+
+**This make is the least verified.** Nearly every OM/Olympus file on
+raw.pixls.us is a manual-focus chart shot (20 files tried across the six
+bodies):
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| OM-1 Mark II | `om-1ii` | manual focus only (5 files tried) |
+| OM-1 | `om-1` (AF, but focus not confirmed: no area), `om-1-af-edited` | `AFFocusArea` path on hand-edited tags only |
+| E-M1 Mark III | `olympus-e-m1iii` | manual focus only (3 files tried) |
+| E-M1 Mark II | `olympus-e-m1ii` | manual focus only (4 files tried) |
+| OM-5 | `om-5` | manual focus only (3 files tried) |
+| E-M5 Mark III | `olympus-e-m5iii` (`AFPointSelected`, off-centre) | yes |
+
+So only the `AFPointSelected` path is confirmed on a real file. The OM System
+`AFFocusArea` path and the subject-detect frames need a real autofocus ORF.
+
 **Unsupported cameras degrade gracefully**: no delegate is no longer fatal —
 the panel still renders the embedded preview (or, for JPEGs with no embedded
 PreviewImage, the file itself) plus the generic shooting-info line, with a
 "<Make> is not supported yet" status. Only the overlay needs a delegate.
 
 Not yet done / next steps:
+- Real autofocus files for the bodies listed above as manual-focus-only or
+  hand-edited: Sony A7R II / A7 II, Canon R6, Fuji X-T3, Nikon D850 / D500, and
+  every OM System / Olympus body except the E-M5 III. Add each with
+  `tools/add-sample.js` and look at its check image.
+- Unverified geometry: Sony faces and non-3:2 aspect, Nikon off-centre points
+  in 16:9 / 1:1 crop, Nikon DSLR crop offset, OM System `AFFocusArea` and
+  subject-detect frames.
 - Calibrate `AF_POINT_SIZE_FRACTION` against real in-camera AF-frame testing
   (absolute scale only; shape confirmed). Zone mode (`AFAreaZoneSize`) unmodelled.
 - Mirrored EXIF orientations (2/4/5/7) — coded, no fixture to verify.
@@ -529,7 +568,7 @@ Not yet done / next steps:
 - Distinguish face-element types (Head/Body/Face/Eye via `FaceElementTypes`)
   instead of drawing all as one yellow box; also `FacePositions` vs the
   delegate's `FacesPositions` tag-name mismatch (latent dead branch).
-- Remaining manufacturers (Canon, Nikon, Sony, …), one at a time.
+- Other makes (Panasonic, Pentax, …) only on request; each is one delegate file.
 - A proper `.zxp` for distribution (the dev self-sign is fine for personal use).
 
 ## Install / debug (Windows VM)

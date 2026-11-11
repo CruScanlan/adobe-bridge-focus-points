@@ -1,0 +1,32 @@
+{
+  "file": "pixls/om-5.ORF",
+  "source": "https://raw.pixls.us/getfile.php/6343/nice/OM System - OM-5 - 16bit (4:3).ORF",
+  "tags": {
+    "Make": "OM Digital Solutions",
+    "Model": "OM-5",
+    "FileType": "ORF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "SIGMA 56mm F1.4 DC DN | C 018",
+    "FocalLength": "56.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/13",
+    "ISO": 200,
+    "FocusMode": "MF; MF",
+    "FacesDetected": "0 0 0",
+    "InternalSerialNumber": "(redacted)",
+    "FocusDistance": "3.35 m",
+    "AFFrameSize": "640 480",
+    "AFFocusArea": "0 0 0 0",
+    "AFPointSelected": "undef undef undef undef",
+    "AFAreas": "none",
+    "SubjectDetectFrameSize": "640 480",
+    "SubjectDetectArea": "0 0 0 0",
+    "SubjectDetectDetail": "0 0 0 0",
+    "AISubjectTrackingMode": "Off",
+    "StackedImage": "No"
+  },
+  "expected": {
+    "message": "manual focus",
+    "points": []
+  }
+}

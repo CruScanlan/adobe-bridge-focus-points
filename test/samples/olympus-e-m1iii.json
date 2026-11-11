@@ -1,0 +1,27 @@
+{
+  "file": "pixls/olympus-e-m1iii.ORI",
+  "source": "https://raw.pixls.us/getfile.php/3802/nice/Olympus - E-M1MarkIII - 16bit (4:3).ORI",
+  "tags": {
+    "Make": "OLYMPUS CORPORATION",
+    "Model": "E-M1MarkIII",
+    "FileType": "ORF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "OLYMPUS M.12-40mm F2.8",
+    "FocalLength": "35.0 mm",
+    "FNumber": 2.8,
+    "ExposureTime": "1/15",
+    "ISO": 200,
+    "FocusMode": "MF; S-AF, MF",
+    "FacesDetected": "0 0 0",
+    "InternalSerialNumber": "(redacted)",
+    "FocusDistance": "0.595 m",
+    "AFPointSelected": "undef undef undef undef",
+    "AFAreas": "none",
+    "AISubjectTrackingMode": "Off",
+    "StackedImage": "No"
+  },
+  "expected": {
+    "message": "manual focus",
+    "points": []
+  }
+}
