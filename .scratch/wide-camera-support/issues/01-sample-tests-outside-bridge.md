@@ -8,10 +8,14 @@ Keep it small: one samples folder, one test file, one tool. No invariant suites,
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] One command runs all sample tests with system Node and passes for the existing Fuji fixtures (focus point, portrait orientation, aspect-ratio crop cases)
-- [ ] A snapshot tool turns a raw file into a committed sample file (tags + delegate output + source)
-- [ ] Tests pass on a checkout with no raw files present
-- [ ] Deliberately breaking the Fuji geometry makes a test fail
-- [ ] CLAUDE.md documents the add-a-sample workflow in a few lines
+- [x] One command runs all sample tests with system Node and passes for the existing Fuji fixtures (focus point, portrait orientation, aspect-ratio crop cases)
+- [x] A snapshot tool turns a raw file into a committed sample file (tags + delegate output + source)
+- [x] Tests pass on a checkout with no raw files present
+- [x] Deliberately breaking the Fuji geometry makes a test fail
+- [x] CLAUDE.md documents the add-a-sample workflow in a few lines
+
+## Comments
+
+Done on branch `wide-camera-support`. `node --test` runs `test/samples.test.js` over `test/samples/*.json`; `tools/add-sample.js` snapshots a raw (and writes a check image to look at); `tools/fetch-samples.js` re-downloads raws from each sample's `source`. First samples: the five X-H2 RAFs, the DSCF2659 OOC JPEG and one DJI DNG. DSCF2659 covers portrait orientation and Fuji face/subject boxes; DSCF2561 and DSCF2714 cover the 16:9 aspect crop. Checked that shifting the Fuji focus point by 10 px fails six tests. The tool redacts `InternalSerialNumber`, so no camera serial is committed.

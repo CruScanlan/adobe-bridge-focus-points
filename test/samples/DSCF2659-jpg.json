@@ -1,0 +1,81 @@
+{
+  "file": "DSCF2659.JPG",
+  "source": "Cru's own",
+  "tags": {
+    "FocusPixel": "4248 2720",
+    "ExifImageWidth": 7728,
+    "ExifImageHeight": 5152,
+    "Make": "FUJIFILM",
+    "Model": "X-H2",
+    "Orientation": "Rotate 270 CW",
+    "FacesDetected": 1,
+    "FaceElementPositions": "4033 2527 4454 2876 1449 1644 4647 3698 4008 2527 4333 2828 4177 2503 4320 2647 4177 2648 4320 2792",
+    "FaceElementTypes": [
+      "Head",
+      "Body",
+      "Face",
+      "Left Eye",
+      "Right Eye"
+    ],
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode": "Auto",
+    "FocusMode2": "AF-C",
+    "AFMode": "Single Point",
+    "AFAreaMode": "Single Point",
+    "AFAreaPointSize": 5,
+    "AFAreaZoneSize": "n/a",
+    "LensModel": "XF16-80mmF4 R OIS WR",
+    "FocalLength": "54.5 mm",
+    "FNumber": 4,
+    "ExposureTime": "1/500",
+    "ISO": 500,
+    "FocalLengthIn35mmFormat": "82 mm"
+  },
+  "expected": {
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 4248,
+        "y": 2720,
+        "width": 618.24,
+        "height": 618.24,
+        "primary": true
+      },
+      {
+        "pointType": "face",
+        "x": 4243.5,
+        "y": 2701.5,
+        "width": 421,
+        "height": 349
+      },
+      {
+        "pointType": "face",
+        "x": 3048,
+        "y": 2671,
+        "width": 3198,
+        "height": 2054
+      },
+      {
+        "pointType": "face",
+        "x": 4170.5,
+        "y": 2677.5,
+        "width": 325,
+        "height": 301
+      },
+      {
+        "pointType": "face",
+        "x": 4248.5,
+        "y": 2575,
+        "width": 143,
+        "height": 144
+      },
+      {
+        "pointType": "face",
+        "x": 4248.5,
+        "y": 2720,
+        "width": 143,
+        "height": 144
+      }
+    ]
+  }
+}

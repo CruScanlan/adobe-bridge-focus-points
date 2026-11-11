@@ -1,0 +1,39 @@
+{
+  "file": "DSCF3417.RAF",
+  "source": "Cru's own",
+  "tags": {
+    "FocusPixel": "2207 1318",
+    "ExifImageWidth": 4416,
+    "ExifImageHeight": 2944,
+    "Make": "FUJIFILM",
+    "Model": "X-H2",
+    "Orientation": "Horizontal (normal)",
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "3:2",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode": "Auto",
+    "FocusMode2": "AF-S",
+    "AFMode": "Single Point",
+    "AFAreaMode": "Single Point",
+    "AFAreaPointSize": 5,
+    "AFAreaZoneSize": "n/a",
+    "LensModel": "XF10-24mmF4 R OIS",
+    "FocalLength": "15.9 mm",
+    "FNumber": 7.1,
+    "ExposureTime": "1/1250",
+    "ISO": 400,
+    "FocalLengthIn35mmFormat": "24 mm"
+  },
+  "expected": {
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 2207,
+        "y": 1318,
+        "width": 353.28,
+        "height": 353.28,
+        "primary": true
+      }
+    ]
+  }
+}

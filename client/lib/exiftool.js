@@ -133,6 +133,26 @@ function readFocusData(file) {
   return chain;
 }
 
+/**
+ * Read just the tags (no preview). Used by the sample tools; the same tag
+ * list and exiftool as the panel, so a snapshot holds what the panel sees.
+ * @param {string} file absolute path
+ * @returns {Promise<object>}
+ */
+function readTags(file) {
+  const run = function () {
+    const args = ['-json', '-s'];
+    for (let i = 0; i < TAGS.length; i++) args.push('-' + TAGS[i]);
+    args.push(file);
+    return execute(args).then(function (payload) {
+      const parsed = JSON.parse(payload);
+      return (Array.isArray(parsed) && parsed[0]) || {};
+    });
+  };
+  chain = chain.then(run, run);
+  return chain;
+}
+
 /** Shut the persistent process down (call on panel unload). */
 function stop() {
   if (!proc) return;
@@ -143,4 +163,4 @@ function stop() {
   stdoutBuf = '';
 }
 
-module.exports = { readFocusData, stop, EXIFTOOL_EXE, REPO_ROOT };
+module.exports = { readFocusData, readTags, stop, EXIFTOOL_EXE, REPO_ROOT, PREVIEW_PATH };

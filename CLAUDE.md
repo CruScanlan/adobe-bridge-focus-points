@@ -64,11 +64,41 @@ client/
     fujifilm.js            ported Fuji geometry (getAfPoints)
     dji.js                 DJI: preview + flight info, no AF data (none exists)
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
+test/
+  samples.test.js          `node --test`: every sample through its delegate
+  samples/*.json           one per camera file: exiftool tags + expected boxes
 tools/                     dev-only: ZXPSignCmd.exe + cert.p12 + sign-install.sh,
+                           add-sample.js + fetch-samples.js (sample tests, below),
                            plus clipfix.cs (unshipped remedy, see blank-panel section)
 reference/                 read-only porting sources (Lr plugin, digiKam)
-fixtures/                  test RAFs; expected/ holds rendered AF-box oracles
+fixtures/                  raw files, gitignored: Cru's own at the top level,
+                           downloaded ones in pixls/, check images in check/
 ```
+
+## Sample tests (run outside Bridge)
+
+`node --test` (system Node, from the repo root) feeds every
+`test/samples/*.json` to its delegate and compares the boxes. A sample is the
+exiftool tag snapshot of one real camera file plus the expected boxes; it needs
+no Bridge, no exiftool and no raw file, so it also runs on a fresh checkout and
+on the macOS CI job planned in `.scratch/public-release`. **Raw image files are
+never committed** — `fixtures/` is gitignored and each sample records its
+`source` (a URL, or "Cru's own").
+
+Adding a camera body:
+
+1. Put the raw in `fixtures/` (downloads go in `fixtures/pixls/`).
+2. `node tools/add-sample.js fixtures/pixls/<name>.ARW --source <url>` writes
+   `test/samples/<name>.json` and a check image `fixtures/check/<name>.jpg`
+   (boxes drawn on the embedded preview; needs the dev-only ImageMagick).
+3. **Look at the check image.** Nothing else confirms the box is in the right
+   place; the expected output is only a regression baseline.
+4. `node --test`, then commit the `.json`.
+
+Other uses: `node tools/add-sample.js test/samples/<name>.json` recomputes
+`expected` from the sample's own tags (after an intended geometry change, or a
+hand-edited sample); `node tools/fetch-samples.js` re-downloads every raw whose
+source is a URL. The snapshot tool redacts camera serial numbers.
 
 ## How the Fuji geometry works (the ported core)
 
