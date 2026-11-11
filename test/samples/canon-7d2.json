@@ -1,0 +1,47 @@
+{
+  "file": "pixls/canon-7d2.CR2",
+  "source": "https://raw.pixls.us/getfile.php/1064/nice/Canon - EOS 7D Mark II - RAW (3:2).cr2",
+  "tags": {
+    "Make": "Canon",
+    "Model": "Canon EOS 7D Mark II",
+    "FileType": "CR2",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "EF50mm f/1.4 USM",
+    "FocalLength": "50.0 mm",
+    "FNumber": 4,
+    "ExposureTime": "1/200",
+    "ISO": 100,
+    "FocusMode": "One-shot AF",
+    "AFAreaMode": "Single-point AF",
+    "ExifImageWidth": 5472,
+    "ExifImageHeight": 3648,
+    "InternalSerialNumber": "(redacted)",
+    "AFImageWidth": 5472,
+    "AFImageHeight": 3648,
+    "AFPointsSelected": 24,
+    "AFPointsInFocus": 24,
+    "CanonImageWidth": 5472,
+    "CanonImageHeight": 3648,
+    "AFAreaWidths": "243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243",
+    "AFAreaHeights": "243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243 243",
+    "AFAreaXPositions": "279 0 -279 -559 -1093 -1397 -1700 -2004 -1397 -1700 -2004 2004 1700 1397 1093 559 1397 1093 559 279 0 -279 -559 -1093 -279 -559 -1093 -1397 -1700 -2004 2004 1700 -2004 2004 1700 1397 1093 559 279 0 559 279 0 -279 -559 -1093 -1397 -1700 -1093 -1397 -1700 -2004 2004 1700 1397 1093 1700 1397 1093 559 279 0 -279 -559 2004",
+    "AFAreaYPositions": "776 776 776 776 631 631 631 631 315 315 315 631 631 631 631 776 315 315 388 388 388 388 388 315 0 0 0 0 0 0 315 315 -315 0 0 0 0 0 0 0 -388 -388 -388 -388 -388 -315 -315 -315 -631 -631 -631 -631 -315 -315 -315 -315 -631 -631 -631 -776 -776 -776 -776 -776 -631",
+    "CameraType": "EOS High-end"
+  },
+  "expected": {
+    "frame": {
+      "width": 5472,
+      "height": 3648
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2457,
+        "y": 1824,
+        "width": 243,
+        "height": 243,
+        "primary": true
+      }
+    ]
+  }
+}

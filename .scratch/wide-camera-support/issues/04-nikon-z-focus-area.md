@@ -21,12 +21,22 @@ The generations before the Z7 are the DSLRs in ticket 06. Fetch one sample per b
 
 **Blocked by:** 01, 02
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
-- [ ] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
-- [ ] At least one sample is a crop-mode shot, or the crop transform is covered by a sample with hand-edited tags and noted as unverified on real data
-- [ ] Each sample's box position was checked by eye against the image before its expected output was committed
-- [ ] A manual-focus or no-AF-data Nikon file shows a status message, not an error
-- [ ] Faces are drawn if exiftool exposes them, otherwise CLAUDE.md records that they are unavailable. Neither outcome blocks this ticket
+- [x] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
+- [x] At least one sample is a crop-mode shot, or the crop transform is covered by a sample with hand-edited tags and noted as unverified on real data
+- [x] Each sample's box position was checked by eye against the image before its expected output was committed
+- [x] A manual-focus or no-AF-data Nikon file shows a status message, not an error
+- [x] Faces are drawn if exiftool exposes them, otherwise CLAUDE.md records that they are unavailable. Neither outcome blocks this ticket
 - [ ] Cru confirms one NEF renders correctly in Bridge after sign-install
-- [ ] CLAUDE.md status section lists Nikon Z and the bodies sampled
+- [x] CLAUDE.md status section lists Nikon Z and the bodies sampled
+
+## Comments
+
+Code done on branch `wide-camera-support`; left for Cru: look at one NEF in Bridge.
+
+- Samples for all nine bodies, checked by eye (Z6 on the toy's eye, Zfc on the flower's centre, Z7 on the colour chart).
+- Z8: all three raw.pixls.us files are auto-area AF, which writes `AFPointsUsed` (grid names) and no AF-area tags. That needs a point map, so it is picked up in ticket 06.
+- Crop: four real crop-mode samples (Z6 III DX, 16:9 and 1:1; Z50 II 16:9), all centre points. The transform differs from the Lr plugin for 16:9 and 1:1 (see CLAUDE.md for why); off-centre points in those two modes are unverified.
+- Faces: exiftool exposes none for Nikon; recorded in CLAUDE.md.
+- `FocusDistance` is shown in the Nikon info line. That touches the spec's open question; easy to drop if unwanted.

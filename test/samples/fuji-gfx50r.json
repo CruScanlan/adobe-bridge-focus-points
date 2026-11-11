@@ -1,0 +1,44 @@
+{
+  "file": "pixls/fuji-gfx50r.RAF",
+  "source": "https://raw.pixls.us/getfile.php/2979/nice/Fujifilm - GFX 50R - 14bit 14bit compressed (3:2).raf",
+  "tags": {
+    "Make": "FUJIFILM",
+    "Model": "GFX 50R",
+    "FileType": "RAF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "GF45mmF2.8 R WR",
+    "FocalLength": "45.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/350",
+    "ISO": 100,
+    "FocusMode": "Auto",
+    "AFAreaMode": "Wide/Tracking",
+    "FocusPixel": "2001 941",
+    "ExifImageWidth": 4000,
+    "ExifImageHeight": 3000,
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "4:3",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode2": "AF-S",
+    "AFMode": "No",
+    "AFAreaPointSize": "n/a",
+    "AFAreaZoneSize": "n/a",
+    "FocalLengthIn35mmFormat": "36 mm"
+  },
+  "expected": {
+    "frame": {
+      "width": 4000,
+      "height": 3000
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 2001,
+        "y": 941,
+        "width": 120,
+        "height": 120,
+        "primary": true
+      }
+    ]
+  }
+}

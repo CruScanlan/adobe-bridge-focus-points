@@ -1,0 +1,47 @@
+{
+  "file": "pixls/canon-r.CR3",
+  "source": "https://raw.pixls.us/getfile.php/4543/nice/Canon - EOS R - 3:2.CR3",
+  "tags": {
+    "Make": "Canon",
+    "Model": "Canon EOS R",
+    "FileType": "CR3",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "RF85mm F2 MACRO IS STM",
+    "FocalLength": "85.0 mm",
+    "FNumber": 11,
+    "ExposureTime": "1/6",
+    "ISO": 100,
+    "FocusMode": "AI Servo AF (Live View)",
+    "AFAreaMode": "AF Point Expansion (8 point)",
+    "ExifImageWidth": 6720,
+    "ExifImageHeight": 4480,
+    "InternalSerialNumber": "(redacted)",
+    "AFImageWidth": 6720,
+    "AFImageHeight": 4480,
+    "AFPointsSelected": 0,
+    "AFPointsInFocus": 0,
+    "CanonImageWidth": 6720,
+    "CanonImageHeight": 4480,
+    "AFAreaWidths": "468 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaHeights": "441 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaXPositions": "-346 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaYPositions": "-65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "CameraType": "EOS High-end"
+  },
+  "expected": {
+    "frame": {
+      "width": 6720,
+      "height": 4480
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3014,
+        "y": 2305,
+        "width": 468,
+        "height": 441,
+        "primary": true
+      }
+    ]
+  }
+}

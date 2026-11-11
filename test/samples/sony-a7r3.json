@@ -1,0 +1,44 @@
+{
+  "file": "pixls/sony-a7r3.ARW",
+  "source": "https://raw.pixls.us/getfile.php/3251/nice/Sony - ILCE-7RM3 - 14bit 14bit uncompressed (3:2).ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7RM3",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "FE 24mm F1.4 GM",
+    "FocalLength": "24.0 mm",
+    "FNumber": 2.8,
+    "ExposureTime": "1/30",
+    "ISO": 100,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Flexible Spot",
+    "ExifImageWidth": 7952,
+    "ExifImageHeight": 5304,
+    "FacesDetected": 0,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "24 mm",
+    "FocusLocation": "7952 5304 3976 1911",
+    "FullImageSize": "7952x5304",
+    "FocalPlaneAFPointsUsed": 0,
+    "AFAreaModeSetting": "Flexible Spot",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "Off"
+  },
+  "expected": {
+    "frame": {
+      "width": 7952,
+      "height": 5304
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 3976,
+        "y": 1911,
+        "width": 212.16,
+        "height": 212.16,
+        "primary": true
+      }
+    ]
+  }
+}

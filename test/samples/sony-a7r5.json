@@ -1,0 +1,46 @@
+{
+  "file": "pixls/sony-a7r5.ARW",
+  "source": "https://raw.pixls.us/getfile.php/6239/nice/Sony - ILCE-7RM5 - 14bit 14bit compressed (3:2).ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7RM5",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "FE 50mm F1.2 GM",
+    "FocalLength": "50.0 mm",
+    "FNumber": 1.2,
+    "ExposureTime": "1/2000",
+    "ISO": 100,
+    "FocusMode": "AF-C",
+    "AFAreaMode": "Multi",
+    "ExifImageWidth": 6240,
+    "ExifImageHeight": 4160,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "75 mm",
+    "FocusLocation": "6240 4160 2564 2634",
+    "FocusFrameSize": "137x139",
+    "FullImageSize": "6240x4160",
+    "FocalPlaneAFPointsUsed": 4,
+    "FocalPlaneAFPointArea": "640 428",
+    "FocalPlaneAFPointLocation1": "282 304",
+    "AFAreaModeSetting": "Wide",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "On"
+  },
+  "expected": {
+    "frame": {
+      "width": 6240,
+      "height": 4160
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2564,
+        "y": 2634,
+        "width": 137,
+        "height": 139,
+        "primary": true
+      }
+    ]
+  }
+}

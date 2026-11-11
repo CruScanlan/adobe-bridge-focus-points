@@ -1,0 +1,74 @@
+{
+  "file": "pixls/canon-77d.CR2",
+  "source": "https://raw.pixls.us/getfile.php/1332/nice/Canon - EOS 77D - RAW (3:2).CR2",
+  "tags": {
+    "Make": "Canon",
+    "Model": "Canon EOS 77D",
+    "FileType": "CR2",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "EF50mm f/1.8 II",
+    "FocalLength": "50.0 mm",
+    "FNumber": 4.5,
+    "ExposureTime": "1/160",
+    "ISO": 3200,
+    "FocusMode": "AI Focus AF",
+    "AFAreaMode": "Auto",
+    "ExifImageWidth": 6000,
+    "ExifImageHeight": 4000,
+    "InternalSerialNumber": "(redacted)",
+    "AFImageWidth": 6000,
+    "AFImageHeight": 4000,
+    "AFPointsSelected": "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44",
+    "AFPointsInFocus": "4,5,6,10,11",
+    "CanonImageWidth": 6000,
+    "CanonImageHeight": 4000,
+    "AFAreaWidths": "278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 0 0 0 0",
+    "AFAreaHeights": "278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 278 0 0 0 0",
+    "AFAreaXPositions": "1438 1089 497 0 -497 -1089 -1438 -1788 1089 497 0 -497 -1089 -1438 -1788 1788 497 0 -497 -1089 -1438 -1788 1788 1438 0 -497 -1089 -1438 -1788 1788 1438 1089 -497 -1089 -1438 -1788 1788 1438 1089 497 1788 1438 1089 497 0 0 0 0 0",
+    "AFAreaYPositions": "699 699 860 860 860 699 699 699 349 430 430 430 349 349 349 699 0 0 0 0 0 0 349 349 -430 -430 -349 -349 -349 0 0 0 -860 -699 -699 -699 -349 -349 -349 -430 -699 -699 -699 -860 -860 0 0 0 0",
+    "CameraType": "EOS High-end"
+  },
+  "expected": {
+    "frame": {
+      "width": 6000,
+      "height": 4000
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2503,
+        "y": 1140,
+        "width": 278,
+        "height": 278
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 1911,
+        "y": 1301,
+        "width": 278,
+        "height": 278
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 1562,
+        "y": 1301,
+        "width": 278,
+        "height": 278
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3000,
+        "y": 1570,
+        "width": 278,
+        "height": 278
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 2503,
+        "y": 1570,
+        "width": 278,
+        "height": 278
+      }
+    ]
+  }
+}

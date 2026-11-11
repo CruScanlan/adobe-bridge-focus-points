@@ -35,10 +35,12 @@ delegate to both:
 ```
 Bridge selection
   -> host/index.jsx (ExtendScript)  : reports selected file path; pings panel on change
-  -> client/main.js (Node/JS)       : spawns exiftool, picks delegate, renders
-  -> vendor/exiftool                : returns maker-note / AF tags as JSON
-  -> client/delegates/<mfr>.js      : computes AF box(es) in image-pixel coords
-  -> SVG overlay                    : draws the box(es) on the preview
+  -> client/main.js (Node/JS)       : asks exiftool, asks the registry, renders
+  -> vendor/exiftool                : returns maker-note / AF tags as JSON, and
+                                      the largest embedded image as the preview
+  -> client/delegates/index.js      : registry: picks the delegate for the tags
+  -> client/delegates/<mfr>.js      : computes AF box(es) in its own pixel frame
+  -> SVG overlay                    : viewBox = that frame, stretched on the preview
 ```
 
 ExtendScript (ES3) is the *only* thing that can talk to Bridge but is feeble, so
@@ -59,16 +61,87 @@ client/
   styles.css
   lib/
     CSInterface.js         Adobe CEP 12 library (vendored)
-    exiftool.js            spawn wrapper: readTags() / extractPreview()
+    exiftool.js            spawn wrapper: readFocusData(file, tags) -> tags + preview
   delegates/
+    index.js               registry: delegate list, tag union, delegateFor(tags)
+    common.js              shared helpers: point types, default box, info line
     fujifilm.js            ported Fuji geometry (getAfPoints)
     dji.js                 DJI: preview + flight info, no AF data (none exists)
+    sony.js                ported Sony geometry (FocusLocation)
+    nikon.js               ported Nikon geometry (AF area, point names, CropHiSpeed)
+    nikon-points.js        Nikon AF point maps (name -> x, y, w, h), generated data
+    canon.js               ported Canon geometry (AF area lists, in-focus only)
+    olympus.js             OM System / Olympus: primary focus area or point
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
+test/
+  samples.test.js          `node --test`: every sample through its delegate
+  samples/*.json           one per camera file: exiftool tags + expected boxes
 tools/                     dev-only: ZXPSignCmd.exe + cert.p12 + sign-install.sh,
+                           add-sample.js + fetch-samples.js (sample tests, below),
                            plus clipfix.cs (unshipped remedy, see blank-panel section)
 reference/                 read-only porting sources (Lr plugin, digiKam)
-fixtures/                  test RAFs; expected/ holds rendered AF-box oracles
+fixtures/                  raw files, gitignored: Cru's own at the top level,
+                           downloaded ones in pixls/, check images in check/
 ```
+
+## Delegate contract (adding a manufacturer)
+
+Adding a make is **one file in `client/delegates/` plus one line in the
+`DELEGATES` list of `client/delegates/index.js`**. Neither `main.js` nor
+`exiftool.js` names any manufacturer. A delegate is a pure module (no I/O, no
+DOM, so the sample tests run it on plain Node) exporting:
+
+- `matches(tags)` — true if it handles this file. First match in the list wins.
+- `TAGS` — the exiftool tag names it reads. The registry asks exiftool for the
+  union of every delegate's list plus a few common ones; wildcards work for
+  numbered tags (`Face*Position`).
+- `getAfPoints(tags)` — returns `{ frame: {width, height}, points, message? }`,
+  or `null` for nothing to draw. Each point is a centre/size box
+  `{pointType, x, y, width, height, primary?}` in the pixel space of `frame`,
+  in the camera's native (unrotated) orientation. `frame` is whatever space the
+  camera reports coordinates in (Fuji: `ExifImageWidth x ExifImageHeight`;
+  most others: full-size image pixels). The panel sets the SVG `viewBox` to
+  it and fits it centred over the preview (`xMidYMid meet`), so the preview's
+  own pixel size never matters, and a frame that is a centred aspect-ratio
+  crop of the preview (or the reverse) still lines up. `message` optionally
+  explains an empty `points` (manual focus, no AF data).
+- optional `formatShootingInfo(tags)` and `NO_AF_MESSAGE`.
+
+`pointType` picks the layer and colour: contains `face` → Faces, `crop` →
+Crop, anything else → Focus (see `common.js`). A type containing `selected`
+is drawn dashed: a point the photographer chose whose focus the camera did not
+confirm.
+
+**Preview:** `exiftool.js` displays the largest embedded image a file has
+(`JpgFromRaw`, `PreviewImage`, `OtherImage`, `ThumbnailImage`, by byte size),
+so NEF/ARW/CR3 get their full-size JPEG. A JPEG file is displayed as itself.
+
+## Sample tests (run outside Bridge)
+
+`node --test` (system Node, from the repo root) feeds every
+`test/samples/*.json` to its delegate and compares the boxes. A sample is the
+exiftool tag snapshot of one real camera file plus the expected boxes; it needs
+no Bridge, no exiftool and no raw file, so it also runs on a fresh checkout and
+on the macOS CI job planned in `.scratch/public-release`. **Raw image files are
+never committed** — `fixtures/` is gitignored and each sample records its
+`source` (a URL, or "Cru's own").
+
+Adding a camera body:
+
+1. Put the raw in `fixtures/` (downloads go in `fixtures/pixls/`).
+2. `node tools/add-sample.js fixtures/pixls/<name>.ARW --source <url>` writes
+   `test/samples/<name>.json` and a check image `fixtures/check/<name>.jpg`
+   (boxes drawn on the embedded preview; needs the dev-only ImageMagick).
+   Samples are named `<make>-<body>[-<what>]`; for a file with a camera name
+   such as `DSCF2714.RAF`, pass `--name fuji-x-h2-dscf2714`.
+3. **Look at the check image.** Nothing else confirms the box is in the right
+   place; the expected output is only a regression baseline.
+4. `node --test`, then commit the `.json`.
+
+Other uses: `node tools/add-sample.js test/samples/<name>.json` recomputes
+`expected` from the sample's own tags (after an intended geometry change, or a
+hand-edited sample); `node tools/fetch-samples.js` re-downloads every raw whose
+source is a URL. The snapshot tool redacts camera serial numbers.
 
 ## How the Fuji geometry works (the ported core)
 
@@ -77,23 +150,44 @@ Ported from `reference/focuspoints.lrplugin/FujifilmDelegates.lua`
 
 - `FocusPixel` is a single `(x, y)` in the coordinate system of the **embedded
   JPEG**, whose dimensions are reported by `ExifImageWidth`/`ExifImageHeight`.
-- The transform is a pure scale to the displayed image:
-  `xScale = displayW / ExifImageWidth`, same for y. The box is a square of side
-  `min(displayW, displayH) * 0.04` (the Lr "medium" default) centred on the
-  scaled point.
+- The delegate returns that as its `frame` and leaves the point unscaled. The
+  default box is a square of side `min(frameW, frameH) * 0.04` (the Lr "medium"
+  default) centred on the point.
 - **We render the embedded preview**, extracted with exiftool. On the X-H2 that
   preview is exactly `ExifImageWidth x ExifImageHeight` (4416x2944 on the test
-  bodies), so `xScale = yScale = 1.0` and `FocusPixel` maps directly. The SVG
-  overlay uses `viewBox="0 0 imgW imgH"` so coordinates are in image-pixel space
-  regardless of on-screen zoom.
+  bodies). The SVG overlay's `viewBox` is the frame, so coordinates stay in
+  frame space regardless of preview size or on-screen zoom.
 - Faces (`FacesDetected`/`FacesPositions`), subject detection
   (`FaceElementPositions`, exiftool >= 12.44) and tele-converter crop
   (`CropSize`/`CropTopLeft`, >= 12.82) use the same scale and are already ported.
   None of the current fixtures exercise them.
 
+**Manual focus:** with `FocusMode2` = AF-M the camera still writes
+`FocusPixel` (where the focus frame was parked), but the delegate shows
+"manual focus" and no box, like every other make.
+
+**Bodies sampled** (the delegate needed no per-body changes: every body uses
+`FocusPixel` in the `ExifImage*` frame, which is 4416x2944 on the X bodies and
+4000x3000, 4:3, on the GFX):
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| X-H2 | `fuji-x-h2-dscf*` (Cru's own: portrait + faces, 16:9 crop, OOC JPEG) | yes, and in Bridge |
+| X-T5 | `fuji-x-t5`, `fuji-x-t5-mf` (manual focus) | yes |
+| X-T4 | `fuji-x-t4` | yes |
+| X-T3 | `fuji-x-t3` | manual focus only: both raw.pixls.us files are MF |
+| GFX 100S II | `fuji-gfx100s-ii` (off-centre) | yes |
+| GFX 100S | `fuji-gfx100s` | yes |
+| GFX 50S II | `fuji-gfx50s-ii` | yes |
+| GFX 50R | `fuji-gfx50r` (wide/tracking, off-centre) | yes |
+
+The X-T3 is **untested for autofocus**. None of the downloaded samples has
+face data; Fuji faces are covered by the X-H2 sample only.
+
 **OOC caveat:** the `FocusPixel`/`ExifImageWidth` reference is lost or corrupted
 on RAF->DNG conversion. Feed straight-out-of-camera `.RAF` (or the OOC JPEG).
-`fujifilm.makerNotesFound()` rejects DNGs and files missing `InternalSerialNumber`.
+`fujifilm.js` rejects DNGs (`FileType`) and files missing `InternalSerialNumber`,
+with a status message instead of a box.
 
 ### Tag access convention
 
@@ -127,10 +221,9 @@ lives entirely in `client/main.js` + `styles.css`:
   (no mirrored fixture). The four rotations (incl. `Rotate 270 CW`, the
   `DSCF2659` fixtures) are verified in Bridge.
 
-**Crop caveat (open):** an OOC JPEG's embedded `PreviewImage` can be a small
-letterboxed thumbnail (e.g. 640×480 4:3 for a 3:2 frame), so `FocusPixel`/dim
-scaling is slightly off on the *JPEG* path. The RAF preview is a clean full-frame
-3:2 and maps exactly — feed RAFs. Real in-camera crop (`CropSize`/`CropTopLeft`,
+**JPEGs are displayed as themselves**, not via their embedded `PreviewImage`
+(a small letterboxed thumbnail, e.g. 640×480 4:3 for a 3:2 frame, which used to
+put the box slightly off). Real in-camera crop (`CropSize`/`CropTopLeft`,
 digital tele-converter) is drawn but untested. Getting the box in the wrong place
 is almost always a transform bug, not a parse bug.
 
@@ -257,8 +350,15 @@ bonus path — polling is what actually drives live updates.
 
 Working end-to-end in Bridge: select a Fuji RAF → preview + green AF box render
 on the focus point, and the panel updates live as the selection changes.
+Sony, Nikon (Z and DSLR), Canon and OM System / Olympus delegates were added
+on 2026-11-11 and pass their sample tests (`node --test`). One file per make
+was run through the real panel in Bridge 16 by Claude over the debug port
+(state read back plus a CDP screenshot: A7R III, Z6, Z6 III 1:1 crop, D810,
+R10 portrait, 80D, E-M5 III, GFX 100S II, the X-H2 RAF + JPEG, DJI). **Cru has
+not yet looked at them himself**; the per-make notes below say what each
+sample covers.
 exiftool bundle verified (13.55); Fuji primary-point geometry ported & visually
-verified against all three fixtures (`fixtures/expected/*-afbox.jpg`); signed
+verified against Cru's X-H2 fixtures (`fixtures/expected/*-afbox.jpg`); signed
 `Embedded` panel docks in Bridge 2026 like a native panel. Faces / AI subject
 boxes confirmed working with live data. **Orientation** (incl. portrait
 `Rotate 270 CW`) verified on the `DSCF2659` fixtures.
@@ -294,11 +394,168 @@ two shots with focus deliberately tapped at opposite corners. The delegate
 therefore draws nothing by design: it renders the DNG's embedded 960×630
 SubIFD1 preview, a drone-flavoured info bar (model-code map FC3411→Air 2S etc.,
 35mm-eq focal, AGL altitude, gimbal pitch from XMP-drone-dji), and an honest
-"DJI does not record AF-point coordinates" status. Delegates may now provide
-optional `matches(tags)` (dispatch; Mavic 2/3 report Make=Hasselblad),
-`formatShootingInfo(tags)` and `NO_AF_MESSAGE` hooks — main.js falls back to
-its generic versions when absent. Decoding `AFDebugInfo` would need several
+"DJI does not record AF-point coordinates" status. Its `matches(tags)` also
+claims Mavic 2/3 files, which report Make=Hasselblad. Decoding `AFDebugInfo` would need several
 samples with known (tap-to-focus) positions to diff.
+
+**Sony** (`client/delegates/sony.js`, ported from `SonyDelegates.lua`):
+`FocusLocation` ("W H X Y") gives both the frame and the point; the box is
+sized from `FocusFrameSize` where the body records it (A7R V, A7 IV, a6700),
+the default box otherwise. All-zero `FocusLocation` falls back to the first
+focal-plane phase-detect point. `FocusMode` = Manual shows "manual focus" and
+no box. Faces (`FaceNPosition`) are ported but unverified: no sample has one.
+The Lr plugin's centring shift for non-native aspect ratios is left to the
+panel's centred frame fit, also unverified on a real 16:9 file. Inactive
+phase-detect points are not drawn.
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| A7R V | `sony-a7r5` (APS-C crop mode, camera-sized frame) | yes |
+| A7R IV | `sony-a7r4` | yes |
+| A7R III | `sony-a7r3` (flexible spot, off-centre) | yes |
+| A7R II | `sony-a7r2` | manual focus only: every raw.pixls.us file is MF |
+| A7 IV | `sony-a7m4` (APS-C crop mode, tracking) | yes |
+| A7 III | `sony-a7m3` (centre point) | yes |
+| A7 II | `sony-a7m2` | manual focus only: every raw.pixls.us file is MF |
+| a6700 | `sony-a6700` (centre) | yes |
+| a6600 | `sony-a6600` | yes |
+| a6400 | `sony-a6400` | yes |
+
+So the A7R II and A7 II are **untested for autofocus**; whether they record
+`FocusLocation` in AF is unknown (the A7R II writes it even in MF).
+
+**Nikon Z** (`client/delegates/nikon.js`, the contrast-AF path of
+`NikonDelegates.lua`): `AFAreaXPosition/YPosition/Width/Height` are the focus
+area in the pixels of `AFImageWidth x AFImageHeight`, which is the frame. The
+same path covers DSLRs shot in live view. `FocusMode` = Manual shows "manual
+focus". The info line includes `FocusDistance` (useful for telling the frames
+of a focus stack apart; whether to show it for every make is still the open
+question in the spec).
+
+In-camera crop (`CropHiSpeed`): the area is moved into the cropped image by
+scaling about the centre by the *larger* of the two crop ratios. This
+**deviates from the Lr plugin** for 16:9 and 1:1, where Lr scales each axis
+separately. Reason: real Z6 III files keep the area size (163x174) in 16:9 and
+1:1 and enlarge it only in DX, so those modes crop without magnifying. For DX
+the two formulas are identical. Every crop sample is a centre point, where
+both agree, so **off-centre points in 16:9/1:1 are unverified**.
+
+**Faces are unavailable for Nikon**: exiftool exposes no face positions for
+these bodies (only `SubjectDetection`), and the Lr plugin has none either.
+With subject detection on, the AF area is normally the subject's box anyway.
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| Z8 | `nikon-z8` (auto-area: 49 named points via the Z9 map, see Nikon DSLR) | yes |
+| Z7 II | `nikon-z7ii` (off-centre) | yes |
+| Z7 | `nikon-z7` (off-centre) | yes |
+| Z6 III | `nikon-z6iii`, `-dx`, `-16x9`, `-1x1` (pinpoint, centre) | yes |
+| Z6 II | `nikon-z6ii` (centre) | yes |
+| Z6 | `nikon-z6` (off-centre) | yes |
+| Z50 II | `nikon-z50ii`, `-16x9` (3D-tracking) | yes |
+| Z50 | `nikon-z50` (centre) | yes |
+| Zfc | `nikon-zfc` (auto-area, off-centre) | yes |
+
+**Canon** (`client/delegates/canon.js`, ported from `CanonDelegates.lua`):
+the camera lists every AF area (`AFAreaXPositions/YPositions/Widths/Heights`)
+in the `AFImageWidth x AFImageHeight` frame, measured from the frame centre
+with Y up; the delegate converts to top-left origin and draws only the areas
+named in `AFPointsInFocus`. One box gets the centre cross; several (auto-area
+on a DSLR, whole-area on an R body) are all drawn without one.
+**When no area is in focus, the areas in `AFPointsSelected` are drawn
+instead, dashed** (`af_selected`), with the status "selected AF point shown,
+focus not confirmed". This is our addition, not in the Lr plugin, and it is
+what makes Canon useful for tripod work: across 783 of Cru's 80D frames about
+90% record a selected point but no in-focus one (live view Flexizone, or
+back-button AF released before the shutter). The same code
+serves CR2 DSLRs and CR3 mirrorless. `FocusMode` "Manual Focus…" shows
+"manual focus". The only model quirks carried over from Lr are the original
+EOS 5D's image size and the flipped Y axis on compacts; neither is a target
+body and neither has a sample.
+
+**Faces are unavailable for Canon**: exiftool exposes no face positions for
+these bodies (only settings such as `SubjectToDetect` / `EyeDetection`), and
+the Lr plugin has none. With subject detection on, the in-focus area is the
+subject's box (see the R7 and R10 samples).
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| R5 Mark II | `canon-r5ii` (spot AF) | yes |
+| R5 | `canon-r5` (spot AF) | yes |
+| EOS R | `canon-r` (servo, live view) | yes |
+| 5D Mark IV | `canon-5d4` (single point) | yes |
+| 5D Mark III | `canon-5d3` (single point) | yes |
+| R6 Mark II | `canon-r6ii` (whole area, 7 areas) | yes |
+| R6 | `canon-r6` | manual focus only: every raw.pixls.us file tried is MF |
+| R7 | `canon-r7` (subject box) | yes |
+| R10 | `canon-r10` (portrait, subject box) | yes |
+| 90D | `canon-90d` (single point) | yes |
+| 80D | `canon-80d` (auto-area, 44 areas in focus); Cru's own `canon-80d-img7801` (selected point only), `-img8745` (in focus), `-img8272` (portrait) | yes, and in Bridge |
+| 70D | `canon-70d` (single point) | yes |
+| 77D | `canon-77d` (auto-area, 5 areas) | yes |
+| 7D Mark II | `canon-7d2` (single point) | yes |
+| 6D Mark II | `canon-6d2` (live view) | yes |
+
+The R6 is **untested for autofocus**.
+
+**Nikon DSLR** (viewfinder AF, the phase-detect path of `NikonDelegates.lua`,
+in the same `nikon.js`): these bodies record point *names* (`C6`, `E9`), not
+coordinates. `client/delegates/nikon-points.js` holds the per-model maps
+(converted from the Lr plugin's `focus_points/nikon corporation/*.txt`), and
+`MODEL_MAP` in `nikon.js` says which model uses which. `PrimaryAFPoint` is
+drawn with the centre cross; any other used points are drawn as plain boxes.
+The D850 generation (`AFInfo2Version` 0101: D850, D500, D7500) picks its tag
+by AF-area mode as Lr does: `AFPointsSelected` for single / group / dynamic,
+`AFPointsInFocus` for auto and 3D-tracking; everything else uses
+`AFPointsUsed`. In-camera crop shifts the points by half the size difference
+(the viewfinder is not magnified). A Nikon with point names but no map shows
+"this Nikon model is not supported yet". Viewfinder AF records no faces. The
+inactive-point grid is not drawn. The Z8 and Z9 use this path in auto-area AF,
+with the Z9 map, as in the Lr plugin.
+
+**Adding another Nikon DSLR:** convert its Lr `.txt` map into
+`nikon-points.js` (same shape as the others), add the model to `MODEL_MAP`,
+and add a sample.
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| D850 | `nikon-d850` (manual focus), `nikon-d850-af-edited` | AF path on hand-edited tags only: every raw.pixls.us file is MF |
+| D810 | `nikon-d810` (point A5), `nikon-d810-dx-edited` (crop offset, hand-edited) | yes (the real one) |
+| D800 | `nikon-d800` (centre; from rawsamples.ch) | yes |
+| D800E | `nikon-d800e` (centre) | yes |
+| D500 | `nikon-d500` (manual focus), `nikon-d500-af-edited` | AF path on hand-edited tags only: every raw.pixls.us file is MF |
+| D7500 | `nikon-d7500` (dynamic area, centre) | yes |
+
+So the **D850 and D500 are untested on a real autofocus file**, and the DSLR
+crop offset is covered only by a hand-edited sample. `nikon-d750-nomap-edited`
+covers the no-map status.
+
+**OM System / Olympus** (`client/delegates/olympus.js`, the primary-focus path
+of `OlympusDelegates.lua`; matches Make "OLYMPUS…" and "OM Digital
+Solutions"). First hit wins: `AFFocusArea` in `AFFrameSize` units (OM System
+bodies, the area actually in focus); else `AFPointSelected` read numerically
+(`AFPointSelected#`, fractions of the image, default box); else `AFAreas`
+(1/256ths). Subject-detect frames (`SubjectDetectArea`/`Detail`) go on the
+Faces layer. `FocusMode` starting "MF" shows "manual focus". The info line
+adds `FocusDistance` and `StackedImage` when the camera focus-stacked.
+Not ported: the selected-but-not-in-focus target area, and face frames
+(`FaceDetectArea` needs Lr's long per-model decoding).
+
+**This make is the least verified.** Nearly every OM/Olympus file on
+raw.pixls.us is a manual-focus chart shot (20 files tried across the six
+bodies):
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| OM-1 Mark II | `om-1ii` | manual focus only (5 files tried) |
+| OM-1 | `om-1` (AF, but focus not confirmed: no area), `om-1-af-edited` | `AFFocusArea` path on hand-edited tags only |
+| E-M1 Mark III | `olympus-e-m1iii` | manual focus only (3 files tried) |
+| E-M1 Mark II | `olympus-e-m1ii` | manual focus only (4 files tried) |
+| OM-5 | `om-5` | manual focus only (3 files tried) |
+| E-M5 Mark III | `olympus-e-m5iii` (`AFPointSelected`, off-centre) | yes |
+
+So only the `AFPointSelected` path is confirmed on a real file. The OM System
+`AFFocusArea` path and the subject-detect frames need a real autofocus ORF.
 
 **Unsupported cameras degrade gracefully**: no delegate is no longer fatal —
 the panel still renders the embedded preview (or, for JPEGs with no embedded
@@ -306,14 +563,21 @@ PreviewImage, the file itself) plus the generic shooting-info line, with a
 "<Make> is not supported yet" status. Only the overlay needs a delegate.
 
 Not yet done / next steps:
+- Real autofocus files for the bodies listed above as manual-focus-only or
+  hand-edited: Sony A7R II / A7 II, Canon R6, Fuji X-T3, Nikon D850 / D500, and
+  every OM System / Olympus body except the E-M5 III. Add each with
+  `tools/add-sample.js` and look at its check image.
+- Unverified geometry: Sony faces and non-3:2 aspect, Nikon off-centre points
+  in 16:9 / 1:1 crop, Nikon DSLR crop offset, OM System `AFFocusArea` and
+  subject-detect frames.
 - Calibrate `AF_POINT_SIZE_FRACTION` against real in-camera AF-frame testing
   (absolute scale only; shape confirmed). Zone mode (`AFAreaZoneSize`) unmodelled.
 - Mirrored EXIF orientations (2/4/5/7) — coded, no fixture to verify.
-- JPEG-path letterbox crop (see orientation caveat) + digital-TC crop test.
+- Digital-TC crop test.
 - Distinguish face-element types (Head/Body/Face/Eye via `FaceElementTypes`)
   instead of drawing all as one yellow box; also `FacePositions` vs the
   delegate's `FacesPositions` tag-name mismatch (latent dead branch).
-- Remaining manufacturers (Canon, Nikon, Sony, …), one at a time.
+- Other makes (Panasonic, Pentax, …) only on request; each is one delegate file.
 - A proper `.zxp` for distribution (the dev self-sign is fine for personal use).
 
 ## Install / debug (Windows VM)

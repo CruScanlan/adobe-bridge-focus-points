@@ -1,0 +1,45 @@
+{
+  "file": "pixls/sony-a6700.ARW",
+  "source": "https://raw.pixls.us/getfile.php/6735/nice/Sony - ILCE-6700 - 14bit (3:2).ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-6700",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "E 16-55mm F2.8 G",
+    "FocalLength": "16.0 mm",
+    "FNumber": 11,
+    "ExposureTime": "1/50",
+    "ISO": 125,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Multi",
+    "ExifImageWidth": 6192,
+    "ExifImageHeight": 4128,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "24 mm",
+    "FocusLocation": "6192 4128 3096 2064",
+    "FocusFrameSize": "135x138",
+    "FullImageSize": "6192x4128",
+    "FocalPlaneAFPointsUsed": 9,
+    "FocalPlaneAFPointArea": "640 428",
+    "FocalPlaneAFPointLocation1": "320 240",
+    "AFAreaModeSetting": "Wide",
+    "AFTracking": "Off"
+  },
+  "expected": {
+    "frame": {
+      "width": 6192,
+      "height": 4128
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3096,
+        "y": 2064,
+        "width": 135,
+        "height": 138,
+        "primary": true
+      }
+    ]
+  }
+}

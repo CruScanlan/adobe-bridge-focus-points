@@ -10,8 +10,9 @@
 <body>
     <div id="app">
         <div id="stage">
-            <!-- Preview image; the SVG overlay sits on top, sharing a viewBox
-                 in image-pixel space so AF boxes map 1:1 regardless of zoom. -->
+            <!-- Preview image; the SVG overlay sits on top. Its viewBox is the
+                 delegate's frame, scaled to fit and centred on the preview, so
+                 AF boxes line up whatever the preview's pixel size or zoom. -->
             <img id="preview" alt=""/>
             <svg id="overlay" preserveAspectRatio="xMidYMid meet"></svg>
             <div id="placeholder">Select a photo in Bridge</div>

@@ -1,0 +1,42 @@
+{
+  "file": "pixls/nikon-z6.NEF",
+  "source": "https://raw.pixls.us/getfile.php/3587/nice/Nikon - Z 6 - 12bit 12bit compressed (3:2).NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON Z 6",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "NIKKOR Z 24-70mm f/4 S",
+    "FocalLength": "52.0 mm",
+    "FNumber": 6.7,
+    "ExposureTime": 1,
+    "ISO": 100,
+    "FocusMode": "AF-C",
+    "AFAreaMode": "Single",
+    "FocalLengthIn35mmFormat": "52 mm",
+    "AFAreaXPosition": 3024,
+    "AFAreaYPosition": 1160,
+    "AFAreaWidth": 285,
+    "AFAreaHeight": 308,
+    "AFImageWidth": 6048,
+    "AFImageHeight": 4024,
+    "CropHiSpeed": "FX Uncropped (6064x4040 cropped to 6064x4040 at pixel 0,0)",
+    "FocusDistance": "0.807 m"
+  },
+  "expected": {
+    "frame": {
+      "width": 6048,
+      "height": 4024
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3024,
+        "y": 1160,
+        "width": 285,
+        "height": 308,
+        "primary": true
+      }
+    ]
+  }
+}

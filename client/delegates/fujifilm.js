@@ -4,32 +4,34 @@
  * Source: reference/focuspoints.lrplugin/FujifilmDelegates.lua  (Apache-2.0,
  * © Whizzbang Inc; maintenance © 2026 Karsten Gieselmann). Ported with
  * attribution. This is pure coordinate math — no I/O, no metadata parsing
- * (ExifTool already did that). Given the tag table and the dimensions of the
- * image we are going to display, it returns AF boxes in *display* pixels.
+ * (ExifTool already did that). Given the tag table it returns AF boxes in the
+ * frame the tags themselves describe.
  *
  * Fuji specifics (see project.md §5):
  *  - `FocusPixel` is a single (x, y) in the coordinate system of the embedded
- *    JPEG, whose size is reported by ExifImageWidth/ExifImageHeight.
- *  - The transform is a pure scale from that system to the displayed image:
- *      xScale = displayW / ExifImageWidth,  yScale = displayH / ExifImageHeight
- *  - This reference is lost on RAF->DNG conversion, so callers must feed
- *    straight-out-of-camera RAFs (or their OOC JPEG). See modelSupported/
- *    makerNotesFound for the DNG guard.
+ *    JPEG, whose size is reported by ExifImageWidth/ExifImageHeight. That is
+ *    the frame returned; the panel scales it onto whatever it displays.
+ *  - This reference is lost on RAF->DNG conversion, so only straight-out-of-
+ *    camera RAFs (or their OOC JPEG) work. See makerNotesFound.
  */
 'use strict';
 
-// Point-type vocabulary, mirrors DefaultDelegates.lua.
-const POINTTYPE = {
-  AF_FOCUS_PIXEL: 'af_focus_pixel',         // small box around the focus pixel
-  AF_FOCUS_PIXEL_BOX: 'af_focus_pixel_box', // medium/large box with centre dot
-  FACE: 'face',                             // detected face / subject box
-  CROP: 'crop',                             // digital tele-converter crop area
-};
+const { POINTTYPE, DEFAULT_BOX_FRACTION, shootingBasics, joinInfo } = require('./common.js');
 
-// Box-size scaling factors, mirrors FocusPointPrefs.focusBoxSize { 0, .04, .1 }.
-// Default is medium, as in the Lr plugin (initfocusBoxSize = medium). Used as a
-// fallback when the camera's real AF-frame size is unavailable.
-const FOCUS_BOX_SIZE = { small: 0, medium: 0.04, large: 0.1 };
+// exiftool tags this delegate reads.
+const TAGS = [
+  'FocusPixel', 'ExifImageWidth', 'ExifImageHeight',
+  'FacesDetected', 'FacesPositions', 'FaceElementPositions', 'FaceElementTypes',
+  'CropSize', 'CropTopLeft', 'RawImageAspectRatio',
+  'InternalSerialNumber', 'FocusMode2', 'AFMode',
+  'AFAreaPointSize', 'AFAreaZoneSize',
+];
+
+function matches(tags) {
+  return String(tags.Make || '').toUpperCase().indexOf('FUJI') !== -1;
+}
+
+const NOT_OOC_MESSAGE = 'no usable maker notes (DNG/converted?) — needs OOC RAF/JPEG';
 
 // Real in-camera AF-frame size (approximation). Fuji records only an ordinal,
 // `AFAreaPointSize` 1..7 for Single Point — NOT a pixel size — and neither the
@@ -62,16 +64,13 @@ function split2(value) {
 /**
  * Compute AF visualisation boxes for a Fuji file.
  *
- * @param {object} tags      flat tag map from exiftool (-s -json keys)
- * @param {object} display   { width, height } of the image being rendered.
- *                           For the v1 slice this is the embedded preview's
- *                           size (== ExifImageWidth/Height, so scale == 1).
- * @param {object} [opts]
- * @param {number} [opts.boxSize=FOCUS_BOX_SIZE.medium]
- * @returns {{points: Array, scale: {x:number,y:number}, focusPixel: {x:number,y:number}}|null}
+ * @param {object} tags  flat tag map from exiftool (-s -json keys)
+ * @returns {{frame: {width:number,height:number}, points: Array}|{points: Array, message: string}|null}
  */
-function getAfPoints(tags, display, opts = {}) {
-  const boxSize = opts.boxSize !== undefined ? opts.boxSize : FOCUS_BOX_SIZE.medium;
+function getAfPoints(tags) {
+  if (!makerNotesFound(tags)) return { points: [], message: NOT_OOC_MESSAGE };
+  // In manual focus FocusPixel is only where the focus frame was parked.
+  if (tags.FocusMode2 === 'AF-M' || tags.FocusMode === 'Manual') return { points: [], message: 'manual focus' };
 
   // --- primary focus point ---------------------------------------------------
   const focusPixel = tags['FocusPixel'];
@@ -89,43 +88,30 @@ function getAfPoints(tags, display, opts = {}) {
   const exifW = parseFloat(tags['ExifImageWidth']);
   const exifH = parseFloat(tags['ExifImageHeight']);
   if (!Number.isFinite(exifW) || !Number.isFinite(exifH)) {
-    // Caller should have already rejected non-OOC sources; signal the miss.
-    return { points: [], scale: null, focusPixel: { x, y }, notOoc: true };
+    return { points: [], message: NOT_OOC_MESSAGE };
   }
 
-  const xScale = display.width / exifW;
-  const yScale = display.height / exifH;
-
-  const result = {
-    focusPixel: { x, y },
-    scale: { x: xScale, y: yScale },
-    points: [],
-  };
+  // Points are returned in the ExifImage* frame itself.
+  const result = { frame: { width: exifW, height: exifH }, points: [] };
 
   // Primary point: a square box centred on the (scaled) focus pixel. We size it
   // from the camera's real Single-Point AF frame (AFAreaPointSize) when present,
-  // falling back to the fixed boxSize fraction otherwise. The box lives in the
+  // falling back to the default fraction otherwise. The box lives in the
   // ExifImage* frame, so the side is a fraction of that frame's short side.
   const areaMode = String(tags['AFAreaMode'] || tags['AFMode'] || '');
   const ptSizeOrd = parseInt(tags['AFAreaPointSize'], 10);
-  let sideFraction = boxSize;
-  let cameraSized = false;
+  let sideFraction = DEFAULT_BOX_FRACTION;
   if (/single/i.test(areaMode) && AF_POINT_SIZE_FRACTION[ptSizeOrd] !== undefined) {
     sideFraction = AF_POINT_SIZE_FRACTION[ptSizeOrd];
-    cameraSized = true;
   }
-  const side = Math.min(display.width, display.height) * sideFraction;
+  const side = Math.min(exifW, exifH) * sideFraction;
   result.points.push({
-    pointType: sideFraction === FOCUS_BOX_SIZE.small
-      ? POINTTYPE.AF_FOCUS_PIXEL
-      : POINTTYPE.AF_FOCUS_PIXEL_BOX,
-    x: x * xScale,
-    y: y * yScale,
+    pointType: POINTTYPE.AF_FOCUS_PIXEL_BOX,
+    x: x,
+    y: y,
     width: side,
     height: side,
     primary: true,
-    cameraSized: cameraSized,
-    afAreaPointSize: Number.isFinite(ptSizeOrd) ? ptSizeOrd : null,
   });
 
   // --- detected faces (FacesDetected / FacesPositions) -----------------------
@@ -133,24 +119,24 @@ function getAfPoints(tags, display, opts = {}) {
   if (facesDetected !== undefined && String(facesDetected) !== '0') {
     const coords = split(tags['FacesPositions']);
     const n = parseInt(facesDetected, 10);
-    if (coords) pushBoxesFromCorners(result.points, coords, n, xScale, yScale, POINTTYPE.FACE);
+    if (coords) pushBoxesFromCorners(result.points, coords, n, POINTTYPE.FACE);
   }
 
   // --- subject detection (FaceElementPositions, exiftool >= 12.44) -----------
   const subjCoords = split(tags['FaceElementPositions']);
   if (subjCoords) {
     const n = Math.floor(subjCoords.length / 4);
-    pushBoxesFromCorners(result.points, subjCoords, n, xScale, yScale, POINTTYPE.FACE);
+    pushBoxesFromCorners(result.points, subjCoords, n, POINTTYPE.FACE);
   }
 
   // --- digital tele-converter crop area (CropSize/CropTopLeft, >= 12.82) -----
   const cropSize = split(tags['CropSize']);
   const cropTopLeft = split(tags['CropTopLeft']);
   if (cropSize && cropTopLeft) {
-    const x1 = parseFloat(cropTopLeft[0]) * xScale;
-    const y1 = parseFloat(cropTopLeft[1]) * yScale;
-    const x2 = (parseFloat(cropSize[0]) + parseFloat(cropTopLeft[0])) * xScale;
-    const y2 = (parseFloat(cropSize[1]) + parseFloat(cropTopLeft[1])) * yScale;
+    const x1 = parseFloat(cropTopLeft[0]);
+    const y1 = parseFloat(cropTopLeft[1]);
+    const x2 = (parseFloat(cropSize[0]) + parseFloat(cropTopLeft[0]));
+    const y2 = (parseFloat(cropSize[1]) + parseFloat(cropTopLeft[1]));
     result.points.push({
       pointType: POINTTYPE.CROP,
       x: (x1 + x2) / 2,
@@ -173,10 +159,10 @@ function getAfPoints(tags, display, opts = {}) {
         else { ch = exifH; cw = exifH * targetR; }                  // trim sides
         result.points.push({
           pointType: POINTTYPE.CROP,
-          x: (exifW / 2) * xScale,
-          y: (exifH / 2) * yScale,
-          width: cw * xScale,
-          height: ch * yScale,
+          x: (exifW / 2),
+          y: (exifH / 2),
+          width: cw,
+          height: ch,
         });
       }
     }
@@ -189,14 +175,14 @@ function getAfPoints(tags, display, opts = {}) {
  * Push centre/size boxes built from flat [x1 y1 x2 y2, ...] corner quads.
  * Mirrors the face/subject loops in the Lua delegate.
  */
-function pushBoxesFromCorners(out, coords, count, xScale, yScale, pointType) {
+function pushBoxesFromCorners(out, coords, count, pointType) {
   for (let i = 0; i < count; i++) {
     const b = 4 * i;
     if (coords[b + 3] === undefined) break;
-    const x1 = parseFloat(coords[b + 0]) * xScale;
-    const y1 = parseFloat(coords[b + 1]) * yScale;
-    const x2 = parseFloat(coords[b + 2]) * xScale;
-    const y2 = parseFloat(coords[b + 3]) * yScale;
+    const x1 = parseFloat(coords[b + 0]);
+    const y1 = parseFloat(coords[b + 1]);
+    const x2 = parseFloat(coords[b + 2]);
+    const y2 = parseFloat(coords[b + 3]);
     out.push({
       pointType,
       x: (x1 + x2) / 2,
@@ -207,33 +193,37 @@ function pushBoxesFromCorners(out, coords, count, xScale, yScale, pointType) {
   }
 }
 
-/** modelSupported: Fuji delegate supports the entire X/GFX line. */
-function modelSupported(/* model */) {
-  return true;
-}
-
 /**
  * makerNotesFound: true when the file has Fuji maker notes AND is not a DNG
  * (Fuji DNGs lose/corrupt the ExifImageWidth/Height reference). Mirrors
  * FujifilmDelegates.makerNotesFound.
  */
-function makerNotesFound(tags, filePath) {
+function makerNotesFound(tags) {
   if (tags['InternalSerialNumber'] === undefined) return false;
-  if (filePath && /\.dng$/i.test(filePath)) return false;
+  if (String(tags['FileType'] || '').toUpperCase() === 'DNG') return false;
   return true;
 }
 
-/** manualFocusUsed: no focus point to draw if manual focus was used. */
-function manualFocusUsed(tags) {
-  const mode = tags['FocusMode2'] || tags['FocusMode'];
-  return mode === 'Manual' || mode === 'AF-M';
+function subjectLabel(tags) {
+  const types = String(tags.FaceElementTypes || '');
+  if (/eye/i.test(types)) return 'Eye';
+  if (/face/i.test(types)) return 'Face';
+  if (tags.FacesDetected && String(tags.FacesDetected) !== '0') return 'Face';
+  return '';
 }
 
-module.exports = {
-  getAfPoints,
-  modelSupported,
-  makerNotesFound,
-  manualFocusUsed,
-  POINTTYPE,
-  FOCUS_BOX_SIZE,
-};
+/** e.g.  X-H2 · 56mm · ƒ/1.2 · 1/250s · ISO 400 · AF-C · SP 5 · Eye */
+function formatShootingInfo(tags) {
+  const parts = shootingBasics(tags);
+  parts.push(tags.FocusMode2 || tags.AFMode || tags.FocusMode);
+  // AF area + size ordinal — handy for eyeballing the camera-sized box.
+  if (/single/i.test(String(tags.AFAreaMode || '')) && tags.AFAreaPointSize != null) {
+    parts.push('SP ' + tags.AFAreaPointSize);
+  } else {
+    parts.push(tags.AFAreaMode);
+  }
+  parts.push(subjectLabel(tags));
+  return joinInfo(parts);
+}
+
+module.exports = { matches, TAGS, getAfPoints, formatShootingInfo };

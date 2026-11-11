@@ -1,0 +1,44 @@
+{
+  "file": "DSCF3292.RAF",
+  "source": "Cru's own",
+  "tags": {
+    "Make": "FUJIFILM",
+    "Model": "X-H2",
+    "FileType": "RAF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "XF70-300mmF4-5.6 R LM OIS WR",
+    "FocalLength": "300.0 mm",
+    "FNumber": 10,
+    "ExposureTime": "1/1250",
+    "ISO": 400,
+    "FocusMode": "Auto",
+    "AFAreaMode": "Single Point",
+    "FocusPixel": "2822 1318",
+    "ExifImageWidth": 4416,
+    "ExifImageHeight": 2944,
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "3:2",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode2": "AF-S",
+    "AFMode": "Single Point",
+    "AFAreaPointSize": 6,
+    "AFAreaZoneSize": "n/a",
+    "FocalLengthIn35mmFormat": "450 mm"
+  },
+  "expected": {
+    "frame": {
+      "width": 4416,
+      "height": 2944
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 2822,
+        "y": 1318,
+        "width": 412.16,
+        "height": 412.16,
+        "primary": true
+      }
+    ]
+  }
+}

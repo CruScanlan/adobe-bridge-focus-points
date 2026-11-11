@@ -1,0 +1,44 @@
+{
+  "file": "pixls/sony-a7m4.ARW",
+  "source": "https://raw.pixls.us/getfile.php/6936/nice/Sony - ILCE-7M4 - 14bit (3:2).ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7M4",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "FE 50mm F2.5 G",
+    "FocalLength": "50.0 mm",
+    "FNumber": 5.6,
+    "ExposureTime": "1/80",
+    "ISO": 640,
+    "FocusMode": "AF-C",
+    "AFAreaMode": "Tracking",
+    "ExifImageWidth": 4608,
+    "ExifImageHeight": 3072,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "75 mm",
+    "FocusLocation": "4608 3072 2275 1516",
+    "FocusFrameSize": "230x231",
+    "FullImageSize": "4608x3072",
+    "FocalPlaneAFPointsUsed": 0,
+    "AFAreaModeSetting": "Wide",
+    "AFTracking": "Lock On AF",
+    "APS-CSizeCapture": "On"
+  },
+  "expected": {
+    "frame": {
+      "width": 4608,
+      "height": 3072
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2275,
+        "y": 1516,
+        "width": 230,
+        "height": 231,
+        "primary": true
+      }
+    ]
+  }
+}

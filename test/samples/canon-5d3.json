@@ -1,0 +1,46 @@
+{
+  "file": "pixls/canon-5d3.CR2",
+  "source": "https://raw.pixls.us/getfile.php/771/nice/Canon - EOS 5D Mark III.CR2",
+  "tags": {
+    "Make": "Canon",
+    "Model": "Canon EOS 5D Mark III",
+    "FileType": "CR2",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "EF70-200mm f/2.8L IS II USM",
+    "FocalLength": "70.0 mm",
+    "FNumber": 2.8,
+    "ExposureTime": "1/125",
+    "ISO": 200,
+    "FocusMode": "One-shot AF",
+    "AFAreaMode": "Single-point AF",
+    "ExifImageWidth": 5760,
+    "ExifImageHeight": 3840,
+    "AFImageWidth": 5760,
+    "AFImageHeight": 3840,
+    "AFPointsSelected": 30,
+    "AFPointsInFocus": 30,
+    "CanonImageWidth": 5760,
+    "CanonImageHeight": 3840,
+    "AFAreaWidths": "190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190 190",
+    "AFAreaHeights": "188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188 188",
+    "AFAreaXPositions": "288 0 -288 1520 1232 944 639 288 0 -1520 -1232 -944 -639 -288 1520 1232 944 639 288 0 -1520 -1232 -944 -639 -288 1520 1232 944 639 288 0 -1520 -1232 -944 -639 -288 1520 1232 944 639 288 0 -1520 -1232 -944 -639 -288 1520 1232 944 639 288 0 -1520 -1232 -944 -639 -288 288 0 -288",
+    "AFAreaYPositions": "-648 -648 -648 -433 -433 -433 -433 -433 -433 -433 -433 -433 -433 -433 -215 -215 -215 -215 -215 -215 -215 -215 -215 -215 -215 0 0 0 0 0 0 0 0 0 0 0 215 215 215 215 215 215 215 215 215 215 215 433 433 433 433 433 433 433 433 433 433 433 648 648 648",
+    "CameraType": "EOS High-end"
+  },
+  "expected": {
+    "frame": {
+      "width": 5760,
+      "height": 3840
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2880,
+        "y": 1920,
+        "width": 190,
+        "height": 188,
+        "primary": true
+      }
+    ]
+  }
+}

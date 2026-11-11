@@ -1,0 +1,47 @@
+{
+  "file": "pixls/canon-6d2.CR2",
+  "source": "https://raw.pixls.us/getfile.php/1625/nice/Canon - EOS 6D Mark II - RAW (3:2).CR2",
+  "tags": {
+    "Make": "Canon",
+    "Model": "Canon EOS 6D Mark II",
+    "FileType": "CR2",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "18-35mm",
+    "FocalLength": "35.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/100",
+    "ISO": 100,
+    "FocusMode": "One-shot AF",
+    "AFAreaMode": "Flexizone Single",
+    "ExifImageWidth": 6240,
+    "ExifImageHeight": 4160,
+    "InternalSerialNumber": "(redacted)",
+    "AFImageWidth": 6240,
+    "AFImageHeight": 4160,
+    "AFPointsSelected": 0,
+    "AFPointsInFocus": 0,
+    "CanonImageWidth": 6240,
+    "CanonImageHeight": 4160,
+    "AFAreaWidths": "552 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaHeights": "450 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaXPositions": "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaYPositions": "832 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "CameraType": "EOS High-end"
+  },
+  "expected": {
+    "frame": {
+      "width": 6240,
+      "height": 4160
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3120,
+        "y": 1248,
+        "width": 552,
+        "height": 450,
+        "primary": true
+      }
+    ]
+  }
+}

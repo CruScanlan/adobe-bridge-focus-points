@@ -1,0 +1,38 @@
+{
+  "file": "pixls/olympus-e-m5iii.ORF",
+  "source": "https://raw.pixls.us/getfile.php/3573/nice/Olympus - E-M5 Mark III - 16bit (4:3).ORF",
+  "tags": {
+    "Make": "OLYMPUS CORPORATION",
+    "Model": "E-M5MarkIII",
+    "FileType": "ORF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "OLYMPUS M.12-100mm F4.0",
+    "FocalLength": "57.0 mm",
+    "FNumber": 5.6,
+    "ExposureTime": "1/15",
+    "ISO": 200,
+    "FocusMode": "Single AF; S-AF, Imager AF",
+    "FacesDetected": "0 0 0",
+    "InternalSerialNumber": "(redacted)",
+    "FocusDistance": "0.805 m",
+    "AFPointSelected": "0.4265625 0.29375 0.4265625 0.29375",
+    "AFAreas": "(99,66)-(118,84)",
+    "StackedImage": "Tripod high resolution"
+  },
+  "expected": {
+    "frame": {
+      "width": 640,
+      "height": 480
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 273,
+        "y": 141,
+        "width": 19.2,
+        "height": 19.2,
+        "primary": true
+      }
+    ]
+  }
+}

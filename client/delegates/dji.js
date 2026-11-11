@@ -14,6 +14,9 @@
  */
 'use strict';
 
+// exiftool tags this delegate reads (35mm-equivalent focal + XMP-drone-dji).
+const TAGS = ['FocalLengthIn35mmFormat', 'RelativeAltitude', 'GimbalPitchDegree'];
+
 // Camera model codes as reported in EXIF Make/Model. DJI writes internal
 // codes (FC****); map the ones we can name to something readable. Unknown
 // codes fall through to the raw code, which is still identifiable.
@@ -47,8 +50,8 @@ function modelName(tags) {
  * is never a box to draw. Returning an empty point list (not null) lets the
  * panel render the preview + info bar and report the absence honestly.
  */
-function getAfPoints(/* tags, display */) {
-  return { points: [], scale: null, noAfData: true };
+function getAfPoints(/* tags */) {
+  return { points: [] };
 }
 
 // Status-line text for the empty result — more honest than the generic
@@ -76,27 +79,4 @@ function formatShootingInfo(tags) {
   return parts.join('  ·  ');
 }
 
-/** All DJI aircraft/handhelds get the same (point-less) treatment. */
-function modelSupported(/* model */) {
-  return true;
-}
-
-/** DNG *is* DJI's straight-out-of-camera raw format — always acceptable. */
-function makerNotesFound(tags /*, filePath */) {
-  return matches(tags);
-}
-
-/** No focus-mode metadata is decoded either; never claim manual focus. */
-function manualFocusUsed(/* tags */) {
-  return false;
-}
-
-module.exports = {
-  matches,
-  getAfPoints,
-  modelSupported,
-  makerNotesFound,
-  manualFocusUsed,
-  formatShootingInfo,
-  NO_AF_MESSAGE,
-};
+module.exports = { matches, TAGS, getAfPoints, formatShootingInfo, NO_AF_MESSAGE };

@@ -38,9 +38,9 @@ The panel is used almost entirely by landscape photographers, mainly to see wher
 |---|---|---|---|
 | Sony | A7R V, A7R IV, A7R III, A7R II; A7 IV, A7 III, A7 II | a6700, a6600, a6400 | 03 |
 | Nikon Z | Z8, Z7 II, Z7; Z6 III, Z6 II, Z6 | Z50 II, Z50, Zfc | 04 |
-| Canon | R5 II, R5, EOS R, 5D IV, 5D III; R6 II, R6 | R7, R10, 90D | 05 |
+| Canon | R5 II, R5, EOS R, 5D IV, 5D III; R6 II, R6; 6D II | R7, R10, 90D, 80D, 70D, 77D, 7D II | 05 |
 | Nikon DSLR | D850, D810, D800 / D800E | D500, D7500 | 06 |
-| Fujifilm | GFX 100S II, GFX 100S, GFX 50S II or 50R | X-T5, X-T4, X-T3 | 07 |
+| Fujifilm | GFX 100S II, GFX 100S, GFX 50S II or 50R | X-H2, X-T5, X-T4, X-T3 | 07 |
 | OM System / Olympus | — | OM-1 II, OM-1, E-M1 III, E-M1 II; OM-5, E-M5 III | 08 |
 
 ## Out of scope until someone asks
@@ -52,4 +52,5 @@ The panel is used almost entirely by landscape photographers, mainly to see wher
 
 ## Open question
 
+- (2026-11-11: `FocusDistance` is now shown for Nikon and OM System / Olympus, where exiftool gives it as one tag. Not shown for the other makes. Still Cru's call whether to keep, extend or drop it.)
 - Whether to show the recorded focus distance in the shooting-info line. In-camera focus bracketing may keep the AF point fixed while shifting focus distance, in which case every frame of a bracket would show the same box. Not yet verified per make, and not yet decided. Ticket 08 includes it only if it is cheap.

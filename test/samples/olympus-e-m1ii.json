@@ -1,0 +1,26 @@
+{
+  "file": "pixls/olympus-e-m1ii.ORF",
+  "source": "https://raw.pixls.us/getfile.php/1993/nice/Olympus - E-M1MarkII - 16bit (4:3).ORF",
+  "tags": {
+    "Make": "OLYMPUS CORPORATION",
+    "Model": "E-M1MarkII",
+    "FileType": "ORF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "OLYMPUS M.12-40mm F2.8",
+    "FocalLength": "28.0 mm",
+    "FNumber": 2.8,
+    "ExposureTime": "1/40",
+    "ISO": 400,
+    "FocusMode": "MF; S-AF, MF",
+    "FacesDetected": "0 0 0",
+    "InternalSerialNumber": "(redacted)",
+    "FocusDistance": "0.48 m",
+    "AFPointSelected": "undef undef undef undef",
+    "AFAreas": "none",
+    "StackedImage": "No"
+  },
+  "expected": {
+    "message": "manual focus",
+    "points": []
+  }
+}

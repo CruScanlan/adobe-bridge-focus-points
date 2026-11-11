@@ -1,0 +1,32 @@
+{
+  "file": "pixls/fuji-x-t5-mf.RAF",
+  "source": "https://raw.pixls.us/getfile.php/7271/nice/Fujifilm - X-T5 - 14bit 14bit compressed (16:9).RAF",
+  "tags": {
+    "Make": "FUJIFILM",
+    "Model": "X-T5",
+    "FileType": "RAF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "XF70-300mmF4-5.6 R LM OIS WR",
+    "FocalLength": "222.5 mm",
+    "FNumber": 5.6,
+    "ExposureTime": "1/120",
+    "ISO": 400,
+    "FocusMode": "Manual",
+    "AFAreaMode": "Single Point",
+    "FocusPixel": "2207 1472",
+    "ExifImageWidth": 4416,
+    "ExifImageHeight": 2944,
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "3:2",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode2": "AF-M",
+    "AFMode": "No",
+    "AFAreaPointSize": "n/a",
+    "AFAreaZoneSize": "n/a",
+    "FocalLengthIn35mmFormat": "334 mm"
+  },
+  "expected": {
+    "message": "manual focus",
+    "points": []
+  }
+}

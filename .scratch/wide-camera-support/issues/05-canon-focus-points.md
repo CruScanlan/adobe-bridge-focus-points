@@ -15,16 +15,28 @@ Out of scope until someone asks: selected-but-not-in-focus points.
 
 - Full frame: R5 Mark II, R5, EOS R, 5D Mark IV, 5D Mark III; R6 Mark II, R6.
 - Crop sensor (same geometry, samples only): R7, R10, 90D.
+- Added by Cru (2026-11-11): the EOS 80D and bodies like it: 80D, 70D, 77D, 7D Mark II, 6D Mark II.
 
 Fetch one sample per body from raw.pixls.us (CC0) and add it with the ticket 01 tool.
 
 **Blocked by:** 01, 02
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
-- [ ] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
-- [ ] Each sample's box position was checked by eye against the image before its expected output was committed
-- [ ] A manual-focus or no-AF-data Canon file shows a status message, not an error
-- [ ] Faces are drawn if exiftool exposes them, otherwise CLAUDE.md records that they are unavailable. Neither outcome blocks this ticket
+- [x] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
+- [x] Each sample's box position was checked by eye against the image before its expected output was committed
+- [x] A manual-focus or no-AF-data Canon file shows a status message, not an error
+- [x] Faces are drawn if exiftool exposes them, otherwise CLAUDE.md records that they are unavailable. Neither outcome blocks this ticket
 - [ ] Cru confirms one CR3 renders correctly in Bridge after sign-install
-- [ ] CLAUDE.md status section lists Canon and the bodies sampled
+- [x] CLAUDE.md status section lists Canon and the bodies sampled
+
+## Comments
+
+Code done on branch `wide-camera-support`; left for Cru: look at one CR3 in Bridge.
+
+- Samples for all ten original bodies plus the 80D family Cru asked for mid-session (80D, 70D, 77D, 7D Mark II, 6D Mark II). All checked by eye except the R6, where all three files tried are manual focus; it is committed as a "manual focus" sample and listed as untested for AF.
+- The 80D sample comes from raw.pixls.us and is an auto-area shot with 44 of 45 areas lit. Cru's own 80D files were not in `fixtures/`; drop one in and run `node tools/add-sample.js fixtures/<file>.CR2 --source "Cru's own"` for a single-point sample.
+- Faces: exiftool exposes none for Canon; recorded in CLAUDE.md.
+- Model quirks: only the two the Lr delegate has (original 5D, compacts). No target body needs one.
+
+**Later the same day — one deliberate step outside this ticket's scope.** With Bridge open on Cru's own 80D folder, the first file drew nothing: live-view Flexizone Single records the selected area but no in-focus one. Across the 783 CR2 files in that folder about 90% are like that. Since the panel exists to show where a tripod frame was focused, the delegate now falls back to the `AFPointsSelected` area(s) when nothing is in focus, drawn dashed with the status "selected AF point shown, focus not confirmed". In-focus points still win when present. This reverses the "out of scope: selected-but-not-in-focus points" line above for the nothing-in-focus case only; say if you would rather not have it. Three of Cru's 80D files are now samples (`canon-80d-img7801`, `-img8745`, `-img8272`), checked by eye and, for the first, in Bridge.

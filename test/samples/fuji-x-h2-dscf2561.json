@@ -1,0 +1,51 @@
+{
+  "file": "DSCF2561.RAF",
+  "source": "Cru's own",
+  "tags": {
+    "Make": "FUJIFILM",
+    "Model": "X-H2",
+    "FileType": "RAF",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "XF16-80mmF4 R OIS WR",
+    "FocalLength": "80.0 mm",
+    "FNumber": 9,
+    "ExposureTime": "1/400",
+    "ISO": 160,
+    "FocusMode": "Auto",
+    "AFAreaMode": "Single Point",
+    "FocusPixel": "1900 1317",
+    "ExifImageWidth": 4416,
+    "ExifImageHeight": 2944,
+    "FacesDetected": 0,
+    "RawImageAspectRatio": "16:9",
+    "InternalSerialNumber": "(redacted)",
+    "FocusMode2": "AF-S",
+    "AFMode": "Single Point",
+    "AFAreaPointSize": 3,
+    "AFAreaZoneSize": "n/a",
+    "FocalLengthIn35mmFormat": "120 mm"
+  },
+  "expected": {
+    "frame": {
+      "width": 4416,
+      "height": 2944
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 1900,
+        "y": 1317,
+        "width": 235.52,
+        "height": 235.52,
+        "primary": true
+      },
+      {
+        "pointType": "crop",
+        "x": 2208,
+        "y": 1472,
+        "width": 4416,
+        "height": 2484
+      }
+    ]
+  }
+}

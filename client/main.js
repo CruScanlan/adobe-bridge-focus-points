@@ -1,8 +1,10 @@
 /*
  * main.js - the Node/JS panel layer.
  *
- * Flow: ExtendScript reports selected path -> spawn exiftool -> Fuji delegate
- * computes AF box(es) -> SVG overlay draws them.
+ * Flow: ExtendScript reports selected path -> exiftool reads the tags -> the
+ * registry (client/delegates/index.js) picks a delegate -> it computes AF
+ * box(es) in its own frame -> the SVG overlay draws them over the preview.
+ * Nothing here knows about any manufacturer.
  *
  * Defensive bootstrap: nothing here is allowed to throw to the top level. If
  * the Node runtime or CSInterface isn't present (or a module fails to load),
@@ -79,39 +81,7 @@
         });
     }
 
-    // --- shooting-info readout ------------------------------------------------
-    // A compact "what/how it was shot" line for the bottom bar, e.g.
-    //   X-H2 · 56mm · ƒ/1.2 · 1/250s · ISO 400 · AF-C · Eye
-    function subjectLabel(tags) {
-        var types = String(tags.FaceElementTypes || '');
-        if (/eye/i.test(types)) return 'Eye';
-        if (/face/i.test(types)) return 'Face';
-        if (tags.FacesDetected && String(tags.FacesDetected) !== '0') return 'Face';
-        return '';
-    }
-
-    function formatShootingInfo(tags) {
-        var parts = [];
-        if (tags.Model) parts.push(tags.Model);
-        if (tags.FocalLength) {
-            parts.push(String(tags.FocalLength).replace(/\s*mm$/i, '').replace(/\.0$/, '') + 'mm');
-        }
-        if (tags.FNumber != null && tags.FNumber !== '') parts.push('ƒ/' + tags.FNumber);
-        if (tags.ExposureTime != null && tags.ExposureTime !== '') parts.push(tags.ExposureTime + 's');
-        if (tags.ISO != null && tags.ISO !== '') parts.push('ISO ' + tags.ISO);
-        var mode = tags.FocusMode2 || tags.AFMode || tags.FocusMode;
-        if (mode) parts.push(mode);
-        // AF area + size ordinal — handy for eyeballing the camera-sized box.
-        if (/single/i.test(String(tags.AFAreaMode || '')) && tags.AFAreaPointSize != null) {
-            parts.push('SP ' + tags.AFAreaPointSize);
-        } else if (tags.AFAreaMode) {
-            parts.push(tags.AFAreaMode);
-        }
-        var subj = subjectLabel(tags);
-        if (subj) parts.push(subj);
-        return parts.join('  ·  ');
-    }
-
+    // --- shooting-info readout (text comes from the delegate) -----------------
     function setShootingInfo(text) {
         if (els.shootinfo) els.shootinfo.textContent = text || '';
     }
@@ -131,27 +101,20 @@
     }
 
     // --- real pipeline (Node available) ---------------------------------------
-    var path, exiftool, fuji, dji, csInterface, EXT_ROOT;
+    var path, exiftool, registry, csInterface, EXT_ROOT;
     try {
         path = require('path');
         csInterface = new CSInterface();
         EXT_ROOT = csInterface.getSystemPath(SystemPath.EXTENSION);
         exiftool = require(path.join(EXT_ROOT, 'client', 'lib', 'exiftool.js'));
-        fuji = require(path.join(EXT_ROOT, 'client', 'delegates', 'fujifilm.js'));
-        dji = require(path.join(EXT_ROOT, 'client', 'delegates', 'dji.js'));
+        registry = require(path.join(EXT_ROOT, 'client', 'delegates', 'index.js'));
     } catch (err) {
         setStatus('Init failed: ' + (err && err.message ? err.message : err), 'error');
         return;
     }
 
     var currentPath = null;
-
-    function delegateFor(tags) {
-        var make = (tags.Make || '').toUpperCase();
-        if (make.indexOf('FUJI') !== -1) return fuji;
-        if (dji.matches(tags)) return dji;
-        return null;
-    }
+    var TAGS = registry.allTags();
 
     function clearOverlay() {
         while (els.overlay.firstChild) els.overlay.removeChild(els.overlay.firstChild);
@@ -183,9 +146,10 @@
     // Size the preview + overlay to fit the stage and rotate them together.
     // The pre-rotation box is fit so that its POST-rotation on-screen footprint
     // fits the stage: for 90/270 the footprint's width/height are swapped, so we
-    // fit against the swapped bounds. Points stay in native pixel space (the SVG
-    // viewBox), so rotating the whole container keeps each box glued to its
-    // image feature with no per-point math.
+    // fit against the swapped bounds. Points stay in the delegate's frame (the
+    // SVG viewBox, stretched over the preview whatever its pixel size), so
+    // rotating the whole container keeps each box glued to its image feature
+    // with no per-point math.
     function layout() {
         if (!nativeW || !nativeH) return;
         var swap = (curOri.rotate === 90 || curOri.rotate === 270);
@@ -200,14 +164,23 @@
             el.style.height = h + 'px';
             el.style.transform = transform;
         });
-        els.overlay.setAttribute('viewBox', '0 0 ' + nativeW + ' ' + nativeH);
+        var frame = frameOf(curResult);
+        els.overlay.setAttribute('viewBox', '0 0 ' + frame.width + ' ' + frame.height);
         updateToggleAvail(curResult);
         renderRects(curResult);
+    }
+
+    // The pixel space the points are in: the delegate's frame, or the preview's
+    // own pixels when there is none.
+    function frameOf(result) {
+        return (result && result.frame) || { width: nativeW, height: nativeH };
     }
 
     function renderRects(result) {
         clearOverlay();
         if (!result || !result.points || !result.points.length) return;
+        var frame = frameOf(result);
+        var c = Math.min(frame.width, frame.height) * 0.005; // centre-cross arm
 
         result.points.forEach(function (pt) {
             if (!layerOn(layerOf(pt.pointType))) return; // layer hidden by toggle
@@ -218,11 +191,11 @@
             rect.setAttribute('y', pt.y - pt.height / 2);
             rect.setAttribute('width', pt.width);
             rect.setAttribute('height', pt.height);
+            if (pt.pointType.indexOf('selected') !== -1) kind = 'selected';
             rect.setAttribute('class', 'af-box ' + (kind === 'af' ? '' : kind));
             els.overlay.appendChild(rect);
 
             if (pt.primary) {
-                var c = 14;
                 [[pt.x - c, pt.y, pt.x + c, pt.y], [pt.x, pt.y - c, pt.x, pt.y + c]]
                     .forEach(function (l) {
                         var line = document.createElementNS(SVGNS, 'line');
@@ -250,7 +223,7 @@
         var name = filePath.split(/[\\/]/).pop();
         setStatus('Reading ' + name + '…', '');
 
-        exiftool.readFocusData(filePath).then(function (data) {
+        exiftool.readFocusData(filePath, TAGS).then(function (data) {
             // A newer selection superseded this one while exiftool was working.
             if (currentPath !== filePath) return;
 
@@ -258,13 +231,10 @@
             // No delegate is not fatal: the preview + shooting info are
             // manufacturer-agnostic, so unsupported cameras still render the
             // image — they just can't draw focus data on it.
-            var delegate = delegateFor(tags);
+            var delegate = registry.delegateFor(tags);
             setShootingInfo(delegate && delegate.formatShootingInfo
                 ? delegate.formatShootingInfo(tags)
-                : formatShootingInfo(tags));
-            if (delegate && delegate.makerNotesFound && !delegate.makerNotesFound(tags, filePath)) {
-                setStatus('No usable maker notes (DNG/converted?) — needs OOC RAF/JPEG', 'warn');
-            }
+                : registry.formatShootingInfo(tags));
             if (!data.previewUrl) {
                 setStatus('No embedded preview to display', 'error');
                 return;
@@ -274,22 +244,21 @@
                 if (currentPath !== filePath) return; // superseded during decode
                 els.placeholder.style.display = 'none';
                 // image-orientation:none -> naturalW/H are the native (un-rotated)
-                // pixel dims, the frame FocusPixel lives in. We rotate for display.
+                // pixel dims of the preview. We rotate for display.
                 nativeW = els.preview.naturalWidth;
                 nativeH = els.preview.naturalHeight;
                 curOri = orientationOf(tags);
-                var result = delegate
-                    ? delegate.getAfPoints(tags, { width: nativeW, height: nativeH })
-                    : null;
+                var result = delegate ? delegate.getAfPoints(tags) : null;
                 curResult = result;
                 layout();
                 if (!delegate) {
                     setStatus(name + ' — ' + (tags.Make || 'this camera') + ' is not supported yet', 'warn');
                 } else if (!result || !result.points.length) {
-                    var why = delegate.NO_AF_MESSAGE || 'no focus point recorded';
+                    var why = (result && result.message) || delegate.NO_AF_MESSAGE || 'no focus point recorded';
                     setStatus(name + ' — ' + why, 'warn');
                 } else {
-                    setStatus(name, 'ok');
+                    // A delegate may qualify what it drew (e.g. focus not confirmed).
+                    setStatus(result.message ? name + ' — ' + result.message : name, 'ok');
                 }
             };
             els.preview.onerror = function () { setStatus('Failed to display preview', 'error'); };
