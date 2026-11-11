@@ -69,6 +69,7 @@ client/
     dji.js                 DJI: preview + flight info, no AF data (none exists)
     sony.js                ported Sony geometry (FocusLocation)
     nikon.js               ported Nikon geometry (AF area + CropHiSpeed)
+    canon.js               ported Canon geometry (AF area lists, in-focus only)
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
 test/
   samples.test.js          `node --test`: every sample through its delegate
@@ -419,6 +420,44 @@ With subject detection on, the AF area is normally the subject's box anyway.
 | Z50 II | `nikon-z50ii`, `-16x9` (3D-tracking) | yes |
 | Z50 | `nikon-z50` (centre) | yes |
 | Zfc | `nikon-zfc` (auto-area, off-centre) | yes |
+
+**Canon** (`client/delegates/canon.js`, ported from `CanonDelegates.lua`):
+the camera lists every AF area (`AFAreaXPositions/YPositions/Widths/Heights`)
+in the `AFImageWidth x AFImageHeight` frame, measured from the frame centre
+with Y up; the delegate converts to top-left origin and draws only the areas
+named in `AFPointsInFocus`. One box gets the centre cross; several (auto-area
+on a DSLR, whole-area on an R body) are all drawn without one. The same code
+serves CR2 DSLRs and CR3 mirrorless. `FocusMode` "Manual Focus…" shows
+"manual focus". The only model quirks carried over from Lr are the original
+EOS 5D's image size and the flipped Y axis on compacts; neither is a target
+body and neither has a sample.
+
+**Faces are unavailable for Canon**: exiftool exposes no face positions for
+these bodies (only settings such as `SubjectToDetect` / `EyeDetection`), and
+the Lr plugin has none. With subject detection on, the in-focus area is the
+subject's box (see the R7 and R10 samples).
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| R5 Mark II | `canon-r5ii` (spot AF) | yes |
+| R5 | `canon-r5` (spot AF) | yes |
+| EOS R | `canon-r` (servo, live view) | yes |
+| 5D Mark IV | `canon-5d4` (single point) | yes |
+| 5D Mark III | `canon-5d3` (single point) | yes |
+| R6 Mark II | `canon-r6ii` (whole area, 7 areas) | yes |
+| R6 | `canon-r6` | manual focus only: every raw.pixls.us file tried is MF |
+| R7 | `canon-r7` (subject box) | yes |
+| R10 | `canon-r10` (portrait, subject box) | yes |
+| 90D | `canon-90d` (single point) | yes |
+| 80D | `canon-80d` (auto-area, 44 areas in focus) | yes |
+| 70D | `canon-70d` (single point) | yes |
+| 77D | `canon-77d` (auto-area, 5 areas) | yes |
+| 7D Mark II | `canon-7d2` (single point) | yes |
+| 6D Mark II | `canon-6d2` (live view) | yes |
+
+The R6 is **untested for autofocus**. The 80D sample is an auto-area shot
+(the only kind on raw.pixls.us); Cru has 80D files of his own that would make
+a better single-point sample.
 
 **Unsupported cameras degrade gracefully**: no delegate is no longer fatal —
 the panel still renders the embedded preview (or, for JPEGs with no embedded

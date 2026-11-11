@@ -21,11 +21,20 @@ Fetch one sample per body from raw.pixls.us (CC0) and add it with the ticket 01 
 
 **Blocked by:** 01, 02
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
-- [ ] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
-- [ ] Each sample's box position was checked by eye against the image before its expected output was committed
-- [ ] A manual-focus or no-AF-data Canon file shows a status message, not an error
-- [ ] Faces are drawn if exiftool exposes them, otherwise CLAUDE.md records that they are unavailable. Neither outcome blocks this ticket
+- [x] A sample is committed and passes for every target body that has a file on raw.pixls.us; any body without one is listed in CLAUDE.md as untested
+- [x] Each sample's box position was checked by eye against the image before its expected output was committed
+- [x] A manual-focus or no-AF-data Canon file shows a status message, not an error
+- [x] Faces are drawn if exiftool exposes them, otherwise CLAUDE.md records that they are unavailable. Neither outcome blocks this ticket
 - [ ] Cru confirms one CR3 renders correctly in Bridge after sign-install
-- [ ] CLAUDE.md status section lists Canon and the bodies sampled
+- [x] CLAUDE.md status section lists Canon and the bodies sampled
+
+## Comments
+
+Code done on branch `wide-camera-support`; left for Cru: look at one CR3 in Bridge.
+
+- Samples for all ten original bodies plus the 80D family Cru asked for mid-session (80D, 70D, 77D, 7D Mark II, 6D Mark II). All checked by eye except the R6, where all three files tried are manual focus; it is committed as a "manual focus" sample and listed as untested for AF.
+- The 80D sample comes from raw.pixls.us and is an auto-area shot with 44 of 45 areas lit. Cru's own 80D files were not in `fixtures/`; drop one in and run `node tools/add-sample.js fixtures/<file>.CR2 --source "Cru's own"` for a single-point sample.
+- Faces: exiftool exposes none for Canon; recorded in CLAUDE.md.
+- Model quirks: only the two the Lr delegate has (original 5D, compacts). No target body needs one.

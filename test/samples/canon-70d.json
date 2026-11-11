@@ -1,0 +1,46 @@
+{
+  "file": "pixls/canon-70d.CR2",
+  "source": "https://raw.pixls.us/getfile.php/784/nice/Canon - EOS 70D - RAW.CR2",
+  "tags": {
+    "Make": "Canon",
+    "Model": "Canon EOS 70D",
+    "FileType": "CR2",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "FocalLength": "24.0 mm",
+    "FNumber": 5.6,
+    "ExposureTime": "1/640",
+    "ISO": 100,
+    "FocusMode": "AI Focus AF",
+    "AFAreaMode": "Single-point AF",
+    "ExifImageWidth": 5472,
+    "ExifImageHeight": 3648,
+    "InternalSerialNumber": "(redacted)",
+    "AFImageWidth": 5472,
+    "AFImageHeight": 3648,
+    "CanonImageWidth": 5472,
+    "CanonImageHeight": 3648,
+    "AFAreaWidths": "229 229 229 229 229 229 229 229 229 229 229 229 229 229 229 229 229 229 229 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaHeights": "277 277 277 277 277 277 277 277 277 277 277 277 277 277 277 277 277 277 277 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaXPositions": "-1395 -897 -897 -897 -399 -399 -399 0 0 0 0 0 399 399 399 897 897 897 1395 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaYPositions": "0 401 0 -401 401 0 -401 755 401 0 -401 -755 401 0 -401 401 0 -401 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFPointsInFocus": 8,
+    "CameraType": "EOS High-end"
+  },
+  "expected": {
+    "frame": {
+      "width": 5472,
+      "height": 3648
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2736,
+        "y": 1423,
+        "width": 229,
+        "height": 277,
+        "primary": true
+      }
+    ]
+  }
+}
