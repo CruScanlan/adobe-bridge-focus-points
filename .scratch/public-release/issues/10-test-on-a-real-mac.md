@@ -22,3 +22,7 @@
 - [ ] `diagnose-mac.sh` exists and is attached to releases
 - [ ] Friend pass: screenshot + diagnostics file recorded here (macOS version, chip, Bridge version, pass/fail per check)
 - [ ] Any fix needed becomes its own ticket (and, if diagnostics can't explain it, consider the Scaleway fallback)
+
+## Comments
+
+2026-11-11: `tools/diagnose-mac.sh` written and attached to releases by the workflow (syntax-checked only; it needs a Mac to run). Everything else here needs the friend with a Mac, after the first release exists.
