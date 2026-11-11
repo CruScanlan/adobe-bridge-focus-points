@@ -1,0 +1,32 @@
+{
+  "file": "pixls/sony-a7r2.ARW",
+  "source": "https://raw.pixls.us/getfile.php/1310/nice/Sony - ILCE-7RM2 - 12bit 12bit compressed (3:2).ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7RM2",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "FE 24-70mm F2.8 GM",
+    "FocalLength": "51.0 mm",
+    "FNumber": 13,
+    "ExposureTime": "1/6",
+    "ISO": 100,
+    "FocusMode": "Manual",
+    "AFAreaMode": "Manual",
+    "ExifImageWidth": 7952,
+    "ExifImageHeight": 5304,
+    "FacesDetected": 0,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "51 mm",
+    "FocusLocation": "7952 5304 3976 2652",
+    "FullImageSize": "7952x5304",
+    "FocalPlaneAFPointsUsed": "(none)",
+    "AFAreaModeSetting": "Center",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "Off"
+  },
+  "expected": {
+    "message": "manual focus",
+    "points": []
+  }
+}

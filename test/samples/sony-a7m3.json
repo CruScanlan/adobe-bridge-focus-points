@@ -1,0 +1,44 @@
+{
+  "file": "pixls/sony-a7m3.ARW",
+  "source": "https://raw.pixls.us/getfile.php/2415/nice/Sony - ILCE-7M3 - 12bit 12bit compressed (3:2).ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7M3",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "FE 16-35mm F2.8 GM",
+    "FocalLength": "32.0 mm",
+    "FNumber": 4,
+    "ExposureTime": "1/50",
+    "ISO": 400,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Flexible Spot",
+    "ExifImageWidth": 6000,
+    "ExifImageHeight": 4000,
+    "FacesDetected": 0,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "32 mm",
+    "FocusLocation": "6000 4000 3000 2000",
+    "FullImageSize": "6000x4000",
+    "FocalPlaneAFPointsUsed": 0,
+    "AFAreaModeSetting": "Flexible Spot",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "Off"
+  },
+  "expected": {
+    "frame": {
+      "width": 6000,
+      "height": 4000
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 3000,
+        "y": 2000,
+        "width": 160,
+        "height": 160,
+        "primary": true
+      }
+    ]
+  }
+}

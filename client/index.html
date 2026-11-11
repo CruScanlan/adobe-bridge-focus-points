@@ -11,10 +11,10 @@
     <div id="app">
         <div id="stage">
             <!-- Preview image; the SVG overlay sits on top. Its viewBox is the
-                 delegate's frame, stretched over the preview, so AF boxes line
-                 up whatever the preview's pixel size or the zoom. -->
+                 delegate's frame, scaled to fit and centred on the preview, so
+                 AF boxes line up whatever the preview's pixel size or zoom. -->
             <img id="preview" alt=""/>
-            <svg id="overlay" preserveAspectRatio="none"></svg>
+            <svg id="overlay" preserveAspectRatio="xMidYMid meet"></svg>
             <div id="placeholder">Select a photo in Bridge</div>
         </div>
         <div id="statusbar">

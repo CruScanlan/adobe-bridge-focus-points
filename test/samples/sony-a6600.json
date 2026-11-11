@@ -1,0 +1,45 @@
+{
+  "file": "pixls/sony-a6600.ARW",
+  "source": "https://raw.pixls.us/getfile.php/3590/nice/Sony - ILCE-6600 - 14bit 14bit compressed (3:2).ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-6600",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "E PZ 18-105mm F4 G OSS",
+    "FocalLength": "18.0 mm",
+    "FNumber": 5.6,
+    "ExposureTime": "1/250",
+    "ISO": 100,
+    "FocusMode": "AF-C",
+    "AFAreaMode": "Multi",
+    "ExifImageWidth": 6000,
+    "ExifImageHeight": 4000,
+    "FacesDetected": 0,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "27 mm",
+    "FocusLocation": "6000 4000 3890 2008",
+    "FullImageSize": "6000x4000",
+    "FocalPlaneAFPointsUsed": 9,
+    "FocalPlaneAFPointArea": "640 428",
+    "FocalPlaneAFPointLocation1": "415 215",
+    "AFAreaModeSetting": "Wide",
+    "AFTracking": "Off"
+  },
+  "expected": {
+    "frame": {
+      "width": 6000,
+      "height": 4000
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 3890,
+        "y": 2008,
+        "width": 160,
+        "height": 160,
+        "primary": true
+      }
+    ]
+  }
+}

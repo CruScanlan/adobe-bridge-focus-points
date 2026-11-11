@@ -1,0 +1,44 @@
+{
+  "file": "pixls/sony-a7r4.ARW",
+  "source": "https://raw.pixls.us/getfile.php/3479/nice/Sony - ILCE-7RM4 - 12bit 12bit compressed (3:2).ARW",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7RM4",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "FE 24-70mm F4 ZA OSS",
+    "FocalLength": "25.0 mm",
+    "FNumber": 22,
+    "ExposureTime": 4,
+    "ISO": 50,
+    "FocusMode": "AF-A",
+    "AFAreaMode": "Multi",
+    "ExifImageWidth": 9504,
+    "ExifImageHeight": 6336,
+    "FacesDetected": 0,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "25 mm",
+    "FocusLocation": "9504 6336 2880 2125",
+    "FullImageSize": "9504x6336",
+    "FocalPlaneAFPointsUsed": 0,
+    "AFAreaModeSetting": "Wide",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "Off"
+  },
+  "expected": {
+    "frame": {
+      "width": 9504,
+      "height": 6336
+    },
+    "points": [
+      {
+        "pointType": "af_focus_pixel_box",
+        "x": 2880,
+        "y": 2125,
+        "width": 253.44,
+        "height": 253.44,
+        "primary": true
+      }
+    ]
+  }
+}

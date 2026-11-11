@@ -1,0 +1,31 @@
+{
+  "file": "pixls/sony-a7m2.ARW",
+  "source": "https://raw.pixls.us/getfile.php/968/nice/Sony - ILCE-7M2 - 12bit 12bit compressed (3:2).arw",
+  "tags": {
+    "Make": "SONY",
+    "Model": "ILCE-7M2",
+    "FileType": "ARW",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "----",
+    "FocalLength": "0.0 mm",
+    "FNumber": 0,
+    "ExposureTime": 8,
+    "ISO": 100,
+    "FocusMode": "Manual",
+    "AFAreaMode": "Manual",
+    "ExifImageWidth": 6000,
+    "ExifImageHeight": 4000,
+    "FacesDetected": 0,
+    "InternalSerialNumber": "(redacted)",
+    "FocalLengthIn35mmFormat": "0 mm",
+    "FullImageSize": "6000x4000",
+    "FocalPlaneAFPointsUsed": "(none)",
+    "AFAreaModeSetting": "Wide",
+    "AFTracking": "Off",
+    "APS-CSizeCapture": "Off"
+  },
+  "expected": {
+    "message": "manual focus",
+    "points": []
+  }
+}

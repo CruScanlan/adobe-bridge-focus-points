@@ -67,6 +67,7 @@ client/
     common.js              shared helpers: point types, default box, info line
     fujifilm.js            ported Fuji geometry (getAfPoints)
     dji.js                 DJI: preview + flight info, no AF data (none exists)
+    sony.js                ported Sony geometry (FocusLocation)
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
 test/
   samples.test.js          `node --test`: every sample through its delegate
@@ -95,10 +96,11 @@ DOM, so the sample tests run it on plain Node) exporting:
   `{pointType, x, y, width, height, primary?}` in the pixel space of `frame`,
   in the camera's native (unrotated) orientation. `frame` is whatever space the
   camera reports coordinates in (Fuji: `ExifImageWidth x ExifImageHeight`;
-  most others: full-sensor pixels) and must cover the same area as the
-  displayed preview: the panel sets the SVG `viewBox` to it and stretches it
-  over the preview, so the preview's own pixel size never matters. `message`
-  optionally explains an empty `points` (manual focus, no AF data).
+  most others: full-size image pixels). The panel sets the SVG `viewBox` to
+  it and fits it centred over the preview (`xMidYMid meet`), so the preview's
+  own pixel size never matters, and a frame that is a centred aspect-ratio
+  crop of the preview (or the reverse) still lines up. `message` optionally
+  explains an empty `points` (manual focus, no AF data).
 - optional `formatShootingInfo(tags)` and `NO_AF_MESSAGE`.
 
 `pointType` picks the layer and colour: contains `face` → Faces, `crop` →
@@ -358,6 +360,32 @@ SubIFD1 preview, a drone-flavoured info bar (model-code map FC3411→Air 2S etc.
 "DJI does not record AF-point coordinates" status. Its `matches(tags)` also
 claims Mavic 2/3 files, which report Make=Hasselblad. Decoding `AFDebugInfo` would need several
 samples with known (tap-to-focus) positions to diff.
+
+**Sony** (`client/delegates/sony.js`, ported from `SonyDelegates.lua`):
+`FocusLocation` ("W H X Y") gives both the frame and the point; the box is
+sized from `FocusFrameSize` where the body records it (A7R V, A7 IV, a6700),
+the default box otherwise. All-zero `FocusLocation` falls back to the first
+focal-plane phase-detect point. `FocusMode` = Manual shows "manual focus" and
+no box. Faces (`FaceNPosition`) are ported but unverified: no sample has one.
+The Lr plugin's centring shift for non-native aspect ratios is left to the
+panel's centred frame fit, also unverified on a real 16:9 file. Inactive
+phase-detect points are not drawn.
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| A7R V | `sony-a7r5` (APS-C crop mode, camera-sized frame) | yes |
+| A7R IV | `sony-a7r4` | yes |
+| A7R III | `sony-a7r3` (flexible spot, off-centre) | yes |
+| A7R II | `sony-a7r2` | manual focus only: every raw.pixls.us file is MF |
+| A7 IV | `sony-a7m4` (APS-C crop mode, tracking) | yes |
+| A7 III | `sony-a7m3` (centre point) | yes |
+| A7 II | `sony-a7m2` | manual focus only: every raw.pixls.us file is MF |
+| a6700 | `sony-a6700` (centre) | yes |
+| a6600 | `sony-a6600` | yes |
+| a6400 | `sony-a6400` | yes |
+
+So the A7R II and A7 II are **untested for autofocus**; whether they record
+`FocusLocation` in AF is unknown (the A7R II writes it even in MF).
 
 **Unsupported cameras degrade gracefully**: no delegate is no longer fatal —
 the panel still renders the embedded preview (or, for JPEGs with no embedded
