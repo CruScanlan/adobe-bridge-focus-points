@@ -20,9 +20,13 @@ Also make `tools/sign-install.sh` work on macOS for dev installs: Adobe's macOS 
 
 **Blocked by:** 03, 08
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
 - [ ] Script installs, reinstalls over an existing copy, and uninstalls cleanly (shellcheck clean)
-- [ ] Update banner on macOS links to the Mac install instructions, not the `.exe`
-- [ ] README has the Mac one-liner
+- [x] Update banner on macOS links to the Mac install instructions, not the `.exe`
+- [x] README has the Mac one-liner
 - [ ] Verified in Bridge on a real Mac (ticket 10)
+
+## Comments
+
+2026-11-11: `tools/install-mac.sh` written (POSIX sh). It finds the `.zxp` through the releases API, because `releases/latest/download/` needs a fixed file name and the package name carries the version. Run on Windows under Git Bash with a temp `HOME` and a locally built package: install gives a folder identical to the package (signature verifies), reinstall removes stray files, `--uninstall` removes it. The same checks run on the macOS CI job. shellcheck is not installed here; it runs in CI. **Not done: `sign-install.sh` on macOS.** Adobe's ZXPSignCmd 4.1.103 ships Windows builds only, and nobody on the project has a Mac to develop on; a Mac user installs the release package.

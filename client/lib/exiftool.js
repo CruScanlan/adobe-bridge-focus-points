@@ -24,6 +24,15 @@ const fs = require('fs');
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const EXIFTOOL_EXE = path.join(REPO_ROOT, 'vendor', 'exiftool', 'exiftool.exe');
 
+// Windows runs the bundled .exe. Everywhere else (macOS) the same bundled
+// ExifTool runs on the system Perl through exiftool-unix.pl. Setting BFP_PERL
+// to a perl binary forces the Perl route on any platform (used to compare the
+// two on Windows).
+const PERL = process.env.BFP_PERL || (process.platform === 'win32' ? null : '/usr/bin/perl');
+const PERL_LAUNCHER = path.join(__dirname, 'exiftool-unix.pl');
+const NO_PERL_MESSAGE = 'Perl was not found at ' + PERL + '. Focus Points needs it to read ' +
+  'metadata on this system; install Perl and restart Bridge.';
+
 // Embedded images a file may carry. Which exist and how big they are varies by
 // format (NEF/ARW/CR3 hold a full-size JpgFromRaw, RAF/CR2/ORF a big
 // PreviewImage), so we ask for all of them and display the largest.
@@ -37,11 +46,17 @@ let chain = Promise.resolve(); // serialises requests onto the single process
 
 function ensureProc() {
   if (proc) return;
-  proc = spawn(EXIFTOOL_EXE, ['-stay_open', 'True', '-@', '-'], { windowsHide: true });
+  const stayOpen = ['-stay_open', 'True', '-@', '-'];
+  proc = PERL
+    ? spawn(PERL, [PERL_LAUNCHER].concat(stayOpen))
+    : spawn(EXIFTOOL_EXE, stayOpen, { windowsHide: true });
   proc.stdout.setEncoding('utf8'); // JSON + base64 are ASCII; handles boundaries
   proc.stdout.on('data', onData);
   proc.stderr.on('data', function () { /* exiftool warnings — ignore */ });
-  proc.on('error', failPending);
+  proc.on('error', function (err) {
+    proc = null;
+    failPending(PERL && err.code === 'ENOENT' ? new Error(NO_PERL_MESSAGE) : err);
+  });
   proc.on('exit', function () {
     proc = null;
     failPending(new Error('exiftool process exited'));

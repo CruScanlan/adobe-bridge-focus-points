@@ -9,3 +9,5 @@ tools/ZXPSignCmd.exe
 
 # Machine-specific config (tools/.env.example is the committed template)
 tools/.env
+# Release build output (tools/build-release.sh)
+dist/
