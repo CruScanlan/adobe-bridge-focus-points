@@ -68,7 +68,8 @@ client/
     fujifilm.js            ported Fuji geometry (getAfPoints)
     dji.js                 DJI: preview + flight info, no AF data (none exists)
     sony.js                ported Sony geometry (FocusLocation)
-    nikon.js               ported Nikon geometry (AF area + CropHiSpeed)
+    nikon.js               ported Nikon geometry (AF area, point names, CropHiSpeed)
+    nikon-points.js        Nikon AF point maps (name -> x, y, w, h), generated data
     canon.js               ported Canon geometry (AF area lists, in-focus only)
 vendor/exiftool/           bundled Windows exiftool 13.55 (complete standalone)
 test/
@@ -411,7 +412,7 @@ With subject detection on, the AF area is normally the subject's box anyway.
 
 | Body | Sample | Checked by eye |
 |---|---|---|
-| Z8 | `nikon-z8` | no AF area: all raw.pixls.us Z8 files are auto-area, which records point names instead |
+| Z8 | `nikon-z8` (auto-area: 49 named points via the Z9 map, see Nikon DSLR) | yes |
 | Z7 II | `nikon-z7ii` (off-centre) | yes |
 | Z7 | `nikon-z7` (off-centre) | yes |
 | Z6 III | `nikon-z6iii`, `-dx`, `-16x9`, `-1x1` (pinpoint, centre) | yes |
@@ -458,6 +459,38 @@ subject's box (see the R7 and R10 samples).
 The R6 is **untested for autofocus**. The 80D sample is an auto-area shot
 (the only kind on raw.pixls.us); Cru has 80D files of his own that would make
 a better single-point sample.
+
+**Nikon DSLR** (viewfinder AF, the phase-detect path of `NikonDelegates.lua`,
+in the same `nikon.js`): these bodies record point *names* (`C6`, `E9`), not
+coordinates. `client/delegates/nikon-points.js` holds the per-model maps
+(converted from the Lr plugin's `focus_points/nikon corporation/*.txt`), and
+`MODEL_MAP` in `nikon.js` says which model uses which. `PrimaryAFPoint` is
+drawn with the centre cross; any other used points are drawn as plain boxes.
+The D850 generation (`AFInfo2Version` 0101: D850, D500, D7500) picks its tag
+by AF-area mode as Lr does: `AFPointsSelected` for single / group / dynamic,
+`AFPointsInFocus` for auto and 3D-tracking; everything else uses
+`AFPointsUsed`. In-camera crop shifts the points by half the size difference
+(the viewfinder is not magnified). A Nikon with point names but no map shows
+"this Nikon model is not supported yet". Viewfinder AF records no faces. The
+inactive-point grid is not drawn. The Z8 and Z9 use this path in auto-area AF,
+with the Z9 map, as in the Lr plugin.
+
+**Adding another Nikon DSLR:** convert its Lr `.txt` map into
+`nikon-points.js` (same shape as the others), add the model to `MODEL_MAP`,
+and add a sample.
+
+| Body | Sample | Checked by eye |
+|---|---|---|
+| D850 | `nikon-d850` (manual focus), `nikon-d850-af-edited` | AF path on hand-edited tags only: every raw.pixls.us file is MF |
+| D810 | `nikon-d810` (point A5), `nikon-d810-dx-edited` (crop offset, hand-edited) | yes (the real one) |
+| D800 | `nikon-d800` (centre; from rawsamples.ch) | yes |
+| D800E | `nikon-d800e` (centre) | yes |
+| D500 | `nikon-d500` (manual focus), `nikon-d500-af-edited` | AF path on hand-edited tags only: every raw.pixls.us file is MF |
+| D7500 | `nikon-d7500` (dynamic area, centre) | yes |
+
+So the **D850 and D500 are untested on a real autofocus file**, and the DSLR
+crop offset is covered only by a hand-edited sample. `nikon-d750-nomap-edited`
+covers the no-map status.
 
 **Unsupported cameras degrade gracefully**: no delegate is no longer fatal —
 the panel still renders the embedded preview (or, for JPEGs with no embedded

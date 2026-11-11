@@ -1,0 +1,39 @@
+{
+  "file": null,
+  "source": "hand-edited copy of nikon-d810.json",
+  "note": "CropHiSpeed changed to a DX crop to exercise the viewfinder crop offset. Not verified on real data.",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D810",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "50.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/60",
+    "ISO": 100,
+    "FocusMode": "AF-C",
+    "AFAreaMode": "Single Area",
+    "FocalLengthIn35mmFormat": "50 mm",
+    "CropHiSpeed": "DX Crop (7360x4912 cropped to 4800x3200 at pixel 1280,856)",
+    "FocusDistance": "1.33 m",
+    "AFInfo2Version": "0100",
+    "PrimaryAFPoint": "A5",
+    "AFPointsUsed": "A5"
+  },
+  "expected": {
+    "frame": {
+      "width": 4800,
+      "height": 3200
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2400,
+        "y": 860,
+        "width": 305,
+        "height": 240,
+        "primary": true
+      }
+    ]
+  }
+}

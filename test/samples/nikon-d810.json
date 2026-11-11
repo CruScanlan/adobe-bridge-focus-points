@@ -1,0 +1,38 @@
+{
+  "file": "pixls/nikon-d810.NEF",
+  "source": "https://raw.pixls.us/getfile.php/2034/nice/Nikon - D810 - 12bit 12bit compressed (Lossy (type 2)) (3:2).NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D810",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "50.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/60",
+    "ISO": 100,
+    "FocusMode": "AF-C",
+    "AFAreaMode": "Single Area",
+    "FocalLengthIn35mmFormat": "50 mm",
+    "CropHiSpeed": "FX Uncropped (7384x4928 cropped to 7380x4928 at pixel 0,0)",
+    "FocusDistance": "1.33 m",
+    "AFInfo2Version": "0100",
+    "PrimaryAFPoint": "A5",
+    "AFPointsUsed": "A5"
+  },
+  "expected": {
+    "frame": {
+      "width": 7360,
+      "height": 4912
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3680,
+        "y": 1716,
+        "width": 305,
+        "height": 240,
+        "primary": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "file": null,
+  "source": "hand-edited copy of nikon-d810.json",
+  "note": "Model changed to a DSLR with no shipped point map: expects the not-supported status.",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D750",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "50.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/60",
+    "ISO": 100,
+    "FocusMode": "AF-C",
+    "AFAreaMode": "Single Area",
+    "FocalLengthIn35mmFormat": "50 mm",
+    "CropHiSpeed": "FX Uncropped (7384x4928 cropped to 7380x4928 at pixel 0,0)",
+    "FocusDistance": "1.33 m",
+    "AFInfo2Version": "0100",
+    "PrimaryAFPoint": "A5",
+    "AFPointsUsed": "A5"
+  },
+  "expected": {
+    "message": "this Nikon model is not supported yet",
+    "points": []
+  }
+}

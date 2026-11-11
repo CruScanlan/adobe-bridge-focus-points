@@ -9,7 +9,10 @@
  *    are the centre and `AFAreaWidth/Height` the size of the focus area, in
  *    the pixels of an `AFImageWidth x AFImageHeight` image (the full,
  *    uncropped frame).
- *  - Point names (DSLR viewfinder AF): not handled here yet.
+ *  - Point names (DSLR viewfinder AF, and Z8/Z9 auto-area): `PrimaryAFPoint`,
+ *    `AFPointsUsed` etc. hold names such as "C6". They are turned into
+ *    boxes with the per-model maps in nikon-points.js. A model without a map
+ *    gets a "not supported yet" status.
  *
  * In-camera crop (`CropHiSpeed`, e.g. "DX Crop (6064x4040 cropped to
  * 4000x2672 at pixel 1032,684)"): the embedded image is the cropped one, so
@@ -18,11 +21,23 @@
 'use strict';
 
 const { POINTTYPE, shootingBasics, joinInfo } = require('./common.js');
+const POINT_MAPS = require('./nikon-points.js');
 
 const TAGS = [
   'AFAreaXPosition', 'AFAreaYPosition', 'AFAreaWidth', 'AFAreaHeight',
   'AFImageWidth', 'AFImageHeight', 'CropHiSpeed', 'FocusDistance',
+  'AFInfo2Version', 'PrimaryAFPoint', 'AFPointsUsed', 'AFPointsSelected', 'AFPointsInFocus',
 ];
+
+// Which point map each model uses (several bodies share one AF module).
+// Adding a DSLR: add its map to nikon-points.js and its model name here.
+const MODEL_MAP = {
+  'NIKON D800': 'd800', 'NIKON D800E': 'd800', 'NIKON D810': 'd800',
+  'NIKON D850': 'd850',
+  'NIKON D500': 'd500',
+  'NIKON D7500': 'd7500',
+  'NIKON Z 8': 'z9', 'NIKON Z 9': 'z9',
+};
 
 function matches(tags) {
   return String(tags.Make || '').toUpperCase().indexOf('NIKON') !== -1;
@@ -92,10 +107,66 @@ function areaPoints(tags, crop) {
   return { frame: frame, points: [point] };
 }
 
+/** "C6 (Center),E9" -> ['C6', 'E9']; "(none)" -> [] */
+function pointNames(value) {
+  if (value === undefined || value === null) return [];
+  return String(value).split(',')
+    .map(function (s) { return s.replace(/\(.*\)/, '').trim(); })
+    .filter(Boolean);
+}
+
+/** The names of the points to draw: { primary, used }. Mirrors getPDAfPoints. */
+function usedPointNames(tags) {
+  const mode = String(tags.AFAreaMode || '').toLowerCase();
+  let used;
+  if (String(tags.AFInfo2Version) !== '0101') {
+    used = pointNames(tags.AFPointsUsed);
+  } else if (/^(single area|group area)$/.test(mode) || (/^dynamic area/.test(mode) && !/3d-tracking/.test(mode))) {
+    // The D5/D500/D7500/D850 generation: which tag holds the point depends on
+    // the AF-area mode (this is what Nikon's own NX Studio displays).
+    used = pointNames(tags.AFPointsSelected);
+  } else {
+    used = pointNames(tags.AFPointsInFocus);
+    if (!used.length) used = pointNames(tags.AFPointsSelected);
+  }
+  const primary = mode === 'group area' ? [] : pointNames(tags.PrimaryAFPoint);
+  return { primary: primary[0] || null, used: used };
+}
+
+/** The point-name path. Returns { frame, points }, a message, or null. */
+function namedPoints(tags, crop) {
+  const names = usedPointNames(tags);
+  const all = (names.primary ? [names.primary] : []).concat(
+    names.used.filter(function (n) { return n !== names.primary; }));
+  if (!all.length) return null;
+
+  const map = POINT_MAPS[MODEL_MAP[String(tags.Model || '').toUpperCase()]];
+  if (!map) return { points: [], message: 'this Nikon model is not supported yet' };
+
+  let frame = map.frame;
+  let dx = 0, dy = 0;
+  if (crop && crop.active) {
+    // The viewfinder is not magnified in crop mode: the cropped image is the
+    // middle of the full frame, so the points only shift.
+    dx = (map.frame.width - crop.cropped.width) / 2;
+    dy = (map.frame.height - crop.cropped.height) / 2;
+    frame = crop.cropped;
+  }
+  const points = [];
+  all.forEach(function (name) {
+    const p = map.points[name];
+    if (!p) return;
+    const point = { pointType: POINTTYPE.AF_FOCUS_BOX, x: p[0] - dx, y: p[1] - dy, width: p[2], height: p[3] };
+    if (name === names.primary || all.length === 1) point.primary = true;
+    points.push(point);
+  });
+  return { frame: frame, points: points };
+}
+
 function getAfPoints(tags) {
   if (tags.FocusMode === 'Manual') return { points: [], message: 'manual focus' };
   const crop = parseCrop(tags.CropHiSpeed);
-  return areaPoints(tags, crop);
+  return areaPoints(tags, crop) || namedPoints(tags, crop);
 }
 
 /** "NIKON Z 7_2" -> "Z 7II" */

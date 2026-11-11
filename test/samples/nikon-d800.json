@@ -1,0 +1,38 @@
+{
+  "file": "rawsamples/nikon-d800.NEF",
+  "source": "https://www.rawsamples.ch/raws/nikon/RAW_NIKON_D800_14bit_FX_UNCOMPRESSED.NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D800",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "24.0 mm",
+    "FNumber": 16,
+    "ExposureTime": "1/100",
+    "ISO": 100,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Single Area",
+    "FocalLengthIn35mmFormat": "24 mm",
+    "CropHiSpeed": "Off (7424x4924 cropped to 7424x4924 at pixel 0,0)",
+    "FocusDistance": "5.01 m",
+    "AFInfo2Version": "0100",
+    "PrimaryAFPoint": "C6 (Center)",
+    "AFPointsUsed": "C6"
+  },
+  "expected": {
+    "frame": {
+      "width": 7360,
+      "height": 4912
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3680,
+        "y": 2456,
+        "width": 305,
+        "height": 240,
+        "primary": true
+      }
+    ]
+  }
+}

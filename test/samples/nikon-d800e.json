@@ -1,0 +1,38 @@
+{
+  "file": "pixls/nikon-d800e.NEF",
+  "source": "https://raw.pixls.us/getfile.php/2552/nice/Nikon - D800E - 14bit 14bit compressed (Lossless) (3:2).NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D800E",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "70.0 mm",
+    "FNumber": 6.3,
+    "ExposureTime": "1/500",
+    "ISO": 100,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Single Area",
+    "FocalLengthIn35mmFormat": "70 mm",
+    "CropHiSpeed": "Off (7424x4924 cropped to 7424x4924 at pixel 0,0)",
+    "FocusDistance": "0.67 m",
+    "AFInfo2Version": "0100",
+    "PrimaryAFPoint": "C6 (Center)",
+    "AFPointsUsed": "C6"
+  },
+  "expected": {
+    "frame": {
+      "width": 7360,
+      "height": 4912
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3680,
+        "y": 2456,
+        "width": 305,
+        "height": 240,
+        "primary": true
+      }
+    ]
+  }
+}

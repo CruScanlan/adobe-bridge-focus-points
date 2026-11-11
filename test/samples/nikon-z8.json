@@ -15,7 +15,359 @@
     "AFAreaMode": "Auto",
     "FocalLengthIn35mmFormat": "24 mm",
     "CropHiSpeed": "FX Uncropped (8280x5520 cropped to 8280x5520 at pixel 0,0)",
-    "FocusDistance": "11.9 m"
+    "FocusDistance": "11.9 m",
+    "AFInfo2Version": "0400",
+    "AFPointsUsed": "F12,F13,F14,F15,F16,F17,F18,G12,G13,G14,G15,G16,G17,G18,H12,H13,H14,H15,H16,H17,H18,I12,I13,I14,I15,I16,I17,I18,J12,J13,J14,J15,J16,J17,J18,K12,K13,K14,K15,K16,K17,K18,L12,L13,L14,L15,L16,L17,L18"
   },
-  "expected": null
+  "expected": {
+    "frame": {
+      "width": 8256,
+      "height": 5504
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3618,
+        "y": 2176,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3873,
+        "y": 2176,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4128,
+        "y": 2176,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4383,
+        "y": 2176,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4638,
+        "y": 2176,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4893,
+        "y": 2176,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 5148,
+        "y": 2176,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3618,
+        "y": 2464,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3873,
+        "y": 2464,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4128,
+        "y": 2464,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4383,
+        "y": 2464,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4638,
+        "y": 2464,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4893,
+        "y": 2464,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 5148,
+        "y": 2464,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3618,
+        "y": 2752,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3873,
+        "y": 2752,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4128,
+        "y": 2752,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4383,
+        "y": 2752,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4638,
+        "y": 2752,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4893,
+        "y": 2752,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 5148,
+        "y": 2752,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3618,
+        "y": 3040,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3873,
+        "y": 3040,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4128,
+        "y": 3040,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4383,
+        "y": 3040,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4638,
+        "y": 3040,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4893,
+        "y": 3040,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 5148,
+        "y": 3040,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3618,
+        "y": 3328,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3873,
+        "y": 3328,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4128,
+        "y": 3328,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4383,
+        "y": 3328,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4638,
+        "y": 3328,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4893,
+        "y": 3328,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 5148,
+        "y": 3328,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3618,
+        "y": 3616,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3873,
+        "y": 3616,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4128,
+        "y": 3616,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4383,
+        "y": 3616,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4638,
+        "y": 3616,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4893,
+        "y": 3616,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 5148,
+        "y": 3616,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3618,
+        "y": 3904,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 3873,
+        "y": 3904,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4128,
+        "y": 3904,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4383,
+        "y": 3904,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4638,
+        "y": 3904,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 4893,
+        "y": 3904,
+        "width": 230,
+        "height": 263
+      },
+      {
+        "pointType": "af_focus_box",
+        "x": 5148,
+        "y": 3904,
+        "width": 230,
+        "height": 263
+      }
+    ]
+  }
 }

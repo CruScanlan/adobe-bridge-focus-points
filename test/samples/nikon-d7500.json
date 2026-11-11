@@ -1,0 +1,39 @@
+{
+  "file": "pixls/nikon-d7500.NEF",
+  "source": "https://raw.pixls.us/getfile.php/1531/nice/Nikon - D7500 - 12bit 12bit compressed (Lossy (type 2)) (3:2).NEF",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D7500",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "16.0 mm",
+    "FNumber": 8,
+    "ExposureTime": "1/200",
+    "ISO": 100,
+    "FocusMode": "AF-C",
+    "AFAreaMode": "Dynamic Area (9 points)",
+    "FocalLengthIn35mmFormat": "24 mm",
+    "CropHiSpeed": "DX Uncropped (5600x3728 cropped to 5600x3728 at pixel 0,0)",
+    "FocusDistance": "3.55 m",
+    "AFInfo2Version": "0101",
+    "PrimaryAFPoint": "C6 (Center)",
+    "AFPointsUsed": "C6",
+    "AFPointsInFocus": "C6"
+  },
+  "expected": {
+    "frame": {
+      "width": 5568,
+      "height": 3712
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 2784,
+        "y": 1856,
+        "width": 304,
+        "height": 242,
+        "primary": true
+      }
+    ]
+  }
+}

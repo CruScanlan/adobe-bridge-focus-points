@@ -1,0 +1,41 @@
+{
+  "file": null,
+  "source": "hand-edited copy of nikon-d850.json",
+  "note": "No autofocus D850 file exists on raw.pixls.us (all manual focus). FocusMode changed to AF-S and AFPointsSelected set to the recorded primary point, to exercise the AF-info 0101 path. Not verified on real data.",
+  "tags": {
+    "Make": "NIKON CORPORATION",
+    "Model": "NIKON D850",
+    "FileType": "NEF",
+    "Orientation": "Horizontal (normal)",
+    "FocalLength": "35.0 mm",
+    "FNumber": 9,
+    "ExposureTime": "1/160",
+    "ISO": 64,
+    "FocusMode": "AF-S",
+    "AFAreaMode": "Single Area",
+    "FocalLengthIn35mmFormat": "35 mm",
+    "CropHiSpeed": "FX Uncropped (8288x5520 cropped to 8288x5520 at pixel 0,0)",
+    "FocusDistance": "6.68 m",
+    "AFInfo2Version": "0101",
+    "PrimaryAFPoint": "E9 (Center)",
+    "AFPointsUsed": "(none)",
+    "AFPointsInFocus": "E9",
+    "AFPointsSelected": "E9"
+  },
+  "expected": {
+    "frame": {
+      "width": 8256,
+      "height": 5504
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 4128,
+        "y": 2752,
+        "width": 157,
+        "height": 152,
+        "primary": true
+      }
+    ]
+  }
+}
