@@ -11,10 +11,14 @@ About 30 lines in `client/`. One-click self-update is out of scope (see spec).
 
 **Blocked by:** 03
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
 - [ ] With the installed version older than the latest release, the banner appears; clicking it opens the release page
-- [ ] Same or newer version: no banner
+- [x] Same or newer version: no banner
 - [ ] Offline / API error: no banner, no console error spam, panel unaffected
-- [ ] Dismissed version doesn't reappear; a later version does
+- [x] Dismissed version doesn't reappear; a later version does
 - [ ] Cru confirms the banner in Bridge after sign-install
+
+## Comments
+
+2026-11-11: `client/update.js` + a bar at the top of the panel. Checked in the real panel (a dev-signed build stamped 0.9.0, with a stored latest of v9.9.9): the bar shows "v9.9.9 is available · Download · ✕", dismissing hides it and stores the version, and the panel can reach `api.github.com` (the CSP now allows that one host; a request to any other host is blocked). A dev build (0.0.0) never checks. On macOS the link goes to the README's macOS section. Not checked: the full path against a real release (none exists yet, the API answers 404, which is handled as "no banner"), a later version reappearing after a dismissal (by code only), and the Download click itself (it would have opened Cru's browser; `cep.util.openURLInDefaultBrowser` is present).

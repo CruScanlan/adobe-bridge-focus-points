@@ -3,12 +3,17 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self' 'unsafe-inline' file: data:; img-src 'self' file: data:;"/>
+          content="default-src 'self' 'unsafe-inline' file: data:; img-src 'self' file: data:; connect-src https://api.github.com;"/>
     <title>Focus Points</title>
     <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
     <div id="app">
+        <div id="update" hidden>
+            <span id="update-text"></span>
+            <a id="update-link" href="#">Download</a>
+            <a id="update-dismiss" href="#" title="Dismiss">✕</a>
+        </div>
         <div id="stage">
             <!-- Preview image; the SVG overlay sits on top. Its viewBox is the
                  delegate's frame, scaled to fit and centred on the preview, so
@@ -32,5 +37,6 @@
 
     <script src="lib/CSInterface.js"></script>
     <script src="main.js"></script>
+    <script src="update.js"></script>
 </body>
 </html>

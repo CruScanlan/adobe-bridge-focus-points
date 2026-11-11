@@ -131,3 +131,17 @@ html, body {
 .af-box.selected { stroke-width: 3px; stroke-dasharray: 6 5; }
 .af-box.crop { stroke: #4ab8ff; stroke-dasharray: 12 8; }
 .af-cross { stroke: #39ff14; stroke-width: 2px; vector-effect: non-scaling-stroke; }
+
+/* Update-available banner (update.js). */
+#update {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 10px;
+    background: #3a3f2a;
+    color: #e6e6c8;
+}
+#update[hidden] { display: none; }
+#update a { color: #9fc5ff; text-decoration: none; cursor: pointer; }
+#update-dismiss { margin-left: auto; color: #aaa !important; }
