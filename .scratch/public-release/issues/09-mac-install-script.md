@@ -16,7 +16,7 @@ The script:
 
 Running it again is the upgrade, which is what the update banner (ticket 06) should point Mac users to. The README gets a Mac section with the one-liner.
 
-Also make `tools/sign-install.sh` work on macOS for dev installs: Adobe's macOS ZXPSignCmd, skip the clipfix build, install to the path above, and note `defaults write com.adobe.CSXS.12 PlayerDebugMode 1` in place of the registry step.
+Also make `tools/sign-install.sh` work on macOS for dev installs: Adobe's macOS ZXPSignCmd and install to the path above. Windows needs no registry step (ticket 01), so there is nothing to mirror; whether macOS needs `defaults write com.adobe.CSXS.12 PlayerDebugMode 1` is ticket 10's question.
 
 **Blocked by:** 03, 08
 

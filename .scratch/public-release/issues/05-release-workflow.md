@@ -3,7 +3,7 @@
 **What to build:** A GitHub Actions workflow (`.github/workflows/release.yml`, Windows runner) triggered by pushing a `v*` tag:
 
 1. Stamp the tag's version into the manifest (ticket 03's single source).
-2. Fetch `ZXPSignCmd.exe` (it is gitignored) and build `clipfix.exe` if the public build still ships it (ticket 02).
+2. Fetch `ZXPSignCmd.exe` (it is gitignored). There is no `clipfix.exe` to build: ticket 02 resolved to ship neither the GPU flags nor the helper.
 3. Build the release package: no `.debug`, notices included, signed with the release cert from repo secrets (`RELEASE_CERT_P12` base64 + `RELEASE_CERT_PASS`), timestamped.
 4. Build the installer from ticket 04.
 5. Create the GitHub Release for the tag with `FocusPointsSetup-vX.Y.Z.exe`, `focuspoints-vX.Y.Z.zxp` and (once ticket 09 lands) `install-mac.sh` attached, and auto-generated notes. Everything builds on the Windows runner — the `.zxp` is cross-platform and the Mac script is plain text, so no macOS runner is needed.

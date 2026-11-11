@@ -2,7 +2,7 @@
 
 ## Why
 
-The plugin works for Cru, but installing it means running a dev script, a self-signed dev certificate and a registry tweak. Other photographers should be able to install it in one step and be told when an update is out, without Cru maintaining a complicated release system — there is little time to spend on this.
+The plugin works for Cru, but installing it means running a dev script with a self-signed dev certificate. Other photographers should be able to install it in one step and be told when an update is out, without Cru maintaining a complicated release system — there is little time to spend on this.
 
 ## Requirements
 
@@ -19,12 +19,12 @@ The plugin works for Cru, but installing it means running a dev script, a self-s
 - **GitHub Actions** builds, signs (with a release cert held in repo secrets, timestamped) and attaches both on every version tag.
 - **Inno Setup** per-user installer into `%APPDATA%\Adobe\CEP\extensions\com.cru.bridgefocuspoints`, with an uninstall entry. Unsigned; the README explains the one-time SmartScreen "More info → Run anyway".
 - **Update banner** in the panel: at most once a day, ask GitHub's public releases API for the latest tag; if newer than the installed version, show "vX.Y is available — Download" opening the release page.
-- **One cross-platform package.** The `.zxp` carries both exiftool builds: the Windows `exiftool.exe` and the platform-independent Perl `exiftool` (script + `lib/`), which macOS runs on its system `/usr/bin/perl`. `client/lib/exiftool.js` picks by `process.platform`. No Mac native binary ships, so there is no arm64/x64 split and nothing for Gatekeeper to notarize. `clipfix` already no-ops off Windows. (Findings from the "Apple Silicon plugin compatibility" session.)
+- **One cross-platform package.** The `.zxp` carries both exiftool builds: the Windows `exiftool.exe` and the platform-independent Perl `exiftool` (script + `lib/`), which macOS runs on its system `/usr/bin/perl`. `client/lib/exiftool.js` picks by `process.platform`. No Mac native binary ships, so there is no arm64/x64 split and nothing for Gatekeeper to notarize. (Findings from the "Apple Silicon plugin compatibility" session.)
 - **Mac install is a Terminal one-liner**, not a `.pkg`: `curl -fsSL <release>/install-mac.sh | bash` downloads the `.zxp` and unzips it into `~/Library/Application Support/Adobe/CEP/extensions/`. Files fetched by `curl` are not quarantined, so it sidesteps Gatekeeper entirely. An unsigned, un-notarized `.pkg` is blocked by recent macOS until the user digs into System Settings → Privacy & Security → "Open Anyway", and fixing that properly needs the paid Apple Developer Program ($99/yr) plus notarizing every release — exactly the upkeep we're avoiding. Revisit a `.pkg` if Mac users find the one-liner too technical; the Marketplace (07) is the other answer to that.
 - **Mac testing:** a free GitHub-hosted macOS CI job runs the exiftool + delegate path on every push (ticket 11). CI can't run Bridge, so Bridge loading the panel on Mac is checked once by a friend with a Mac in a single pass (ticket 10), then left to user reports with a one-file diagnostics script. Renting a Scaleway Mac (~€5/day) is a fallback only if CI can't be made to work or a real user's problem can't be explained from diagnostics — not planned, never per release.
 - **Creative Cloud Marketplace** is a later, optional second channel using the same `.zxp`. Not a dependency: it is unclear whether Adobe's Developer Distribution portal currently accepts CEP/ZXP listings for Bridge, review slows frequent releases, and CEP listings may be deprecated.
 
-Considered and rejected for now: ZXP-installer-only distribution (users need a second app; aescripts ZXP Installer is unmaintained), manual zip + copy (error-prone), one-click self-update inside the panel (running `clipfix.exe` is file-locked, so swapping files is fiddly to maintain).
+Considered and rejected for now: ZXP-installer-only distribution (users need a second app; aescripts ZXP Installer is unmaintained), manual zip + copy (error-prone), one-click self-update inside the panel (the running `exiftool.exe` is file-locked, so swapping files is fiddly to maintain).
 
 ## Tickets, in priority order
 
@@ -41,5 +41,7 @@ Considered and rejected for now: ZXP-installer-only distribution (users need a s
 | 09 | Mac install script | 03, 08 |
 | 10 | Test on a real Mac (one-off friend check; rented Scaleway Mac only as a fallback) | 08, 09 |
 | 11 | Ongoing Mac coverage without a Mac (macOS CI job + diagnostics) | 08, 09, wide-camera-support 01 |
+
+01 and 02 are resolved (2026-11-11): a self-signed extension loads without `PlayerDebugMode`, and the build ships no GPU flags and no `clipfix`. See each ticket's Answer.
 
 Mac tickets slot in alongside: 08 can start any time; 05 attaches the Mac script once 09 exists.

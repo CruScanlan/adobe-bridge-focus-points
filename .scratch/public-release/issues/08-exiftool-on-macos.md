@@ -7,7 +7,7 @@
 - If `/usr/bin/perl` is missing (Apple has warned bundled scripting runtimes may go), show a clear status message in the panel rather than a generic error.
 - Add the new folder to `THIRD_PARTY_NOTICES` (ticket 03).
 
-Windows behaviour must not change. Nothing else in the panel is platform-specific: `fsName` gives POSIX paths, temp files use `os.tmpdir()`, and clipfix already no-ops off win32.
+Windows behaviour must not change. Nothing else in the panel is platform-specific: `fsName` gives POSIX paths, and temp files use `os.tmpdir()`.
 
 **Blocked by:** —
 

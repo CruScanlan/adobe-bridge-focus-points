@@ -2,7 +2,7 @@
 
 **What to find out:** Whether Adobe's Developer Distribution portal (developer.adobe.com/distribute) will accept our `.zxp` as a free Bridge listing. If yes, it becomes an extra channel with one-click install and Adobe-managed updates; GitHub Releases stay as they are.
 
-Unknowns: whether ZXP/CEP listings finished migrating to the portal (developers reported failed CEP uploads in January 2026), whether review accepts bundled native executables (exiftool, possibly clipfix), and how long each update's review takes.
+Unknowns: whether ZXP/CEP listings finished migrating to the portal (developers reported failed CEP uploads in January 2026), whether review accepts bundled native executables (exiftool), and how long each update's review takes.
 
 **How:** Cru signs in to the portal and starts a new listing to see whether a ZXP/CEP type with Bridge as a host is offered. If so, upload the `.zxp` from a ticket-05 release and record what review asks for.
 

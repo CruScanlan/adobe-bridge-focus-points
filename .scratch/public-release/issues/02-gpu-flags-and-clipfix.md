@@ -12,7 +12,22 @@ Leaning B: the workaround targets an unusual display path, and a compatibility b
 
 **Blocked by:** —
 
-**Status:** ready-for-human
+**Status:** resolved
 
-- [ ] Decision recorded here (and as an ADR in `docs/adr/` if B or C)
+- [x] Decision recorded here (and as an ADR in `docs/adr/` if B or C)
 - [ ] If B: confirm the panel still renders correctly on a normal (non-VM) Windows machine without the flags and clipfix
+
+## Answer
+
+**None of A, B or C: no flags and no clipfix in any build, the VM included** (2026-11-11). Recorded as [ADR-0009](../../../docs/adr/0009-no-cef-gpu-flags.md).
+
+The premise above was wrong. The flags were not compensating for the VM; they were causing the blank panel. They force CEF into software rendering, and Bridge repaints its tab-panel window straight over a software-rendered panel. With all three removed the panel is GPU-composited and was drawn on six consecutive normal launches on the VM (Bridge 16.0.8); with the helper stopped it stayed drawn through a tab switch and a minimise/restore. `clipfix.exe` only ever existed to protect the software-rendered panel, so it goes too.
+
+The public build and Cru's build are therefore the same build, and it is the stock CEP configuration.
+
+Still open:
+
+- **The last checkbox is not done.** The panel has only been verified on the VM, not on an ordinary Windows machine.
+- **Software-only machines.** Where CEF has no usable GPU and falls back to software by itself, the same overpaint should blank the panel. That is untested. The remedy is the unshipped helper kept in `tools/clipfix.cs`; shipping it would be a new ticket, raised only if a user reports a blank panel.
+- **July 2026.** Default GPU compositing was reported blank on the VM on Bridge 16.0.6, which is what started the flags. The cause was never found and it has not recurred.
+
