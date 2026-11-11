@@ -127,5 +127,7 @@ html, body {
     vector-effect: non-scaling-stroke;
 }
 .af-box.face { stroke: #ffd23f; }
+/* Chosen AF point whose focus the camera did not confirm. */
+.af-box.selected { stroke-width: 3px; stroke-dasharray: 6 5; }
 .af-box.crop { stroke: #4ab8ff; stroke-dasharray: 12 8; }
 .af-cross { stroke: #39ff14; stroke-width: 2px; vector-effect: non-scaling-stroke; }

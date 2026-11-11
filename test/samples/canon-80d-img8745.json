@@ -1,0 +1,48 @@
+{
+  "file": "cru-80d/IMG_8745.CR2",
+  "source": "Cru's own",
+  "note": "Viewfinder single point, in focus.",
+  "tags": {
+    "Make": "Canon",
+    "Model": "Canon EOS 80D",
+    "FileType": "CR2",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "TAMRON SP 70-200mm F/2.8 Di VC USD G2 A025",
+    "FocalLength": "200.0 mm",
+    "FNumber": 2.8,
+    "ExposureTime": "1/500",
+    "ISO": 100,
+    "FocusMode": "AI Servo AF",
+    "AFAreaMode": "Single-point AF",
+    "ExifImageWidth": 6000,
+    "ExifImageHeight": 4000,
+    "InternalSerialNumber": "(redacted)",
+    "AFImageWidth": 6000,
+    "AFImageHeight": 4000,
+    "AFPointsSelected": 17,
+    "AFPointsInFocus": 17,
+    "CanonImageWidth": 6000,
+    "CanonImageHeight": 4000,
+    "AFAreaWidths": "250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250",
+    "AFAreaHeights": "250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250 250",
+    "AFAreaXPositions": "1438 1089 497 0 -497 -1089 -1438 -1788 1089 497 0 -497 -1089 -1438 -1788 1788 497 0 -497 -1089 -1438 -1788 1788 1438 0 -497 -1089 -1438 -1788 1788 1438 1089 -497 -1089 -1438 -1788 1788 1438 1089 497 1788 1438 1089 497 0",
+    "AFAreaYPositions": "699 699 860 860 860 699 699 699 349 430 430 430 349 349 349 699 0 0 0 0 0 0 349 349 -430 -430 -349 -349 -349 0 0 0 -860 -699 -699 -699 -349 -349 -349 -430 -699 -699 -699 -860 -860",
+    "CameraType": "EOS High-end"
+  },
+  "expected": {
+    "frame": {
+      "width": 6000,
+      "height": 4000
+    },
+    "points": [
+      {
+        "pointType": "af_focus_box",
+        "x": 3000,
+        "y": 2000,
+        "width": 250,
+        "height": 250,
+        "primary": true
+      }
+    ]
+  }
+}

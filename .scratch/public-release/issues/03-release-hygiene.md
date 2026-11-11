@@ -17,3 +17,7 @@
 - [ ] Version stamped into the manifest from one place; panel can read it
 - [ ] Dev `sign-install.sh` behaves exactly as before
 - [ ] README covers install, update and SmartScreen
+
+## Comments
+
+2026-11-11, from the wide-camera-support work: `THIRD_PARTY_NOTICES` now has more Focus-Points Lr plugin material to cover than the Fuji geometry. Ported from it (Apache 2.0, each file carries an attribution header): `client/delegates/sony.js`, `nikon.js`, `canon.js`, `olympus.js`, `common.js`, and the AF point maps in `client/delegates/nikon-points.js` (data converted from the plugin's `focus_points/nikon corporation/*.txt`, submitted there by "capricorn8"). Nothing was taken from digiKam. `test/` and the sample tools in `tools/` are outside the staged dirs, so they do not ship. The README's supported-camera list can be built from the per-make tables in CLAUDE.md.

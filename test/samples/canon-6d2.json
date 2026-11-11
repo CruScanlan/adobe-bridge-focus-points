@@ -18,13 +18,14 @@
     "InternalSerialNumber": "(redacted)",
     "AFImageWidth": 6240,
     "AFImageHeight": 4160,
+    "AFPointsSelected": 0,
+    "AFPointsInFocus": 0,
     "CanonImageWidth": 6240,
     "CanonImageHeight": 4160,
     "AFAreaWidths": "552 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
     "AFAreaHeights": "450 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
     "AFAreaXPositions": "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
     "AFAreaYPositions": "832 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-    "AFPointsInFocus": 0,
     "CameraType": "EOS High-end"
   },
   "expected": {

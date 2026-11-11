@@ -11,8 +11,12 @@
  *  - Positions are measured from the frame CENTRE with Y pointing UP
  *    (compacts: Y down), so they are converted to top-left-origin here.
  *  - `AFPointsInFocus` lists the indices (0-based) of the areas that were in
- *    focus. Only those are drawn; the rest of the grid, and the points that
- *    were selected but not in focus, are deliberately left out.
+ *    focus. Those are drawn; the rest of the grid is deliberately left out.
+ *  - When NO area is in focus, the areas in `AFPointsSelected` are drawn
+ *    instead, dashed, with a "focus not confirmed" status. This is not in the
+ *    Lr plugin. It matters for tripod work: focus in live view or with
+ *    back-button AF, then release, and the camera records the chosen point
+ *    but no in-focus one (about 90% of Cru's 80D landscape frames).
  *  - Older bodies give one `AFAreaWidth`/`AFAreaHeight` for all areas.
  */
 'use strict';
@@ -23,7 +27,7 @@ const TAGS = [
   'AFImageWidth', 'AFImageHeight', 'CanonImageWidth', 'CanonImageHeight',
   'ExifImageWidth', 'ExifImageHeight',
   'AFAreaWidth', 'AFAreaHeight', 'AFAreaWidths', 'AFAreaHeights',
-  'AFAreaXPositions', 'AFAreaYPositions', 'AFPointsInFocus', 'CameraType',
+  'AFAreaXPositions', 'AFAreaYPositions', 'AFPointsInFocus', 'AFPointsSelected', 'CameraType',
 ];
 
 function matches(tags) {
@@ -52,22 +56,34 @@ function getAfPoints(tags) {
 
   const yDirection = /compact/i.test(String(tags.CameraType || '')) ? 1 : -1;
   const frame = { width: width, height: height };
-  const points = [];
-  nums(tags.AFPointsInFocus).forEach(function (i) {
-    if (i < 0 || i >= xs.length) return;
-    const w = widths[i] !== undefined ? widths[i] : oneWidth;
-    const h = heights[i] !== undefined ? heights[i] : oneHeight;
-    if (!(w > 0) || !(h > 0)) return;
-    points.push({
-      pointType: POINTTYPE.AF_FOCUS_BOX,
-      x: width / 2 + xs[i],
-      y: height / 2 + ys[i] * yDirection,
-      width: w,
-      height: h,
+  const boxes = function (indices, pointType) {
+    const out = [];
+    indices.forEach(function (i) {
+      if (i < 0 || i >= xs.length) return;
+      const w = widths[i] !== undefined ? widths[i] : oneWidth;
+      const h = heights[i] !== undefined ? heights[i] : oneHeight;
+      if (!(w > 0) || !(h > 0)) return;
+      out.push({
+        pointType: pointType,
+        x: width / 2 + xs[i],
+        y: height / 2 + ys[i] * yDirection,
+        width: w,
+        height: h,
+      });
     });
-  });
+    return out;
+  };
+
+  const points = boxes(nums(tags.AFPointsInFocus), POINTTYPE.AF_FOCUS_BOX);
   if (points.length === 1) points[0].primary = true;
-  return { frame: frame, points: points };
+  if (points.length) return { frame: frame, points: points };
+
+  // Nothing confirmed in focus: fall back to the point(s) the photographer chose.
+  const selected = boxes(nums(tags.AFPointsSelected), POINTTYPE.AF_SELECTED);
+  if (selected.length) {
+    return { frame: frame, points: selected, message: 'selected AF point shown, focus not confirmed' };
+  }
+  return { frame: frame, points: [] };
 }
 
 /** "Canon EOS R5m2" -> "EOS R5 Mark II" */

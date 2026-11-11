@@ -191,6 +191,7 @@
             rect.setAttribute('y', pt.y - pt.height / 2);
             rect.setAttribute('width', pt.width);
             rect.setAttribute('height', pt.height);
+            if (pt.pointType.indexOf('selected') !== -1) kind = 'selected';
             rect.setAttribute('class', 'af-box ' + (kind === 'af' ? '' : kind));
             els.overlay.appendChild(rect);
 
@@ -256,7 +257,8 @@
                     var why = (result && result.message) || delegate.NO_AF_MESSAGE || 'no focus point recorded';
                     setStatus(name + ' — ' + why, 'warn');
                 } else {
-                    setStatus(name, 'ok');
+                    // A delegate may qualify what it drew (e.g. focus not confirmed).
+                    setStatus(result.message ? name + ' — ' + result.message : name, 'ok');
                 }
             };
             els.preview.onerror = function () { setStatus('Failed to display preview', 'error'); };

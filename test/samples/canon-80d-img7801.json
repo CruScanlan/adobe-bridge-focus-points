@@ -1,0 +1,48 @@
+{
+  "file": "cru-80d/IMG_7801.CR2",
+  "source": "Cru's own",
+  "note": "Live view, Flexizone Single: no point in focus, the selected area is drawn.",
+  "tags": {
+    "Make": "Canon",
+    "Model": "Canon EOS 80D",
+    "FileType": "CR2",
+    "Orientation": "Horizontal (normal)",
+    "LensModel": "TAMRON SP 70-200mm F/2.8 Di VC USD G2 A025",
+    "FocalLength": "86.0 mm",
+    "FNumber": 10,
+    "ExposureTime": "1/13",
+    "ISO": 100,
+    "FocusMode": "One-shot AF",
+    "AFAreaMode": "Flexizone Single",
+    "ExifImageWidth": 6000,
+    "ExifImageHeight": 4000,
+    "InternalSerialNumber": "(redacted)",
+    "AFImageWidth": 6000,
+    "AFImageHeight": 4000,
+    "AFPointsSelected": 0,
+    "AFPointsInFocus": "(none)",
+    "CanonImageWidth": 6000,
+    "CanonImageHeight": 4000,
+    "AFAreaWidths": "600 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaHeights": "800 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaXPositions": "-1280 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "AFAreaYPositions": "-448 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "CameraType": "EOS High-end"
+  },
+  "expected": {
+    "frame": {
+      "width": 6000,
+      "height": 4000
+    },
+    "message": "selected AF point shown, focus not confirmed",
+    "points": [
+      {
+        "pointType": "af_selected",
+        "x": 1720,
+        "y": 2448,
+        "width": 600,
+        "height": 800
+      }
+    ]
+  }
+}

@@ -108,7 +108,9 @@ DOM, so the sample tests run it on plain Node) exporting:
 - optional `formatShootingInfo(tags)` and `NO_AF_MESSAGE`.
 
 `pointType` picks the layer and colour: contains `face` → Faces, `crop` →
-Crop, anything else → Focus (see `common.js`).
+Crop, anything else → Focus (see `common.js`). A type containing `selected`
+is drawn dashed: a point the photographer chose whose focus the camera did not
+confirm.
 
 **Preview:** `exiftool.js` displays the largest embedded image a file has
 (`JpgFromRaw`, `PreviewImage`, `OtherImage`, `ThumbnailImage`, by byte size),
@@ -349,9 +351,12 @@ bonus path — polling is what actually drives live updates.
 Working end-to-end in Bridge: select a Fuji RAF → preview + green AF box render
 on the focus point, and the panel updates live as the selection changes.
 Sony, Nikon (Z and DSLR), Canon and OM System / Olympus delegates were added
-on 2026-11-11 and pass their sample tests (`node --test`), but **have not yet
-been looked at in Bridge**; the per-make notes below say what each sample
-covers.
+on 2026-11-11 and pass their sample tests (`node --test`). One file per make
+was run through the real panel in Bridge 16 by Claude over the debug port
+(state read back plus a CDP screenshot: A7R III, Z6, Z6 III 1:1 crop, D810,
+R10 portrait, 80D, E-M5 III, GFX 100S II, the X-H2 RAF + JPEG, DJI). **Cru has
+not yet looked at them himself**; the per-make notes below say what each
+sample covers.
 exiftool bundle verified (13.55); Fuji primary-point geometry ported & visually
 verified against Cru's X-H2 fixtures (`fixtures/expected/*-afbox.jpg`); signed
 `Embedded` panel docks in Bridge 2026 like a native panel. Faces / AI subject
@@ -456,7 +461,13 @@ the camera lists every AF area (`AFAreaXPositions/YPositions/Widths/Heights`)
 in the `AFImageWidth x AFImageHeight` frame, measured from the frame centre
 with Y up; the delegate converts to top-left origin and draws only the areas
 named in `AFPointsInFocus`. One box gets the centre cross; several (auto-area
-on a DSLR, whole-area on an R body) are all drawn without one. The same code
+on a DSLR, whole-area on an R body) are all drawn without one.
+**When no area is in focus, the areas in `AFPointsSelected` are drawn
+instead, dashed** (`af_selected`), with the status "selected AF point shown,
+focus not confirmed". This is our addition, not in the Lr plugin, and it is
+what makes Canon useful for tripod work: across 783 of Cru's 80D frames about
+90% record a selected point but no in-focus one (live view Flexizone, or
+back-button AF released before the shutter). The same code
 serves CR2 DSLRs and CR3 mirrorless. `FocusMode` "Manual Focus…" shows
 "manual focus". The only model quirks carried over from Lr are the original
 EOS 5D's image size and the flipped Y axis on compacts; neither is a target
@@ -479,15 +490,13 @@ subject's box (see the R7 and R10 samples).
 | R7 | `canon-r7` (subject box) | yes |
 | R10 | `canon-r10` (portrait, subject box) | yes |
 | 90D | `canon-90d` (single point) | yes |
-| 80D | `canon-80d` (auto-area, 44 areas in focus) | yes |
+| 80D | `canon-80d` (auto-area, 44 areas in focus); Cru's own `canon-80d-img7801` (selected point only), `-img8745` (in focus), `-img8272` (portrait) | yes, and in Bridge |
 | 70D | `canon-70d` (single point) | yes |
 | 77D | `canon-77d` (auto-area, 5 areas) | yes |
 | 7D Mark II | `canon-7d2` (single point) | yes |
 | 6D Mark II | `canon-6d2` (live view) | yes |
 
-The R6 is **untested for autofocus**. The 80D sample is an auto-area shot
-(the only kind on raw.pixls.us); Cru has 80D files of his own that would make
-a better single-point sample.
+The R6 is **untested for autofocus**.
 
 **Nikon DSLR** (viewfinder AF, the phase-detect path of `NikonDelegates.lua`,
 in the same `nikon.js`): these bodies record point *names* (`C6`, `E9`), not

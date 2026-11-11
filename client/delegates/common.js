@@ -12,6 +12,7 @@
 const POINTTYPE = {
   AF_FOCUS_PIXEL_BOX: 'af_focus_pixel_box', // default-sized box round a focus pixel
   AF_FOCUS_BOX: 'af_focus_box',             // box whose size the camera recorded
+  AF_SELECTED: 'af_selected',               // point the photographer chose; focus not confirmed (dashed)
   FACE: 'face',                             // detected face / subject
   CROP: 'crop',                             // in-camera crop area
 };
@@ -37,10 +38,11 @@ function defaultBox(frame, x, y) {
 function shootingBasics(tags, modelName) {
   const parts = [];
   if (modelName || tags.Model) parts.push(modelName || tags.Model);
-  if (tags.FocalLength) {
+  // A lens with no electronic contacts reports 0 mm and ƒ/0: leave those out.
+  if (parseFloat(tags.FocalLength) > 0) {
     parts.push(String(tags.FocalLength).replace(/\s*mm$/i, '').replace(/\.0$/, '') + 'mm');
   }
-  if (tags.FNumber != null && tags.FNumber !== '') parts.push('ƒ/' + tags.FNumber);
+  if (parseFloat(tags.FNumber) > 0) parts.push('ƒ/' + tags.FNumber);
   if (tags.ExposureTime != null && tags.ExposureTime !== '') parts.push(tags.ExposureTime + 's');
   if (tags.ISO != null && tags.ISO !== '') parts.push('ISO ' + tags.ISO);
   return parts;
