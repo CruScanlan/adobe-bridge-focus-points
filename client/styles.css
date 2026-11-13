@@ -121,9 +121,11 @@ html, body {
 
 /* AF box overlay styling. Neon green to read against most images. */
 /* Colour, opacity and thickness are user settings (settings.js sets these
-   properties on #overlay). The colour is the Focus layer's only. */
+   properties on #overlay), with one colour per layer. */
 #overlay {
     --af-color: #39ff14;
+    --face-color: #ffd23f;
+    --crop-color: #4ab8ff;
     --af-opacity: 1;
     --af-width: 3px;
     opacity: var(--af-opacity);
@@ -134,10 +136,10 @@ html, body {
     stroke-width: var(--af-width);
     vector-effect: non-scaling-stroke;
 }
-.af-box.face { stroke: #ffd23f; }
+.af-box.face { stroke: var(--face-color); }
 /* Chosen AF point whose focus the camera did not confirm. */
 .af-box.selected { stroke-width: calc(var(--af-width) * 0.75); stroke-dasharray: 6 5; }
-.af-box.crop { stroke: #4ab8ff; stroke-dasharray: 12 8; }
+.af-box.crop { stroke: var(--crop-color); stroke-dasharray: 12 8; }
 .af-cross { stroke: var(--af-color); stroke-width: calc(var(--af-width) * 0.5); vector-effect: non-scaling-stroke; }
 
 /* Overlay settings: gear button in the bottom bar, popover above it. */
@@ -175,6 +177,18 @@ html, body {
 .set-row output { color: #9a9a9a; text-align: right; }
 .set-row input[type="range"] { width: 100%; margin: 0; accent-color: #9a9a9a; }
 #set-swatches { display: flex; gap: 5px; }
+#set-layer { display: flex; }
+#set-layer button {
+    flex: 1;
+    padding: 2px 0;
+    background: #262626;
+    border: 1px solid #111;
+    color: #9a9a9a;
+    font: inherit;
+    cursor: pointer;
+}
+#set-layer button + button { border-left: 0; }
+#set-layer button.current { background: #4a4a4a; color: #fff; }
 .swatch {
     width: 17px;
     height: 17px;

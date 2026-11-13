@@ -2,21 +2,29 @@
  * settings.js - overlay appearance settings (the gear button's popover).
  *
  * Colour, opacity and thickness are CSS custom properties on the overlay
- * (`--af-color`, `--af-opacity`, `--af-width`) that styles.css reads, so a
- * change needs no re-render. Colour applies to the Focus layer only; faces
- * and crop keep their own colours. Values persist in localStorage.
+ * (`--af-color`, `--face-color`, `--crop-color`, `--af-opacity`, `--af-width`)
+ * that styles.css reads, so a change needs no re-render. Each layer has its
+ * own colour, picked with the Focus / Faces / Crop selector; opacity and
+ * thickness apply to all three. Values persist in localStorage.
  *
  * Plain DOM, no Node: it works even when the rest of the panel cannot start.
  */
 'use strict';
 
 (function () {
-    var DEFAULTS = { color: '#39ff14', opacity: 100, thickness: 3 };
-    var SWATCHES = ['#39ff14', '#ffffff', '#ff3b30', '#ff9500', '#00e5ff', '#ff4fd8', '#b388ff'];
+    var DEFAULTS = { opacity: 100, thickness: 3 };
+    // Per layer: default colour, CSS property, localStorage key.
+    var LAYERS = {
+        focus: { color: '#39ff14', prop: '--af-color', key: 'color' },
+        faces: { color: '#ffd23f', prop: '--face-color', key: 'color.faces' },
+        crop: { color: '#4ab8ff', prop: '--crop-color', key: 'color.crop' },
+    };
+    var SWATCHES = ['#39ff14', '#ffd23f', '#4ab8ff', '#ffffff', '#ff3b30', '#ff9500', '#ff4fd8'];
 
     var overlay = document.getElementById('overlay');
     var btn = document.getElementById('settings-btn');
     var pop = document.getElementById('settings');
+    var layerSel = document.getElementById('set-layer');
     var swatches = document.getElementById('set-swatches');
     var hex = document.getElementById('set-hex');
     var opacity = document.getElementById('set-opacity');
@@ -39,25 +47,41 @@
         return isFinite(n) ? Math.min(hi, Math.max(lo, n)) : fallback;
     }
 
+    var layer = 'focus'; // the layer whose colour is being edited
     var state = {
-        color: validColor(load('color')) || DEFAULTS.color,
+        colors: {},
         opacity: clamp(load('opacity'), 10, 100, DEFAULTS.opacity),
         thickness: clamp(load('thickness'), 1, 8, DEFAULTS.thickness),
     };
 
+    Object.keys(LAYERS).forEach(function (name) {
+        state.colors[name] = validColor(load(LAYERS[name].key)) || LAYERS[name].color;
+    });
+
+    function setColor(c) {
+        state.colors[layer] = c;
+        save(LAYERS[layer].key, c);
+        overlay.style.setProperty(LAYERS[layer].prop, c);
+    }
+
     function apply() {
-        overlay.style.setProperty('--af-color', state.color);
+        Object.keys(LAYERS).forEach(function (name) {
+            overlay.style.setProperty(LAYERS[name].prop, state.colors[name]);
+        });
         overlay.style.setProperty('--af-opacity', String(state.opacity / 100));
         overlay.style.setProperty('--af-width', state.thickness + 'px');
 
-        hex.value = state.color;
+        hex.value = state.colors[layer];
         hex.classList.remove('invalid');
         opacity.value = state.opacity;
         thickness.value = state.thickness;
         document.getElementById('set-opacity-val').textContent = state.opacity + '%';
         document.getElementById('set-thickness-val').textContent = state.thickness + ' px';
         Array.prototype.forEach.call(swatches.children, function (el) {
-            el.classList.toggle('current', el.dataset.color === state.color);
+            el.classList.toggle('current', el.dataset.color === state.colors[layer]);
+        });
+        Array.prototype.forEach.call(layerSel.children, function (el) {
+            el.classList.toggle('current', el.dataset.layer === layer);
         });
     }
 
@@ -74,8 +98,12 @@
         el.dataset.color = c;
         el.title = c;
         el.style.background = c;
-        el.addEventListener('click', function () { set('color', c); });
+        el.addEventListener('click', function () { setColor(c); apply(); });
         swatches.appendChild(el);
+    });
+
+    Array.prototype.forEach.call(layerSel.children, function (el) {
+        el.addEventListener('click', function () { layer = el.dataset.layer; apply(); });
     });
 
     hex.addEventListener('input', function () {
@@ -83,13 +111,16 @@
         if (v && v.charAt(0) !== '#') v = '#' + v;
         var c = validColor(v);
         hex.classList.toggle('invalid', !c);
-        if (c) { state.color = c; save('color', c); overlay.style.setProperty('--af-color', c); }
+        if (c) setColor(c);
     });
     hex.addEventListener('blur', apply);
     opacity.addEventListener('input', function () { set('opacity', clamp(opacity.value, 10, 100, DEFAULTS.opacity)); });
     thickness.addEventListener('input', function () { set('thickness', clamp(thickness.value, 1, 8, DEFAULTS.thickness)); });
     reset.addEventListener('click', function () {
-        set('color', DEFAULTS.color);
+        Object.keys(LAYERS).forEach(function (name) {
+            state.colors[name] = LAYERS[name].color;
+            save(LAYERS[name].key, LAYERS[name].color);
+        });
         set('opacity', DEFAULTS.opacity);
         set('thickness', DEFAULTS.thickness);
     });

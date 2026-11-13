@@ -387,7 +387,7 @@ localStorage; a layer with no data in the current image is greyed/disabled) and
 a shooting-info readout (model · focal · aperture · shutter · ISO · focus-mode ·
 AF area+size · detected subject). Toggling re-renders the cached result; no
 re-run of exiftool. A gear button opens the overlay settings popover
-(`client/settings.js`): focus colour, opacity and thickness, stored in
+(`client/settings.js`): a colour per layer, opacity and thickness, stored in
 localStorage and applied as CSS variables on `#overlay` (no re-render).
 
 Crop: **aspect-ratio crop** (`RawImageAspectRatio`, e.g. 16:9 → centred dashed
