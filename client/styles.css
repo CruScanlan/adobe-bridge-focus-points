@@ -124,7 +124,7 @@ html, body {
    properties on #overlay), with one colour per layer. */
 #overlay {
     --af-color: #39ff14;
-    --face-color: #39ff14;
+    --face-color: #ffd23f;
     --crop-color: #4ab8ff;
     --af-opacity: 1;
     --af-width: 3px;
