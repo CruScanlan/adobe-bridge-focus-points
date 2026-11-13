@@ -6,7 +6,7 @@
 - **Controls:**
   - Colour of the focus box and its centre cross (default the current `#39ff14`).
   - Opacity, 10–100 % (default 100).
-  - Thickness, 1–8 px (default the current 4; the cross and the dashed "selected" box keep their current ratio to it).
+  - Thickness, 1–8 px (default 3, down from 4 at Cru's request; the cross and the dashed "selected" box keep their current ratio to it).
   - "Reset to defaults".
 - **Scope of each setting:** colour applies to the Focus layer only. Faces (yellow) and Crop (blue) keep their own colours, so the layers stay distinguishable. Opacity and thickness apply to every layer.
 - **Persistence:** localStorage, like the layer toggles (`overlay.color`, `overlay.opacity`, `overlay.thickness`). Applies across selections and Bridge restarts.
@@ -15,15 +15,17 @@
 
 Out of scope: per-layer colours for Faces and Crop, box size or shape (that is camera data), and syncing settings between machines.
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
-- [ ] Gear button opens and closes the popover; it does not cover the bottom bar or steal the panel's selection polling
-- [ ] Colour, opacity and thickness change the overlay live on the current image
+- [x] Gear button opens and closes the popover; it does not cover the bottom bar or steal the panel's selection polling
+- [x] Colour, opacity and thickness change the overlay live on the current image
 - [ ] Settings survive a selection change and a Bridge restart
-- [ ] The dashed "selected, focus not confirmed" box and the centre cross follow the same colour and thickness
+- [x] The dashed "selected, focus not confirmed" box and the centre cross follow the same colour and thickness
 - [ ] Faces and Crop keep their own colours; opacity and thickness apply to them
-- [ ] Reset restores the current look exactly
-- [ ] `node --test` still passes (no delegate changes expected)
+- [x] Reset restores the current look exactly
+- [x] `node --test` still passes (no delegate changes expected)
 - [ ] Cru confirms in Bridge after sign-install
 
 ## Comments
+
+2026-11-13: Implemented in `client/settings.js` + popover markup and CSS variables. Checked in the real panel over the debug port on `IMG_7801.CR2` (dashed) and `IMG_8745.CR2` (solid): swatch, hex field (with and without `#`, invalid input ignored), opacity and thickness all change the overlay live; reset restores the defaults; Esc and a click outside close the popover. The colour control is preset swatches plus a hex field, not a spectrum: the native colour input was not tried. Default thickness is now 3 px (was 4). Not checked: settings surviving a Bridge restart (same localStorage mechanism as the layer toggles), and faces/crop with a non-default opacity or thickness (no such file selected).

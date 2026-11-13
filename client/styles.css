@@ -120,17 +120,91 @@ html, body {
 #status.ok { color: #6fbf73; }
 
 /* AF box overlay styling. Neon green to read against most images. */
+/* Colour, opacity and thickness are user settings (settings.js sets these
+   properties on #overlay). The colour is the Focus layer's only. */
+#overlay {
+    --af-color: #39ff14;
+    --af-opacity: 1;
+    --af-width: 3px;
+    opacity: var(--af-opacity);
+}
 .af-box {
     fill: none;
-    stroke: #39ff14;
-    stroke-width: 4px;
+    stroke: var(--af-color);
+    stroke-width: var(--af-width);
     vector-effect: non-scaling-stroke;
 }
 .af-box.face { stroke: #ffd23f; }
 /* Chosen AF point whose focus the camera did not confirm. */
-.af-box.selected { stroke-width: 3px; stroke-dasharray: 6 5; }
+.af-box.selected { stroke-width: calc(var(--af-width) * 0.75); stroke-dasharray: 6 5; }
 .af-box.crop { stroke: #4ab8ff; stroke-dasharray: 12 8; }
-.af-cross { stroke: #39ff14; stroke-width: 2px; vector-effect: non-scaling-stroke; }
+.af-cross { stroke: var(--af-color); stroke-width: calc(var(--af-width) * 0.5); vector-effect: non-scaling-stroke; }
+
+/* Overlay settings: gear button in the bottom bar, popover above it. */
+#app { position: relative; }
+#settings-btn {
+    background: none;
+    border: 0;
+    padding: 0 2px;
+    color: #9a9a9a;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+}
+#settings-btn:hover, #settings-btn.open { color: #e6e6e6; }
+#settings {
+    position: absolute;
+    left: 8px;
+    bottom: 34px;
+    z-index: 10;
+    padding: 10px 12px;
+    background: #2f2f2f;
+    border: 1px solid #111;
+    border-radius: 4px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+    font-size: 11px;
+}
+#settings[hidden] { display: none; }
+.set-row {
+    display: grid;
+    grid-template-columns: 62px 150px 44px;
+    align-items: center;
+    gap: 8px;
+    min-height: 24px;
+}
+.set-row output { color: #9a9a9a; text-align: right; }
+.set-row input[type="range"] { width: 100%; margin: 0; accent-color: #9a9a9a; }
+#set-swatches { display: flex; gap: 5px; }
+.swatch {
+    width: 17px;
+    height: 17px;
+    padding: 0;
+    border: 1px solid #111;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.swatch.current { outline: 2px solid #e6e6e6; outline-offset: 1px; }
+#set-hex {
+    width: 70px;
+    padding: 2px 5px;
+    background: #1d1d1d;
+    border: 1px solid #111;
+    border-radius: 3px;
+    color: #d6d6d6;
+    font: inherit;
+}
+#set-hex.invalid { border-color: #e0664b; }
+#set-reset {
+    justify-self: start;
+    padding: 3px 8px;
+    background: #3a3a3a;
+    border: 1px solid #111;
+    border-radius: 3px;
+    color: #d6d6d6;
+    font: inherit;
+    cursor: pointer;
+}
+#set-reset:hover { background: #454545; }
 
 /* Update-available banner (update.js). */
 #update {

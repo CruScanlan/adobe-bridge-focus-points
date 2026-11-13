@@ -68,6 +68,7 @@ client/
     exiftool.js            spawn wrapper: readFocusData(file, tags) -> tags + preview
     exiftool-unix.pl       macOS: runs the bundled ExifTool on the system Perl
   update.js                update-available banner (GitHub releases, once a day)
+  settings.js              overlay appearance popover (colour, opacity, thickness)
   delegates/
     index.js               registry: delegate list, tag union, delegateFor(tags)
     common.js              shared helpers: point types, default box, info line
@@ -385,7 +386,9 @@ Bottom-bar UI: per-layer toggles (Focus / Faces / Crop, persisted via
 localStorage; a layer with no data in the current image is greyed/disabled) and
 a shooting-info readout (model · focal · aperture · shutter · ISO · focus-mode ·
 AF area+size · detected subject). Toggling re-renders the cached result; no
-re-run of exiftool.
+re-run of exiftool. A gear button opens the overlay settings popover
+(`client/settings.js`): focus colour, opacity and thickness, stored in
+localStorage and applied as CSS variables on `#overlay` (no re-render).
 
 Crop: **aspect-ratio crop** (`RawImageAspectRatio`, e.g. 16:9 → centred dashed
 box, trim top/bottom) verified on `DSCF2561.RAF`. Digital tele-converter crop

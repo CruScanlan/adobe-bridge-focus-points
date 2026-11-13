@@ -22,12 +22,20 @@
             <svg id="overlay" preserveAspectRatio="xMidYMid meet"></svg>
             <div id="placeholder">Select a photo in Bridge</div>
         </div>
+        <div id="settings" hidden>
+            <div class="set-row"><span>Colour</span><div id="set-swatches"></div></div>
+            <div class="set-row"><span></span><input id="set-hex" type="text" maxlength="7" spellcheck="false" title="Hex colour, e.g. #39ff14"/></div>
+            <div class="set-row"><span>Opacity</span><input id="set-opacity" type="range" min="10" max="100" step="5"/><output id="set-opacity-val"></output></div>
+            <div class="set-row"><span>Thickness</span><input id="set-thickness" type="range" min="1" max="8" step="0.5"/><output id="set-thickness-val"></output></div>
+            <div class="set-row"><span></span><button type="button" id="set-reset">Reset to defaults</button></div>
+        </div>
         <div id="statusbar">
             <div id="leftbar">
                 <div id="controls">
                     <label class="tog"><input type="checkbox" id="tg-focus" checked><span>Focus</span></label>
                     <label class="tog"><input type="checkbox" id="tg-faces" checked><span>Faces</span></label>
                     <label class="tog"><input type="checkbox" id="tg-crop" checked><span>Crop</span></label>
+                    <button type="button" id="settings-btn" title="Overlay settings">⚙</button>
                 </div>
                 <span id="status">Loading…</span>
             </div>
@@ -36,6 +44,7 @@
     </div>
 
     <script src="lib/CSInterface.js"></script>
+    <script src="settings.js"></script>
     <script src="main.js"></script>
     <script src="update.js"></script>
 </body>
