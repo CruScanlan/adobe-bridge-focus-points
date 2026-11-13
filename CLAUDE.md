@@ -587,9 +587,9 @@ Not yet done / next steps:
   instead of drawing all as one yellow box; also `FacePositions` vs the
   delegate's `FacesPositions` tag-name mismatch (latent dead branch).
 - Other makes (Panasonic, Pentax, …) only on request; each is one delegate file.
-- Distribution: everything is written (see "Release" below) but the workflows
-  have never run. Open: release cert + GitHub secrets (Cru), first CI run,
-  first compile of the installer, a real Mac.
+- Distribution: CI and the release workflow run; `v0.9.0-rc1` is published and
+  its installer was checked on the VM. Open: the first real release, upgrade
+  and uninstall with the installer, a real Mac.
 
 ## Release
 

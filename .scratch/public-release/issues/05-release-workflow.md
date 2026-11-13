@@ -12,7 +12,7 @@ Releasing becomes `git tag vX.Y.Z && git push --tags`. Document that, plus the o
 
 **Blocked by:** 01, 02, 03, 04
 
-**Status:** ready-for-human
+**Status:** resolved
 
 - [ ] A test tag (e.g. `v0.9.0-rc1`, marked pre-release) produces both artifacts on a GitHub Release with no manual steps
 - [ ] The `.exe` from the release installs and loads in Bridge on the VM (Cru confirms)
@@ -22,3 +22,5 @@ Releasing becomes `git tag vX.Y.Z && git push --tags`. Document that, plus the o
 ## Comments
 
 2026-11-11: `.github/workflows/release.yml` and `docs/releasing.md` written, **never run** (nothing has been pushed). On a `v*` tag: runs CI, fetches ZXPSignCmd 4.1.103 from Adobe-CEP/CEP-Resources (sha256 pinned; same file as the local one), builds with the cert from secrets, compiles the installer (installs Inno Setup with choco if the runner lacks it), publishes the release with the `.exe`, `.zxp`, `install-mac.sh` and `diagnose-mac.sh`. A tag with a suffix becomes a pre-release. No timestamp, see ticket 03. The cert is written to the runner's temp dir and deleted; the password is only ever an environment variable. Needs the secrets from `docs/releasing.md` before the first tag; then try `v0.9.0-rc1`.
+
+2026-11-13: Release cert created and both secrets set by Cru. `v0.9.0-rc1` tagged: the workflow passed first time and published a pre-release with the installer, the `.zxp` and both Mac scripts. The installed manifest is stamped 0.9.0.

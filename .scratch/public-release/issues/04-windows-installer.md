@@ -22,3 +22,5 @@ The installed folder must be byte-identical to the signed `.zxp` contents, or Br
 ## Comments
 
 2026-11-11: `tools/installer.iss` written, **not compiled or run**: Inno Setup is not installed on the VM and Claude did not install it. Per-user into the CEP extensions folder, empties the folder first, uninstaller kept outside the extension folder (in `%LOCALAPPDATA%\BridgeFocusPoints`) so the installed files match the signed package exactly, waits for Bridge to be closed before installing or uninstalling, finish page says to restart Bridge. First real compile will be the release workflow (or `iscc /DAppVersion=0.9.0 tools\installer.iss` after installing Inno Setup 6). All four checkboxes remain open.
+
+2026-11-13: First compile was the release workflow for `v0.9.0-rc1`; it built. Cru ran the installer on the VM: fresh install over the dev build works (installed manifest 0.9.0, no `.debug`, uninstaller in `%LOCALAPPDATA%\BridgeFocusPoints`), panel loads, and the "Bridge is running" prompt works on a reinstall with Bridge open. Not yet tried: upgrade from an older release, uninstall, `ZXPSignCmd -verify` on the installed folder.
