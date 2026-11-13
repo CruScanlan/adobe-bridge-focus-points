@@ -11,3 +11,4 @@ tools/ZXPSignCmd.exe
 tools/.env
 # Release build output (tools/build-release.sh)
 dist/
+.rnd
