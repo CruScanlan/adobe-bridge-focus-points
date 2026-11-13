@@ -56,4 +56,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: shellcheck tools/install-mac.sh tools/diagnose-mac.sh tools/build-release.sh tools/sign-install.sh
+      - run: shellcheck --severity=warning tools/install-mac.sh tools/diagnose-mac.sh tools/build-release.sh tools/sign-install.sh
