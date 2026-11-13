@@ -17,8 +17,12 @@ delegate to both:
 - **The Focus-Points Lr plugin** holds the per-manufacturer geometry that turns
   exiftool output into pixel coordinates. We port that, manufacturer by
   manufacturer (Lua -> JS). digiKam (`reference/digikam-focuspoint-metadataengine/`)
-  is a secondary cross-reference only — it uses Exiv2, not exiftool, so its
-  extraction layer does not transfer.
+  is a secondary cross-reference only. It also reads exiftool output, and its
+  README says it is derived from the same Lr plugin, so it is **not an
+  independent check** of the geometry (compared 2026-11-13: same formulas for
+  the primary point on all five makes; no Nikon DSLR support). Independent
+  oracles: Adobe Camera Raw 18.4.1+ / Lightroom Classic 16 "Show Autofocus
+  Points" (Canon, Nikon, Sony) and the camera makers' own software.
 
 ## Architecture (decided — do not re-evaluate)
 
