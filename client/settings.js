@@ -16,7 +16,7 @@
     // Per layer: default colour, CSS property, localStorage key.
     var LAYERS = {
         focus: { color: '#39ff14', prop: '--af-color', key: 'color' },
-        faces: { color: '#ffd23f', prop: '--face-color', key: 'color.faces' },
+        faces: { color: '#39ff14', prop: '--face-color', key: 'color.faces' },
         crop: { color: '#4ab8ff', prop: '--crop-color', key: 'color.crop' },
     };
     var SWATCHES = ['#39ff14', '#ffd23f', '#4ab8ff', '#ffffff', '#ff3b30', '#ff9500', '#ff4fd8'];
